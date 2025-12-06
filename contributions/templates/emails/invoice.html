@@ -231,7 +231,7 @@
             <div id="invoice">
                 <h1>INV {{order.reference}}</h1>
                 <div class="date">Date of Invoice: {{order.created|date:"D j M Y, H:i"}}</div>
-                <div class="date">Status: {{order.get_is_approved_display}}</div>
+                <div class="date">Status: {{order.member_contribution.get_is_paid_display}}</div>
             </div>
         </div>
         <table border="0" cellspacing="0" cellpadding="0">
