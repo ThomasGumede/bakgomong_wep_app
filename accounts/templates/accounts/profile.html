@@ -1,0 +1,238 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+{{request.user.get_full_name}}
+{% endblock dash_title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'accounts/profile.css' %}" />
+{% endblock css %}
+
+{% block content %}
+    <div class="content relative">
+        <div class="flex relative before:bg-black/50 before:absolute before:w-full before:h-full"> <img
+                src="{% static 'images/user-grid/user-grid-bg1.png' %}" alt="user background" class="h-[560px] w-full rounded-sm" id="profile-img2"> {% if user == request.user %}<a href="{% url 'accounts:profile-update' %}"
+                class="absolute top-5 end-5 flex p-3 rounded-sm ring-1 ring-black/10 text-white bg-black/10 leading-none">
+                <i class="ri ri-pencil-line me-2"></i> <span>Update Profile</span> </a> {% endif %}</div>
+        <div class="absolute top-28 inset-x-0 text-center space-y-3">
+            <div class="flex justify-center w-full">
+                <div class="relative cursor-pointer"> <img src="{% if user.profile_image %}{{user.profile_image.url}}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
+                        class="w-[150px] h-[150px] rounded-full ring-4 ring-white/10 mx-auto" id="profile-img" alt="profile-img">
+                    <span
+                        class="absolute bottom-0 end-0 block p-1 rounded-full ring-2 ring-white/10 text-white bg-white/10 dark:bg-bgdark leading-none cursor-pointer">
+                        <i class="ri ri-pencil-line cursor-pointer"></i> <input type="file"
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="profile-change"> </span>
+                </div>
+            </div>
+            <div class="text-white">
+                <h2 class="text-xl font-semibold">{{user.get_full_name}}</h2>
+                <p class="text-lg text-white/50">{{user.email}}</p>
+                <p class="text-lg text-white/50">{{user.family}}</p>
+            </div>
+            
+            <div class="flex space-x-1 rtl:space-x-reverse justify-center text-center">
+                
+                <div class="hs-tooltip ti-main-tooltip"> <button type="button"
+                        class="hs-tooltip-toggle m-0 rounded-full p-2 ti-btn ti-btn-outline ring-white/10 text-white bg-white/10  border-white/10">
+                        <i class="ri ri-instagram-line text-lg leading-none"></i> <span
+                            class="hs-tooltip-content ti-main-tooltip-content py-1 px-2 bg-gray-900 text-xs font-medium text-white shadow-sm dark:bg-slate-700 hidden"
+                            role="tooltip"
+                            style="position: fixed; inset: auto auto 0px 0px; margin: 0px; transform: translate(681px, -501px);"
+                            data-popper-placement="top"> Instagram </span> </button> </div>
+                <div class="hs-tooltip ti-main-tooltip"> <button type="button"
+                        class="hs-tooltip-toggle m-0 rounded-full p-2 ti-btn ti-btn-outline ring-white/10 text-white bg-white/10  border-white/10">
+                        <i class="ri ri-twitter-x-line text-lg leading-none"></i> <span
+                            class="hs-tooltip-content ti-main-tooltip-content py-1 px-2 bg-gray-900 text-xs font-medium text-white shadow-sm dark:bg-slate-700 hidden"
+                            role="tooltip" data-popper-placement="top"
+                            style="position: fixed; inset: auto auto 0px 0px; margin: 0px; transform: translate(730px, -501px);">
+                            Twitter </span> </button> </div>
+                <div class="hs-tooltip ti-main-tooltip"> <button type="button"
+                        class="hs-tooltip-toggle m-0 rounded-full p-2 ti-btn ti-btn-outline ring-white/10 text-white bg-white/10  border-white/10">
+                        <i class="ri ri-linkedin-line text-lg leading-none"></i> <span
+                            class="hs-tooltip-content ti-main-tooltip-content py-1 px-2 bg-gray-900 text-xs font-medium text-white shadow-sm dark:bg-slate-700 hidden"
+                            role="tooltip" data-popper-placement="top"
+                            style="position: fixed; inset: auto auto 0px 0px; margin: 0px; transform: translate(765px, -501px);">
+                            Linkedin </span> </button> </div>
+                <div class="hs-tooltip ti-main-tooltip"> <button type="button"
+                        class="hs-tooltip-toggle m-0 rounded-full p-2 ti-btn ti-btn-outline ring-white/10 text-white bg-white/10  border-white/10">
+                        <i class="ri ri-facebook-circle-line text-lg leading-none"></i> <span
+                            class="hs-tooltip-content ti-main-tooltip-content py-1 px-2 bg-gray-900 text-xs font-medium text-white shadow-sm dark:bg-slate-700 hidden"
+                            role="tooltip" data-popper-placement="top"
+                            style="position: fixed; inset: auto auto 0px 0px; margin: 0px; transform: translate(801px, -501px);">
+                            Facebook </span> </button> </div>
+            </div>
+        </div> <!-- Start::main-content -->
+        <div class="main-content -mt-28"> <!-- Start::row-1 -->
+            <div class="grid grid-cols-12 gap-x-6">
+                <div class="col-span-12 xxl:col-span-3">
+                    <div class="box">
+                        <div class="box-header">
+                            <div class="flex justify-between">
+                                <h5 class="box-title">About Me</h5>
+                            </div>
+                        </div>
+                        <div class="box-body space-y-3">
+                            <div class="space-y-3 !text-gray-500 dark:!text-white">
+                                <p>{{user.biography}}</p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="box-header">
+                            <div class="flex justify-between">
+                                <h5 class="box-title">General Info</h5>
+                            </div>
+                        </div>
+                        <div class="box-body py-2">
+                            <div id="profile-1" class="space-y-4">
+                                <h5 class="box-title mb-3">Basic Information</h5>
+                                <div class="overflow-auto">
+                                    <table class="ti-custom-table border-0 whitespace-nowrap">
+                                        <tbody>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Title
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.get_title_display}}</td>
+                                            </tr>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">First name
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.first_name}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Last Name
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.last_name}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Maiden Name
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.maiden_name}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Birthday
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">03 September 1990</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Gender</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.get_gender_display}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Languages
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">Setswana, English
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 class="box-title my-3">Family Information</h5>
+                                <div class="overflow-auto">
+                                    <table class="ti-custom-table border-0 whitespace-nowrap">
+                                        <tbody>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    Family</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.family}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    Role</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.get_role_display}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 class="box-title my-3">Contact Information</h5>
+                                <div class="overflow-auto">
+                                    <table class="ti-custom-table border-0 whitespace-nowrap">
+                                        <tbody>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Personal
+                                                    Contact No</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.phone}}</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Email Id
+                                                </td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.email}}
+                                                </td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Address</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.address}}
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 class="box-title my-3">Education Information</h5>
+                                <div class="overflow-auto">
+                                    <table class="ti-custom-table border-0 whitespace-nowrap">
+                                        <tbody>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    School</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">Studied at Makit Hight
+                                                    school ,1-12th</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    Graduation</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">Studied at Abc
+                                                    University , Btech(cse) </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 class="box-title my-3">Work Experience</h5>
+                                <div class="overflow-auto">
+                                    <table class="ti-custom-table border-0 whitespace-nowrap">
+                                        <tbody>
+                                            <tr class="">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    Work1</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">Web Designer at abc
+                                                    ,2015 - 2018</td>
+                                            </tr>
+                                            <tr class="!border-0">
+                                                <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">
+                                                    Work2</td>
+                                                <td class="!p-2">:</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">Sr. Ui Developer at abc
+                                                    ,2018 - present </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                
+            </div> <!-- End::row-1 -->
+        </div> <!-- Start::main-content -->
+    </div>
+{% endblock content %}
+    

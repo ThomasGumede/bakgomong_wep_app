@@ -1,0 +1,198 @@
+{% load static %}
+<aside class="sidebar">
+    <button type="button" class="sidebar-close-btn !mt-4">
+        <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
+    </button>
+    <div>
+        <a href="{% url 'accounts:dashboard' %}" class="sidebar-logo">
+            <img src="{% static 'images/logo.png' %}" alt="site logo" class="light-logo">
+            <img src="{% static 'images/logo.png' %}" alt="site logo" class="dark-logo">
+            <img src="{% static 'images/logo-icon.png' %}" alt="site logo" class="logo-icon">
+        </a>
+    </div>
+    <div class="sidebar-menu-area">
+        <ul class="sidebar-menu" id="sidebar-menu">
+            <li>
+                <a href="{% url 'accounts:dashboard' %}">
+                    <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-menu-group-title">Kgotla Information</li>
+            <li>
+                <a href="{% url 'accounts:get-families' %}">
+                    <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Families</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'contributions:get-contributions' %}">
+                    <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
+                    <span>Contributions</span>
+                </a>
+            </li>
+            
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
+                    <span>Invoice</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{% url 'contributions:member-contributions-list' %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            Payments</a>
+                    </li>
+                    
+                    <li>
+                        <a href="{% url 'contributions:log-paymens' %}"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> Log payment</a>
+                    </li>
+                    
+                </ul>
+            </li>
+
+
+            <li class="sidebar-menu-group-title">{{request.user.family}}</li>
+            <li>
+                <a href="{% url 'accounts:get-family' request.user.family.slug %}">
+                    <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Family overview</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="flowbite:users-outline" class="menu-icon"></iconify-icon>
+                    <span>Members</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{% url 'accounts:get-members' request.user.family.slug %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            Members List</a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'accounts:add-member' request.user.family.slug %}"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> Add
+                            Member</a>
+                    </li>
+                    
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
+                    <span>Payments</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{% url 'contributions:member-contributions-list-by-slug' request.user.family.slug %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            View Payments</a>
+                    </li>
+
+                    
+                    {% if request.user.is_family_leader %}
+                        <li>
+                            <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i>Log
+                                Payment</a>
+                        </li>
+                    {% endif %}
+                        
+                    
+                    
+                </ul>
+            </li>
+
+
+            <li class="sidebar-menu-group-title">Application</li>
+            <li>
+                <a href="{% url 'accounts:user-details' request.user.username %}">
+                    <iconify-icon icon="flowbite:user-outline" class="menu-icon"></iconify-icon>
+                    <span>Account overview</span>
+                </a>
+            </li>
+            
+
+            <li>
+                <a href="{% url 'contributions:my-contributions' %}">
+                    <iconify-icon icon="hugeicons:money-send-square" class="menu-icon"></iconify-icon>
+                    <span>Your Invoices</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="simple-line-icons:vector" class="menu-icon"></iconify-icon>
+                    <span>Authentication</span>
+                </a>
+                <ul class="sidebar-submenu">
+            
+                    {% if request.user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'accounts:profile-update' %}"><i
+                                class="ri-circle-fill circle-icon text-info-600 w-auto"></i>
+                            View Profile</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:logout' %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            Sign
+                            Out</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'accounts:login' %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Sign
+                            In</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:register' %}"><i class="ri-circle-fill circle-icon text-warning-600 w-auto"></i>
+                            Sign
+                            Up</a>
+                    </li>
+            
+                    {% endif %}
+            
+            
+            
+                </ul>
+            </li>
+            <li class="sidebar-menu-group-title">Company Information</li>
+            <li>
+                <a href="{% url 'accounts:clan-meetings' %}">
+                    <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
+                    <span>Meetings</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'accounts:clan-documents' %}">
+                    <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
+                    <span>Documents</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="octicon:info-24" class="menu-icon"></iconify-icon>
+                    <span>Terms & Conditions</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
+                    <span>Settings</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            Company</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-warning-600 w-auto"></i>
+                            Notification</a>
+                    </li>
+                    
+
+                    <li>
+                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-danger-600 w-auto"></i>
+                            Payment Gateway</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</aside>

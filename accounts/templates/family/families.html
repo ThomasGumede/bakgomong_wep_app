@@ -1,0 +1,219 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block seo %}
+<title>Kgotla Families</title>
+{% endblock seo %}
+{% block dash_title %}
+Families
+{% endblock dash_title %}
+
+
+{% block content %}
+    <div class="grid grid-cols-12">
+        <div class="col-span-12">
+            <div class="card border-0 overflow-hidden">
+                <div class="card-header">
+                    <h6 class="card-title mb-0 text-lg">Families</h6>
+                </div>
+                <div class="card-header flex flex-wrap items-center justify-between gap-3">
+                    
+                    <div>
+                        <a href="{% url 'accounts:add-family' %}"
+                            class="btn btn-sm text-white bg-primary-600 hover:bg-primary-700 flex items-center gap-2"><i
+                                class="ri-add-line"></i> Create Family</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="selection-table"
+                        class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
+                        <thead>
+                            <tr>
+                                
+                                <th scope="col" class="text-neutral-800 dark:text-white">
+                                    <div class="flex items-center gap-2">
+                                        Family Name
+                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                        </svg>
+                                    </div>
+                                </th>
+                                
+                                <th scope="col" class="text-neutral-800 dark:text-white">
+                                    <div class="flex items-center gap-2">
+                                        Leader
+                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                        </svg>
+                                    </div>
+                                </th>
+                                
+                                
+                                <th scope="col" class="text-neutral-800 dark:text-white">
+                                    <div class="flex items-center gap-2">
+                                        Total Members
+                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                        </svg>
+                                    </div>
+                                </th>
+                                
+                                <th scope="col" class="text-neutral-800 dark:text-white">
+                                    <div class="flex items-center gap-2">
+                                        Action
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for family in families %}
+                                <tr>
+                                    
+                                    <td><a href="{% url 'accounts:get-family' family.slug %}" class="text-primary-600">{{family.name}}</a></td>
+                                    <td>
+                                        <div class="flex items-center">
+                                            <img src="{% if family.leader.profile_image %}{{family.leader.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}" alt="{{family.leader.get_full_name}}" class="shrink-0 me-3 h-[46px] w-[46px] rounded-full">
+                                            <h6 class="text-base mb-0 font-medium grow">{{family.leader.get_full_name}}</h6>
+                                        </div>
+                                    </td>
+                                    
+                                    
+                                    <td>{{family.members.count}}</td>
+                                
+                                    <td class="flex items-center gap-3">
+                                        <a href="{% url 'accounts:get-family' family.slug %}"
+                                            class="w-8 h-8 bg-primary-50 dark:bg-primary-600/10 text-primary-600 dark:text-primary-400 rounded-full inline-flex items-center justify-center">
+                                            <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
+                                        </a>
+                                        
+                                        {% if request.user.is_staff %}
+                                            <a href="{% url 'accounts:update-family' family.slug %}"
+                                                class="w-8 h-8 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 rounded-full inline-flex items-center justify-center">
+                                                <iconify-icon icon="lucide:edit"></iconify-icon>
+                                            </a>
+                                            <span data-modal-target="delete-popup-modal-{{family.slug}}" data-modal-toggle="delete-popup-modal-{{family.slug}}" type="button"
+                                                class="w-8 h-8 bg-danger-100 cursor-pointer dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 rounded-full inline-flex items-center justify-center">
+                                                <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                                
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% for family in families %}
+<!-- Delete Modal contribution -->
+<div id="delete-popup-modal-{{family.slug}}" tabindex="-1"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="rounded-2xl bg-white dark:bg-neutral-700 max-w-[400px] w-full">
+        <form method="post" action="{{ family.get_delete_url }}" class="p-6 text-center">
+            {% csrf_token %}
+            <span class="mb-4 text-[40px] line-height-1 text-danger-600">
+                <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+            </span>
+            <h6 class="text-lg font-semibold text-neutral-600 dark:text-neutral-200 mb-0">Are your sure you want to
+                delete this family ({{family.name}})?</h6>
+            <div class="flex items-center justify-center gap-3 mt-6">
+                <button type="reset" data-modal-hide="delete-popup-modal-{{family.slug}}"
+                    class="w-1/2 border border-danger-600 hover:bg-danger-100 text-danger-600 text-base px-10 py-[11px] rounded-lg">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="w-1/2 text-center btn btn-primary border border-primary-600 text-base px-6 py-3 rounded-lg">
+                    Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}
+
+
+{% block scripts %}
+    <script>
+        if (document.getElementById("selection-table") && typeof simpleDatatables.DataTable !== 'undefined') {
+
+            let multiSelect = true;
+            let rowNavigation = false;
+            let table = null;
+
+            const resetTable = function () {
+                if (table) {
+                    table.destroy();
+                }
+
+                const options = {
+                    columns: [
+                        {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
+                    ],
+                    rowRender: (row, tr, _index) => {
+                        if (!tr.attributes) {
+                            tr.attributes = {};
+                        }
+                        if (!tr.attributes.class) {
+                            tr.attributes.class = "";
+                        }
+                        if (row.selected) {
+                            tr.attributes.class += " selected";
+                        } else {
+                            tr.attributes.class = tr.attributes.class.replace(" selected", "");
+                        }
+                        return tr;
+                    }
+                };
+                if (rowNavigation) {
+                    options.rowNavigation = true;
+                    options.tabIndex = 1;
+                }
+
+                table = new simpleDatatables.DataTable("#selection-table", options);
+
+                // Mark all rows as unselected
+                table.data.data.forEach(data => {
+                    data.selected = false;
+                });
+
+                table.on("datatable.selectrow", (rowIndex, event) => {
+                    event.preventDefault();
+                    const row = table.data.data[rowIndex];
+                    if (row.selected) {
+                        row.selected = false;
+                    } else {
+                        if (!multiSelect) {
+                            table.data.data.forEach(data => {
+                                data.selected = false;
+                            });
+                        }
+                        row.selected = true;
+                    }
+                    table.update();
+                });
+            };
+
+            // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
+            const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
+            if (isMobile) {
+                rowNavigation = false;
+            }
+
+            resetTable();
+        }
+    </script>
+{% endblock scripts %}
+    
+    

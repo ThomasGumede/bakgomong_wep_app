@@ -1,0 +1,16 @@
+logs
+even.py
+node_modules
+env
+__pycache__
+/__pycache__
+.env
+a.py
+s.js
+/media
+/static_root
+.env.save
+.env.save.1
+env.py
+
+.env.local

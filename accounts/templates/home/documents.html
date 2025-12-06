@@ -1,0 +1,81 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block seo %}
+<title>Kgotla Documents</title>
+{% endblock seo %}
+{% block dash_title %}
+Kgotla Documents
+{% endblock dash_title %}
+{% block content %}
+<div class="grid grid-cols-12">
+    <div class="col-span-12">
+        <div class="card h-full p-0 rounded-xl border-0 overflow-hidden">
+            <div
+                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
+
+                {% if request.user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
+                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                    Add File
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body p-6">
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                
+                                <th scope="col">Uploaded Date</th>
+                                <th scope="col">Uploaded By</th>
+                                <th scope="col">Title</th>
+                                
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for document in docs %}
+                            
+                            <tr>
+                                
+                                <td>{{document.created|date:"d M Y"}}</td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <img src="{% if document.uploaded_by.profile_image %}{{document.uploaded_by.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}"
+                                            alt="{{document.uploaded_by.get_full_name}}" class="w-10 h-10 rounded-full shrink-0 overflow-hidden">
+                                        <div class="grow">
+                                            <span
+                                                class="text-base mb-0 font-normal text-secondary-light">{{document.uploaded_by.get_full_name|truncatechars:20}}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{document.title|truncatechars:30}}</td>
+    
+                                
+
+                                <td class="text-center">
+                                    <div class="flex items-center gap-3 justify-center">
+                                        <a href="{% url 'accounts:download-file' document.id %}"
+                                            class="bg-info-100 dark:bg-info-600/25 hover:bg-info-200 text-info-600 dark:text-info-400 font-medium w-10 h-10 flex justify-center items-center rounded-full">
+                                            <iconify-icon icon="lucide:download" class="icon text-xl"></iconify-icon>
+
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}

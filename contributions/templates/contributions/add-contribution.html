@@ -1,0 +1,144 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+Add Contribution
+{% endblock dash_title %}
+
+
+{% block content %}
+<div class="grid grid-cols-12 gap-5">
+
+    <div class="col-span-12">
+        <div class="card border-0">
+            <div class="card-header">
+                <h5 class="text-lg font-semibold mb-0">Add Contribution</h5>
+            </div>
+            <div class="card-body grid gap-3">
+                {% include 'includes/errors.html' %}
+                <form method="post" class="grid grid-cols-12 gap-4">
+
+                    {% csrf_token %}
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Contribution Name</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            <input type="text" name="name" id="id_name" value="{{form.name.value}}" class="form-control"
+                                placeholder="Enter Contribution Name" required="">
+                                <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.name.help_text}}</span>
+                                {% if form.name.errors %}
+                                <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.name.errors.as_text}}</span>
+                                {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Contribution Type</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.category}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.category.help_text}}</span>
+                            {% if form.category.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.category.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Contribution Amount</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            <input type="text" name="amount" id="id_amount" value="{{form.amount.value}}" class="form-control"
+                                placeholder="Enter Contribution Amount e.g 100" required="">
+                                <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.amount.help_text}}</span>
+                                {% if form.amount.errors %}
+                                <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.amount.errors.as_text}}</span>
+                                {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Recurrence</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.recurrence}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.recurrence.help_text}}</span>
+                            {% if form.recurrence.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.recurrence.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Scope</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.scope}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.scope.help_text}}</span>
+                            {% if form.scope.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.scope.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Family</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.family}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.family.help_text}}</span>
+                            {% if form.family.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.family.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-span-12">
+                        <label for="id_due_date" class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Due Date </label>
+                        <div class=" relative">
+                            <input value="{{form.due_date.value}}" class="form-control rounded-lg bg-white dark:bg-neutral-700" name="due_date" id="id_due_date" type="text"
+                                placeholder="03/12/2024">
+                            <span class="absolute end-0 top-1/2 -translate-y-1/2 me-3 line-height-1"><iconify-icon
+                                    icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
+                        </div>
+                    </div>
+                    <div class="col-span-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4" cols="50" placeholder="Enter a description..."
+                            style="height: 133px;">{{form.description.value}}</textarea>
+                    </div>
+
+                    <div class="col-span-12">
+                        <button class="btn btn-primary-600" type="submit">Submit form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+<script src="{% static 'js/flatpickr.js' %}"></script>
+<script>
+    // Flat pickr or date picker js 
+    function getDatePicker(receiveID) {
+        flatpickr(receiveID, {
+            enableTime: true,
+            dateFormat: "d/m/Y",
+        });
+    }
+    
+    getDatePicker('#id_due_date');
+
+    
+
+</script>
+
+{% endblock scripts %}

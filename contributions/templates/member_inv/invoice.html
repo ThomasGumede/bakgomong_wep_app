@@ -1,0 +1,450 @@
+{% extends '_base.html' %}
+{% load static %}
+
+
+{% block css %}
+    <style>
+        :root {
+            --accent: #1e40af;
+            --muted: #6b7280;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --radius: 12px;
+            --max-width: 900px;
+            --pad: 20px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: #111827;
+        }
+    
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+        }
+    
+        .wrap {
+            max-width: var(--max-width);
+            margin: 32px auto;
+            padding: 18px;
+        }
+    
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+            
+            overflow: hidden;
+        }
+    
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px
+        }
+    
+        .brand {
+            display: flex;
+            gap: 16px;
+            align-items: center
+        }
+    
+        .logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 22px
+        }
+    
+        .company h1 {
+            margin: 0;
+            font-size: 18px
+        }
+    
+        .company p {
+            margin: 2px 0;
+            color: #6b7280;
+            font-size: 13px
+        }
+    
+        .meta {
+            text-align: right;
+            min-width: 200px
+        }
+    
+        .meta h2 {
+            margin: 0;
+            color: var(--accent)
+        }
+    
+        .meta small {
+            display: block;
+            color: #6b7280;
+            margin-top: 6px
+        }
+    
+        .details {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 20px
+        }
+    
+        .block {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px
+        }
+    
+        .label {
+            font-size: 12px;
+            color: #6b7280
+        }
+    
+        .value {
+            font-weight: 600;
+            margin-top: 6px
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 22px
+        }
+    
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eef2f6;
+            text-align: left
+        }
+    
+        th {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 600
+        }
+    
+        td.qty,
+        td.total {
+            text-align: right
+        }
+    
+        tfoot td {
+            border-top: 2px solid #e6edf3;
+            font-weight: 700
+        }
+    
+        .summary {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end
+        }
+    
+        .summary table {
+            width: auto;
+            border-collapse: collapse
+        }
+    
+        .summary td {
+            padding: 8px 12px
+        }
+    
+        .notes {
+            margin-top: 18px;
+            color: #6b7280;
+            font-size: 13px
+        }
+    
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 18px;
+            gap: 10px
+        }
+    
+        .btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 0;
+            cursor: pointer
+        }
+    
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #e6eef6;
+            color: var(--accent)
+        }
+    
+        .btn-primary {
+            background: var(--accent);
+            color: white
+        }
+    
+        @media print {
+            body {
+                background: white
+            }
+    
+            .actions {
+                display: none
+            }
+    
+            .card {
+                box-shadow: none;
+                border-radius: 0
+            }
+        }
+    
+        @media(max-width:640px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start
+            }
+    
+            .meta {
+                text-align: left
+            }
+    
+            .details {
+                flex-direction: column
+            }
+        }
+    </style>
+{% endblock css %}
+    
+{% block dash_title %}
+Invoice
+{% endblock dash_title %}
+{% block content %}
+
+{% if alert %}
+    <div class="alert alert-success bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 border-success-100 px-6 py-[11px] mb-0 font-semibold text-lg rounded-lg"
+        role="alert">
+        <div class="flex items-center justify-between text-lg">
+            {{alert.title}}
+            <button class="remove-button text-success-600 text-2xl line-height-1"> <iconify-icon
+                    icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+        </div>
+        <p class="font-medium text-success-600 text-sm mt-2">{{alert.message}}</p>
+    </div>
+{% endif %}
+    
+<div class="card border-0">
+    <div class="card-header">
+        <div class="flex flex-wrap items-center justify-end gap-2">
+            <a href="javascript:void(0)"
+                class="btn btn-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg inline-flex items-center gap-1">
+                <iconify-icon icon="pepicons-pencil:paper-plane" class="text-xl"></iconify-icon>
+                Send Invoice
+            </a>
+            
+            {% if contribution.is_paid == 'NOT PAID' %}
+            <a href="{% url 'contributions:checkout' contribution.id %}"
+                class="btn btn-sm bg-warning-600 hover:bg-warning-700 text-white rounded-lg inline-flex items-center gap-1">
+                <iconify-icon icon="hugeicons:invoice-03" class="text-xl"></iconify-icon>
+                Pay Now
+            </a>
+            
+            {% endif %}
+            {% if contribution.is_paid == 'NOT PAID' or contribution.is_paid == 'PENDING' %}
+            <a href="javascript:void(0)"
+                class="btn btn-sm bg-success-600 hover:bg-success-700 text-white rounded-lg inline-flex items-center gap-1">
+                <iconify-icon icon="uil:edit" class="text-xl"></iconify-icon>
+                Mark Paid
+            </a>
+            {% endif %}
+            
+            <button type="button"
+                class="btn btn-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg inline-flex items-center gap-1"
+                onclick="printInvoice()">
+                <iconify-icon icon="basil:printer-outline" class="text-xl"></iconify-icon>
+                Print
+            </button>
+        </div>
+    </div>
+    <div class="card-body md:py-[60px]">
+        <div class="grid grid-cols-1" id="invoice">
+            <div class="max-w-[1174px] mx-auto w-full">
+                <div class="shadow-4 border border-neutral-200 dark:border-neutral-600 rounded-lg">
+                    <div
+                        class="p-5 flex flex-wrap justify-between gap-3 border-b border-neutral-200 dark:border-neutral-600">
+                        <div>
+                            <h3 class="text-xl">Invoice: {{contribution.reference}}</h3>
+                            <p class="mb-1 text-sm">Date Issued: {{contribution.created|date}}</p>
+                            <p class="mb-0 text-sm">Date Due: {{contribution.due_date}}</p>
+                        </div>
+                        <div class="brand">
+                            <div class="logo">BM</div>
+                            <div class="company">
+                                <h1>BAKGOMONG</h1>
+                                <p>12 Commerce Road, Cape Town, 8001</p>
+                                <p>info@bakgomong.co.za • +27 21 555 1234</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="py-7 px-5">
+                        <div class="flex flex-wrap justify-between align-items-end gap-3">
+                            <div>
+                                <h6 class="text-base">Issus For:</h6>
+                                <table class="text-sm text-secondary-light">
+                                    <tbody>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td class="ps-2">: {{contribution.account.get_full_name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Address</td>
+                                            <td class="ps-2">: {{contribution.account.address}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email</td>
+                                            <td class="ps-2">: {{contribution.account.email}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Phone number</td>
+                                            <td class="ps-2">: {{contribution.account.phone}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table class="text-sm text-secondary-light">
+                                    <tbody>
+                                        <tr>
+                                            <td>Issus Date</td>
+                                            <td class="ps-2">: {{contribution.created|date}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Order ID</td>
+                                            <td class="ps-2">: {{contribution.reference}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status</td>
+                                            <td class="ps-2">: {{contribution.is_paid}}</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="table-responsive scroll-sm">
+                                <table class="table bordered-table text-sm">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th scope="col" class="text-sm">Items</th>
+                                            
+                                            <th scope="col" class="text-sm">Category</th>
+                                            
+                                            <th scope="col" class="text-end text-sm">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            
+                                            <td>{{contribution.contribution_type.name}}</td>
+                                            
+                                            <td>{{contribution.contribution_type.category}}</td>
+                                            
+                                            <td class="text-end">R{{contribution.amount_due}}</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="flex flex-wrap justify-between gap-3">
+                                <div>
+                                    <p class="text-sm mb-0"><span
+                                            class="text-neutral-600 dark:text-neutral-200 font-semibold">Group
+                                            By:</span> {{contribution.contribution_type.created_by}}</p>
+                                    <p class="text-sm mb-0">Thanks for your contribution</p>
+                                </div>
+                                <div>
+                                    <table class="text-sm">
+                                        <tbody>
+                                            <tr>
+                                                <td class="pe-[64px]">Subtotal:</td>
+                                                <td class="ps-6">
+                                                    <span
+                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R{{contribution.amount_due}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="pe-[64px]">Discount:</td>
+                                                <td class="ps-6">
+                                                    <span
+                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R0.00</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    class="pe-[64px] border-b border-neutral-200 dark:border-neutral-600 pb-4">
+                                                    Tax:</td>
+                                                <td
+                                                    class="ps-6 border-b border-neutral-200 dark:border-neutral-600 pb-4">
+                                                    <span
+                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">0.00</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="pe-[64px] pt-4">
+                                                    <span
+                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">Total:</span>
+                                                </td>
+                                                <td class="ps-6 pt-4">
+                                                    <span
+                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R{{contribution.amount_due}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-16">
+                            <p class="text-center text-secondary-light text-sm font-semibold">Thank you for your
+                                contribution!</p>
+                        </div>
+
+                        <div class="flex flex-wrap justify-between align-items-end mt-16">
+                            <div class="text-sm border-t border-neutral-200 dark:border-neutral-600 inline-block px-3">
+                                Signature of Customer</div>
+                            <div class="text-sm border-t border-neutral-200 dark:border-neutral-600 inline-block px-3">
+                                Signature of Authorized</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    function printInvoice() {
+        var printContents = document.getElementById('invoice').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+    }
+</script>
+
+{% endblock scripts %}

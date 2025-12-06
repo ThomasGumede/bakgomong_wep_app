@@ -1,0 +1,158 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+{% if family %} {{ family.name }} Contributions {% elif user %} {{ user.get_full_name }} Contributions {% else %}
+Contributions {% endif %}
+{% endblock dash_title %}
+
+{% block content %}
+<div class="grid grid-cols-12">
+    <div class="col-span-12">
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="table-responsive scroll-sm" role="region" aria-label="Contributions table">
+                    {% if contributions and contributions|length > 0 %}
+                    <table id="selection-table" class="table bordered-table mb-0" aria-describedby="contrib-desc">
+                        <caption id="contrib-desc" class="sr-only">List of member contributions and payment status
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Reference</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Issued</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in contributions %}
+                            <tr>
+                                <td><a href="{{ inv.get_absolute_url }}" class="text-primary-600"
+                                        aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
+                                <td>
+                                    <a href="{{inv.account.get_absolute_url}}" class="flex items-center">
+                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}"
+                                            alt="{{ inv.account.get_full_name }} profile"
+                                            class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
+                                        <span class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</span>
+                                    </a>
+                                </td>
+                                <td>{{ inv.created|date:"d M Y" }}</td>
+                                <td>R{{ inv.amount_due|floatformat:2 }}</td>
+                                <td>
+                                    <span
+                                        class="
+                                            {% if inv.is_paid == 'PAID' %}
+                                                bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400
+                                            {% elif inv.is_paid == 'PENDING' %}
+                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
+                                            {% elif inv.is_paid == 'AWAITING APPROVAL' %}
+                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
+                                            {% else %}
+                                                bg-danger-600/25 bg-danger-100 text-danger-600 dark:bg-danger-600/25 dark:text-danger-400
+                                            {% endif %}
+                                            px-6 py-1.5 rounded-full font-medium text-sm
+                                        "
+                                    >
+                                        {{ inv.get_is_paid_display }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
+                                    {% if inv.is_paid == 'PAID' %}
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
+                                    {% else %}
+                                    {% if request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
+                                    <a href="{% url 'contributions:log-payment' inv.id %}"
+                                        class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Log payment for {{ inv.reference }}">
+                                        Log payment
+                                    </a>
+                                    {% elif request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
+                                    <a href="{% url 'contributions:checkout' inv.id %}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        Pay now
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
+                                    {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    {% if contributions.has_other_pages %}
+                    <nav class="mt-4" role="navigation" aria-label="Pagination">
+                        <ul class="pagination">
+                            {% if contributions.has_previous %}
+                            <li class="page-item"><a class="page-link"
+                                    href="?page={{ contributions.previous_page_number }}"
+                                    aria-label="Previous page">&laquo; Prev</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo; Prev</span></li>
+                            {% endif %}
+
+                            {% for p in contributions.paginator.page_range %}
+                            {% if contributions.number == p %}
+                            <li class="page-item active" aria-current="page"><span class="page-link">{{ p }}</span></li>
+                            {% elif p <= 2 or p> contributions.paginator.num_pages|add:-3 or p >=
+                                contributions.number|add:-2 and p <= contributions.number|add:2 %} <li
+                                    class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                                    {% elif forloop.first %}
+                                    <li class="page-item"><span class="page-link">…</span></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% if contributions.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                            href="?page={{ contributions.next_page_number }}"
+                                            aria-label="Next page">Next &raquo;</a></li>
+                                    {% else %}
+                                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                                    {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="p-6 text-center">
+                        <h3 class="mb-2">No payments or invoices found</h3>
+                        <p class="text-muted mb-4">There are currently no payments or invoices to display.</p>
+                        {% if request.user.is_staff or request.user.role == 'TREASURER' %}
+                        <a href="{% url 'contributions:add-contribution' %}" class="btn btn-primary">Create
+                            Contribution</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // keep DataTable initialization but guard against empty table
+    if (document.getElementById("selection-table") && typeof simpleDatatables !== 'undefined') {
+        let table = new simpleDatatables.DataTable("#selection-table", {
+            searchable: true,
+            perPage: 25,
+            columns: [{select: [0, 5], sortable: false}]
+        });
+    }
+</script>
+{% endblock scripts %}

@@ -1,0 +1,199 @@
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% tailwind_preload_css %}
+    {% tailwind_css %}
+    {{form.media}}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block seo %}
+    <!-- ================== SEO META TAGS ================== -->
+
+    <title>{% block title %}Bakgomong - Login{% endblock title %}</title>
+
+    <meta name="description"
+        content="{% block description %}Track, manage, and contribute to Bakgomong Clan projects and family funds — including events, burials, savings, and investments. Stay connected and build financial unity within the clan.{% endblock description %}">
+    <meta name="keywords"
+        content="Bakgomong Clan, clan contributions, family fund, stokvel, burial society, family savings, clan unity, community development, family leaders, South Africa">
+    <meta name="author" content="Bakgomong Clan Management">
+
+    <!-- ================== OPEN GRAPH / FACEBOOK ================== -->
+    <meta property="og:title" content="Bakgomong Clan - Login">
+    <meta property="og:description"
+        content="Join the Bakgomong Clan’s digital - Login — manage family payments, events, and savings online.">
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bakgomong Clan Portal">
+
+    <!-- ================== TWITTER CARD ================== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bakgomong Clan - Login">
+    <meta name="twitter:description"
+        content="A modern, transparent contribution platform for the Bakgomong Clan — uniting families through shared financial goals.">
+    <meta name="twitter:image" content="{% static 'images/logo.png' %}">
+
+    <!-- ================== FAVICON ================== -->
+
+    <!-- ================== CANONICAL LINK ================== -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+
+    {% endblock seo %}
+    <!-- Fav Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bakgomong Clan">
+    <!-- google fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"
+        rel="stylesheet" />
+    <!-- remix icon font css  -->
+    <link rel="stylesheet" href="{% static 'css/remixicon.css' %}" />
+    <!-- Apex Chart css -->
+    <link rel="stylesheet" href="{% static 'css/lib/apexcharts.css' %}" />
+    <!-- Data Table css -->
+    <link rel="stylesheet" href="{% static 'css/lib/dataTables.min.css' %}" />
+    <!-- Text Editor css -->
+    <link rel="stylesheet" href="{% static 'css/lib/editor-katex.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lib/editor.atom-one-dark.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lib/editor.quill.snow.css' %}" />
+    <!-- Date picker css -->
+    <link rel="stylesheet" href="{% static 'css/lib/flatpickr.min.css' %}" />
+    <!-- Calendar css -->
+    <link rel="stylesheet" href="{% static 'css/lib/full-calendar.css' %}" />
+    <!-- Vector Map css -->
+    <link rel="stylesheet" href="{% static 'css/lib/jquery-jvectormap-2.0.5.css' %}" />
+    <!-- Popup css -->
+    <link rel="stylesheet" href="{% static 'css/lib/magnific-popup.css' %}" />
+    <!-- Slick Slider css -->
+    <link rel="stylesheet" href="{% static 'css/lib/slick.css' %}" />
+    <!-- prism css -->
+    <link rel="stylesheet" href="{% static 'css/lib/prism.css' %}" />
+    <!-- file upload css -->
+    <link rel="stylesheet" href="{% static 'css/lib/file-upload.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/lib/audioplayer.css' %}" />
+    <!-- main css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body class="bg-neutral-100 dark:bg-neutral-800 dark:text-white">
+
+
+
+    <section class="bg-white dark:bg-dark-2 flex flex-wrap min-h-[100vh]">
+        <div class="lg:w-1/2 lg:block hidden">
+            <div class="flex items-center flex-col h-full justify-center">
+                <img src="{% static 'images/auth/auth-img.png' %}" alt="">
+            </div>
+        </div>
+        <div class="lg:w-1/2 py-8 px-6 flex flex-col justify-center">
+            {% include 'includes/messages.html' %}
+
+            <div class="lg:max-w-[464px] mx-auto w-full">
+                <div>
+                    <a href="" class="mb-2.5 max-w-[290px]">
+                        <img src="{% static 'images/logo.png' %}" alt="">
+                    </a>
+                    <h4 class="mb-3">Sign In to your Account</h4>
+                    <p class="mb-8 text-secondary-light text-lg">Welcome back! please enter your detail</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    {% include 'includes/errors.html' %}
+                    <div class="icon-field mb-4 relative">
+                        <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
+                            <iconify-icon icon="mage:email"></iconify-icon>
+                        </span>
+                        <input type="email" name="username"
+                            class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
+                            placeholder="Email">
+                    </div>
+                    <div class="relative mb-5">
+                        <div class="icon-field">
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
+                                <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+                            </span>
+                            <input type="password" name="password"
+                                class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
+                                id="your-password" placeholder="Password">
+                        </div>
+                        <span
+                            class="toggle-password ri-eye-line cursor-pointer absolute end-0 top-1/2 -translate-y-1/2 me-4 text-secondary-light"
+                            data-toggle="#your-password"></span>
+                    </div>
+                    <div class="mt-7">
+                        <div class="flex justify-between gap-2">
+                            <div class="flex items-center">
+                                <input class="form-check-input border border-neutral-300" type="checkbox" value=""
+                                    id="remeber">
+                                <label class="ps-2" for="remeber">Remember me </label>
+                            </div>
+                            <a href="{% url 'accounts:password-reset' %}"
+                                class="text-primary-600 font-medium hover:underline">Forgot
+                                Password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8"> Sign
+                        In</button>
+
+
+                    <div class="mt-8 text-center text-sm">
+                        <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}"
+                                class="text-primary-600 font-semibold hover:underline">Sign Up</a></p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- jQuery library js -->
+    <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
+    <!-- Apex Chart js -->
+
+    <!-- Data Table js -->
+    <script src="{% static 'js/lib/simple-datatables.min.js' %}"></script>
+    <!-- Iconify Font js -->
+    <script src="{% static 'js/lib/iconify-icon.min.js' %}"></script>
+    <!-- jQuery UI js -->
+    <script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
+    <!-- Vector Map js -->
+    <script src="{% static 'js/lib/jquery-jvectormap-2.0.5.min.js' %}"></script>
+    <script src="{% static 'js/lib/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <!-- Popup js -->
+    <script src="{% static 'js/lib/magnifc-popup.min.js' %}"></script>
+    <!-- Slick Slider js -->
+    <script src="{% static 'js/app.js' %}"></script>
+
+    <script>
+        // ================== Password Show Hide Js Start ==========
+        function initializePasswordToggle(toggleSelector) {
+            $(toggleSelector).on('click', function () {
+                $(this).toggleClass("ri-eye-off-line");
+                var input = $($(this).attr("data-toggle"));
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+            });
+        }
+        // Call the function
+        initializePasswordToggle('.toggle-password');
+        // ========================= Password Show Hide Js End ===========================
+    </script>
+
+</body>
+
+</html>

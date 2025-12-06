@@ -1,0 +1,183 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+{{request.user.family.name}} Members
+{% endblock dash_title %}
+
+
+{% block content %}
+<div class="grid grid-cols-12">
+    <div class="col-span-12">
+        <div class="card border-0 overflow-hidden">
+            <div class="card-header">
+                <h6 class="card-title mb-0 text-lg">Members</h6>
+            </div>
+            <div
+                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
+            
+                
+                <a href="{% url 'accounts:add-member' request.user.family.slug %}"
+                    class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
+                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                    Add Member
+                </a>
+                
+            </div>
+            
+            <div class="card-body">
+                <table id="selection-table"
+                    class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Member
+                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                    </svg>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Email
+                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                    </svg>
+                                </div>
+                            </th>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Role
+                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                                    </svg>
+                                </div>
+                            </th>
+                            
+                            
+
+                            
+                            
+                            
+
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Status
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for member in members %}
+                        <tr>
+                            
+                            
+                            <td>
+                                <a href="{% url 'accounts:user-details' member.username %}" class="flex items-center">
+                                    <img src="{% if member.profile_image %}{{member.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
+                                        alt="{{member.get_full_name}}"
+                                        class="shrink-0 me-3 h-[46px] w-[46px] rounded-lg">
+                                    <h6 class="text-base mb-0 font-medium grow">{{member.get_full_name}}</h6>
+                                </a>
+                            </td>
+                            <td>{{member.email}}</td>
+                            <td>{{member.role}}</td>
+                            
+                            
+
+                            <td class="text-center">
+                                <span
+                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block scripts %}
+<script>
+    if (document.getElementById("selection-table") && typeof simpleDatatables.DataTable !== 'undefined') {
+
+        let multiSelect = true;
+        let rowNavigation = false;
+        let table = null;
+
+        const resetTable = function () {
+            if (table) {
+                table.destroy();
+            }
+
+            const options = {
+                columns: [
+                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
+                ],
+                rowRender: (row, tr, _index) => {
+                    if (!tr.attributes) {
+                        tr.attributes = {};
+                    }
+                    if (!tr.attributes.class) {
+                        tr.attributes.class = "";
+                    }
+                    if (row.selected) {
+                        tr.attributes.class += " selected";
+                    } else {
+                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
+                    }
+                    return tr;
+                }
+            };
+            if (rowNavigation) {
+                options.rowNavigation = true;
+                options.tabIndex = 1;
+            }
+
+            table = new simpleDatatables.DataTable("#selection-table", options);
+
+            // Mark all rows as unselected
+            table.data.data.forEach(data => {
+                data.selected = false;
+            });
+
+            table.on("datatable.selectrow", (rowIndex, event) => {
+                event.preventDefault();
+                const row = table.data.data[rowIndex];
+                if (row.selected) {
+                    row.selected = false;
+                } else {
+                    if (!multiSelect) {
+                        table.data.data.forEach(data => {
+                            data.selected = false;
+                        });
+                    }
+                    row.selected = true;
+                }
+                table.update();
+            });
+        };
+
+        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
+        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
+        if (isMobile) {
+            rowNavigation = false;
+        }
+
+        resetTable();
+    }
+</script>
+{% endblock scripts %}

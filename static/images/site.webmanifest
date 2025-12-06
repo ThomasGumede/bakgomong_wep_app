@@ -1,0 +1,30 @@
+{
+  "id": "/",
+  "name": "Bakgomong Clan Portal",
+  "short_name": "Bakgomong",
+  "description": "The Bakgomong Clan's official contribution and management web app — track families, meetings, and contributions anywhere.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2A3B6F",
+  "background_color": "#ffffff",
+  "categories": ["community", "finance", "family", "clan", "management"],
+  "dir": "auto",
+  "lang": "en-ZA",
+  "icons": [
+    
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+  
+}

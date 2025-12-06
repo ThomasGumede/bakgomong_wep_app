@@ -1,0 +1,51 @@
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="mb-4 alert alert-primary bg-primary-50 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 border-primary-50 px-6 py-[11px] font-semibold text-lg rounded-lg flex items-center justify-between"
+                role="alert">
+                {{ message|safe|escape }}
+                <button class="remove-button text-primary-600 text-2xl line-height-1"> <iconify-icon
+                        icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+            </div>
+        {% elif message.tags == 'error' %}
+
+        <div class="mb-4 alert alert-danger bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 border-danger-100 px-6 py-[11px] font-semibold text-lg rounded-lg flex items-center justify-between"
+            role="alert">
+            {{ message|safe|escape }}
+            <button class="remove-button text-danger-600 text-2xl line-height-1"> <iconify-icon
+                    icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+        </div>
+        {% elif message.tags == 'info' %}
+        <div class="mb-4 alert alert-info bg-info-100 dark:bg-info-600/25 text-info-600 dark:text-info-400 border-info-100 px-6 py-[11px] font-semibold text-lg rounded-lg flex items-center justify-between"
+            role="alert">
+            {{ message|safe|escape }}
+            <button class="remove-button text-info-600 text-2xl line-height-1"> <iconify-icon icon="iconamoon:sign-times-light"
+                    class="icon"></iconify-icon></button>
+        </div>
+
+        {% elif message.tags == 'warning' %}
+        <div class="mb-4 alert alert-warning bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 border-warning-100 px-6 py-[11px] font-semibold text-lg rounded-lg flex items-center justify-between"
+            role="alert">
+            {{ message|safe|escape }}
+            <button class="remove-button text-warning-600 text-2xl line-height-1"> <iconify-icon
+                    icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+        </div>
+        {% else %}
+
+        <div class="mb-4 alert alert-purple bg-purple-100 dark:bg-purple-600/25 text-purple-600 dark:text-purple-400 border-purple-100 px-6 py-[11px] font-semibold text-lg rounded-lg flex items-center justify-between"
+            role="alert">
+            {{ message|safe|escape }}
+            <button class="remove-button dark:text-purple-400 text-2xl line-height-1"> <iconify-icon
+                    icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div class="card-body p-6 flex flex-col gap-4">
+
+
+
+
+
+</div>

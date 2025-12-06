@@ -1,0 +1,38 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load static tailwind_tags %}
+{% block content %}
+
+    <section class="bg-white dark:bg-neutral-700 flex flex-wrap items-center justify-center ">
+        <div id="popup-modal" tabindex="-1"
+            class="flex overflow-y-auto overflow-x-hidden z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-10 w-full max-w-[496px] max-h-full rounded-2xl bg-white dark:bg-neutral-700">
+
+                <div class="p-2.5 text-center">
+                    
+                    <div class="mb-8 inline-flex">
+                        <img src="{% static 'images/auth/envelop-icon.png' %}" alt="envelope svg">
+                    </div>
+                    <h6 class="mb-3 text-3xl">Order received and ready for payment</h6>
+                    <p class="text-secondary-light text-base mb-1">Thank you for initiating payment for <b>{{mc.contribution_type.name}}(R{{payment.amount}})</b></p>
+                    <p class="text-secondary-light text-base mb-0">To continue with payment, please click 'PAY NOW' and you will be redirected to our payment system</b></p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button value="submit" type="submit"
+                            class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8">Pay now</button>
+                    </form>
+                    
+                    <div class="mt-8 text-sm">
+                        <p class="mb-0">Wish to cancel? <a href="{% url 'accounts:password-reset' %}"
+                                class="text-primary-600 font-semibold">Cancel</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+{% endblock content %}
+    

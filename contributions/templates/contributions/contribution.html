@@ -1,0 +1,469 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+{{contribution.name}}
+{% endblock dash_title %}
+
+{% block content %}
+<!-- Widgets start -->
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-6">
+    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+        <div
+            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] dark:from-neutral-700 dark:to-neutral-800">
+            <div class="card-body p-0">
+                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <span
+                            class="mb-0 w-[48px] h-[48px] bg-cyan-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon1.svg' %}" alt="">
+                        </span>
+                        <div>
+                            <span class="font-medium text-neutral-600 text-base">Group Account Balance</span>
+                            <h6 class="font-semibold mt-[2px]">R{{total_collected}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                    total amount collected from {{payments.count}} members
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    {% if request.user.is_staff %}
+    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+        <div
+            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
+            <div class="card-body p-0">
+                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <span
+                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
+                        </span>
+                        <div>
+                            <span class="font-medium text-neutral-600 text-base">Outstanding Balance</span>
+                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                    {{outstanding_count}} Members are behind with payments
+                </p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+        <div
+            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
+            <div class="card-body p-0">
+                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <span
+                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
+                        </span>
+                        <div>
+                            <span class="font-medium text-neutral-600 text-base">Outstanding Balance</span>
+                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                    The Amount you have not paid
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
+        <div
+            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
+            <div class="card-body p-0">
+                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                    <div class="flex items-center gap-2.5">
+                        <span
+                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
+                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
+                        </span>
+                        <div>
+                            <span class="font-medium text-neutral-600 text-base">Pending Balance</span>
+                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
+                    The Amount you have not paid
+                </p>
+            </div>
+        </div>
+    </div> -->
+
+        
+    
+    
+    
+</div>
+<!-- Widgets end -->
+
+
+{% if payments.count > 0 %}
+<!-- Table Start -->
+<div class="card border-0 rounded-2xl mt-6">
+    <div class="card-header">
+        <div class="flex items-center flex-wrap gap-2 justify-between">
+            <h6 class="font-bold text-lg mb-0">Payment History</h6>
+
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="overflow-x-auto">
+            <div >
+                <table class="table bordered-table sm-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Members </th>
+                            
+                            <th scope="col">Inv No</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for payment in payments %}
+
+                        <tr>
+                            <td class="">
+                                <div class="flex items-center">
+                                    <img src="{% if payment.account.profile_image %}{{payment.account.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}" alt=""
+                                        class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                    <div class="grow">
+                                        <h6 class="text-base mb-0 font-medium">{{payment.account.get_full_name}}</h6>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td>{{payment.reference}}</td>
+                            <td>R{{payment.amount}}</td>
+                            <td>{{payment.payment_method}}</td>
+                            <td>{{payment.payment_date}}</td>
+                            <td>
+                                <a href=""
+                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Paid</a>
+                            </td>
+                            <td>
+                                <a href="{{ payment.member_contribution.get_absolute_url }}"
+                                    class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                    aria-label="Pay contribution {{ payment.reference }}">
+                                    View receipt
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endif %}
+{% if outstandings.count > 0 %}
+<div class="card border-0 rounded-2xl mt-6">
+    <div class="card-header">
+        <div class="flex items-center flex-wrap gap-2 justify-between">
+            <h6 class="font-bold text-lg mb-0">Out standing payments</h6>
+            <a href=""
+                class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
+                View All
+                <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="overflow-x-auto">
+            <div >
+                <table class="table bordered-table sm-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Members </th>
+                            
+                            <th scope="col">Inv No</th>
+                            <th scope="col">Amount</th>
+
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for outstanding in outstandings %}
+                            <tr>
+                                <td class="">
+                                    <div class="flex items-center">
+                                        <img src="{% if outstanding.account.profile_image %}{{outstanding.account.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}" alt=""
+                                            class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
+                                        <div class="grow">
+                                            <h6 class="text-base mb-0 font-medium">{{outstanding.account.get_full_name}}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <td>{{outstanding.reference}}</td>
+                                <td>R{{outstanding.amount_due}}</td>
+                            
+                                <td>
+                                    {% if outstanding.is_overdue %}
+                                    <span
+                                        class="text-danger-600 bg-danger-100 dark:bg-danger-600/25 dark:text-danger-600 px-6 py-1.5 rounded-full font-medium text-sm">{{outstanding.due_date}}
+                                        (Overdue)</span>
+                                    {% else %}
+                                    {{outstanding.due_date}}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span
+                                        class="
+                                            {% if outstanding.is_paid == 'PAID' %}
+                                                bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400
+                                            {% elif outstanding.is_paid == 'PENDING' %}
+                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
+                                            {% elif outstanding.is_paid == 'AWAITING APPROVAL' %}
+                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
+                                            {% else %}
+                                                bg-danger-600/25 bg-danger-100 text-danger-600 dark:bg-danger-600/25 dark:text-danger-400
+                                            {% endif %}
+                                            px-6 py-1.5 rounded-full font-medium text-sm
+                                        "
+                                    >
+                                        {{ outstanding.get_is_paid_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
+                                    {% if outstanding.is_paid == 'PAID' %}
+                                    <a href="{{ outstanding.get_absolute_url }}" class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ outstanding.reference }}">
+                                        View receipt
+                                    </a>
+                                    {% else %}
+                                        {% if request.user.role == 'TREASURER' or request.user.is_staff and request.user != outstanding.account %}
+                                        <a href="{% url 'contributions:log-payment' outstanding.id %}" class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                            aria-label="Log payment for {{ outstanding.reference }}">
+                                            Log payment
+                                        </a>
+                                        {% elif request.user == outstanding.account and outstanding.is_paid == 'NOT_PAID' %}
+                                        <a href="{% url 'contributions:checkout' outstanding.id %}" class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                            aria-label="Pay contribution {{ outstanding.reference }}">
+                                            Pay now
+                                        </a>
+                                        {% else %}
+                                        <a href="{{ outstanding.get_absolute_url }}" class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                            aria-label="Pay contribution {{ outstanding.reference }}">
+                                            View receipt
+                                        </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                            
+                        
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endif %}
+<!-- Table End -->
+{% endblock content %}
+
+
+{% block scripts %}
+<!-- <script src="assets/js/homeTwoChart.js"></script> -->
+<script>
+    // ================================ Balance Statistics Chart Start ================================ 
+    function createChartTwo(chartId, chartColor) {
+
+        var options = {
+            series: [
+                {
+                    name: 'Amount Collected',
+                    data: [2000, 1500, 1800, 2000, 1200, 1000, 2500, 2000, 2100, 1000, 1500, 2700],
+                },
+            ],
+            chart: {
+                type: 'area',
+                width: '100%',
+                height: 162,
+                sparkline: {
+                    enabled: false // Remove whitespace
+                },
+                toolbar: {
+                    show: false
+                },
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+                colors: [chartColor],
+                lineCap: 'round'
+            },
+            grid: {
+                show: true,
+                borderColor: 'red',
+                strokeDashArray: 0,
+                position: 'back',
+                xaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    lines: {
+                        show: false
+                    }
+                },
+                row: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                column: {
+                    colors: undefined,
+                    opacity: 0.5
+                },
+                padding: {
+                    top: -30,
+                    right: 0,
+                    bottom: -10,
+                    left: 0
+                },
+            },
+            fill: {
+                type: 'gradient',
+                colors: [chartColor], // Set the starting color (top color) here
+                gradient: {
+                    shade: 'light', // Gradient shading type
+                    type: 'vertical',  // Gradient direction (vertical)
+                    shadeIntensity: 0.5, // Intensity of the gradient shading
+                    gradientToColors: [`${chartColor}00`], // Bottom gradient color (with transparency)
+                    inverseColors: false, // Do not invert colors
+                    opacityFrom: .6, // Starting opacity
+                    opacityTo: 0.3,  // Ending opacity
+                    stops: [0, 100],
+                },
+            },
+            // Customize the circle marker color on hover
+            markers: {
+                colors: [chartColor],
+                strokeWidth: 3,
+                size: 0,
+                hover: {
+                    size: 10
+                }
+            },
+            xaxis: {
+                labels: {
+                    show: false
+                },
+                categories: [`Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`],
+                tooltip: {
+                    enabled: false,
+                },
+                tooltip: {
+                    enabled: false
+                },
+                labels: {
+                    formatter: function (value) {
+                        return value;
+                    },
+                    style: {
+                        fontSize: "14px"
+                    }
+                },
+            },
+            yaxis: {
+                labels: {
+                    show: false
+                },
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector(`#${chartId}`), options);
+        chart.render();
+    }
+    createChartTwo('revenue-chart', '#487fff');
+    // ================================ Balance Statistics Chart End ================================ 
+
+    // ================================ Expense Statistics Chart start ================================ 
+    var options = {
+        series: [30, 30, 30, 30],
+        chart: {
+            height: 240,
+            type: 'pie',
+        },
+        labels: ['Entertainment', 'Bill Expense', 'Others', 'Investment'],
+        colors: ['#02BCAF', '#F0437D', '#1C52F6', '#43DCFF'],
+        legend: {
+            show: true
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var chart = new ApexCharts(document.querySelector("#expenseStatistics"), options);
+    chart.render();
+    // ================================ Expense Statistics Chart End ================================ 
+
+    // ================================ Expense Statistics Chart start ================================ 
+    R('.officer-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        dots: false,
+        speed: 800,
+        centerPadding: '20px',
+        infinite: true,
+        autoplaySpeed: 2000,
+        centerMode: true,
+        autoplay: true,
+        rtl: R('html').attr('dir') === 'rtl' ? true : false,
+    });
+    // ================================ Expense Statistics Chart End ================================ 
+</script>
+{% endblock scripts %}

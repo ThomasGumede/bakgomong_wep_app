@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Member Added</title>
+    <style>
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        img {
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #f4f6f8;
+            font-family: Helvetica, Arial, sans-serif;
+            color: #111827;
+        }
+
+        @media screen and (max-width:600px) {
+            .container {
+                width: 100% !important;
+            }
+
+            .stack {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .pad-sm {
+                padding: 12px !important;
+            }
+
+            .h1 {
+                font-size: 22px !important;
+                line-height: 28px !important;
+            }
+        }
+
+        .preheader {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            color: transparent;
+            height: 0;
+            width: 0;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #0b2540;
+            width: 160px;
+        }
+
+        .value {
+            color: #374151;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="preheader">A new member has been added to the organization. View details below.</div>
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" valign="top" style="padding:20px 16px;">
+                <table class="container" border="0" cellpadding="0" cellspacing="0" width="600"
+                    style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;">
+
+                    <tr>
+                        <td class="header-section" style="padding:20px 24px;background:#f1f5f9;color:#0b6e99;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="left" style="vertical-align:middle;">
+                                        <img src="https://www.wedodev.co.za/static/images/logo-icon.png" width="56"
+                                            height="56" alt="BAKGOMONG" style="display:block;border-radius:8px;" />
+                                    </td>
+                                    <td align="right" style="vertical-align:middle;font-size:18px;font-weight:700;">
+                                        BAKGOMONG EMAIL</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:28px 24px;">
+                            <h1 class="h1" style="margin:0 0 12px;font-size:26px;line-height:32px;color:#0b2540;">New
+                                Member Added</h1>
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">Dear Executive
+                                Team,</p>
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">A new family has
+                                been successfully added to the system. Below are the details of the new family:</p>
+
+                            <table width="100%" cellpadding="0" cellspacing="0"
+                                style="margin-top:18px;margin-bottom:18px;border:1px solid #e5e7eb;border-radius:6px;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="padding:8px;text-align:left;">Field</th>
+                                    <th style="padding:8px;text-align:left;">Details</th>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Title</td>
+                                    <td class="value" style="padding:6px 8px;">{{full_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Leader</td>
+                                    <td class="value" style="padding:6px 8px;">{{leader}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Registered On</td>
+                                    <td class="value" style="padding:6px 8px;">{{registered_date}}</td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">You may review
+                                their full details and approve the family using the link below:</p>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{profile_link}}"
+                                            style="display:inline-block;background:#0b6e99;color:#ffffff;padding:12px 22px;font-size:14px;border-radius:6px;font-weight:700;text-decoration:none;">View
+                                            Member Profile</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <hr style="border:none;border-top:1px solid #eef2f6;margin:20px 0;" />
+
+                            <p style="margin:0;color:#6b7280;font-size:13px;line-height:20px;">Thank you for your
+                                continued leadership and support.</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="footer-bg"
+                            style="padding:18px 24px;background:#fbfdff;color:#6b7280;font-size:13px;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="stack" style="vertical-align:top;">
+                                        <strong style="color:#0b2540;display:block;margin-bottom:6px;">Bakgomong
+                                            Contribution System</strong>
+                                        <div>12 Commerce Road, Cape Town, 8001</div>
+                                        <div style="margin-top:6px;">support@bakgomong.co.za • +27 21 555 1234</div>
+                                    </td>
+
+                                    <td align="right" class="stack" style="vertical-align:top;padding-top:6px;">
+                                        <a href="#"
+                                            style="text-decoration:none;color:#0b6e99;font-weight:600;">Privacy</a>
+                                        &nbsp;•&nbsp;
+                                        <a href="#"
+                                            style="text-decoration:none;color:#0b6e99;font-weight:600;">Terms</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="margin-top:14px;color:#9aa4b2;font-size:12px;">
+                                You are receiving this email because you are part of BAKGOMONG FAMILY.
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- TEXT-ONLY FALLBACK -->
+    <!--
+  Subject: New Member Added
+
+  Dear Executive,
+
+  A new member has been added:
+  Name: {{full_name}}
+  Member #: {{member_number}}
+  Phone: {{phone}}
+  Email: {{email}}
+  Clan: {{clan}}
+  Registered: {{registered_date}}
+
+  View Profile: {{profile_link}}
+  -->
+
+</body>
+
+</html>

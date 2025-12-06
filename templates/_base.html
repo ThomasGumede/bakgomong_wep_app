@@ -1,0 +1,386 @@
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% tailwind_preload_css %}
+    {% tailwind_css %}
+    {{form.media}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block seo %}
+    <!-- ================== SEO META TAGS ================== -->
+    
+    <title>{% block title %}Bakgomong Kgotla Yamalla{% endblock title %}</title>
+    
+    <meta name="description"
+        content="{% block description %}Track, manage, and contribute to Bakgomong Kgotla Yamalla projects and family funds — including events, burials, savings, and investments. Stay connected and build financial unity within the clan.{% endblock description %}">
+    <meta name="keywords"
+        content="Bakgomong Kgotla Yamalla, clan contributions, family fund, stokvel, burial society, family savings, clan unity, community development, family leaders, South Africa">
+    <meta name="author" content="Bakgomong Kgotla Yamalla Management">
+    
+    <!-- ================== OPEN GRAPH / FACEBOOK ================== -->
+    <meta property="og:title" content="Bakgomong Kgotla Yamalla">
+    <meta property="og:description"
+        content="Join the Bakgomong Kgotla Yamalla’s digital contribution system — manage family payments, events, and savings online.">
+    <meta property="og:image" content="{% static 'images/kgotla.jpg' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bakgomong Kgotla Yamalla Portal">
+    
+    <!-- ================== TWITTER CARD ================== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bakgomong Kgotla Yamalla">
+    <meta name="twitter:description"
+        content="A modern, transparent contribution platform for the Bakgomong Kgotla Yamalla — uniting families through shared financial goals.">
+    <meta name="twitter:image" content="{% static 'images/kgotla.jpg' %}">
+    
+    <!-- ================== FAVICON ================== -->
+    
+    <!-- ================== CANONICAL LINK ================== -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    
+    {% endblock seo %}
+    <!-- Fav Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bakgomong Kgotla Yamalla">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"
+        rel="stylesheet" />
+    <!-- remix icon font css  -->
+    <link rel="stylesheet" href="{% static 'css/remixicon.css' %}" />
+    <!-- Apex Chart css -->
+    <link rel="stylesheet" href="{% static 'css/lib/apexcharts.css' %}" />
+    <!-- Data Table css -->
+    <link rel="stylesheet" href="{% static 'css/lib/dataTables.min.css' %}" />
+    <!-- Text Editor css -->
+    <link rel="stylesheet" href="{% static 'css/lib/editor-katex.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lib/editor.atom-one-dark.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lib/editor.quill.snow.css' %}" />
+    <!-- Date picker css -->
+    <link rel="stylesheet" href="{% static 'css/lib/flatpickr.min.css' %}" />
+    <!-- Calendar css -->
+    <link rel="stylesheet" href="{% static 'css/lib/full-calendar.css' %}" />
+    <!-- Vector Map css -->
+    <link rel="stylesheet" href="{% static 'css/lib/jquery-jvectormap-2.0.5.css' %}" />
+    <!-- Popup css -->
+    <link rel="stylesheet" href="{% static 'css/lib/magnific-popup.css' %}" />
+    <!-- Slick Slider css -->
+    <link rel="stylesheet" href="{% static 'css/lib/slick.css' %}" />
+    <!-- prism css -->
+    <link rel="stylesheet" href="{% static 'css/lib/prism.css' %}" />
+    <!-- file upload css -->
+    <link rel="stylesheet" href="{% static 'css/lib/file-upload.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/lib/audioplayer.css' %}" />
+    <!-- main css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    
+    {% block css %}
+        
+    {% endblock css %}
+        
+</head>
+
+<body class="bg-neutral-100 overflow-x-hidden dark:bg-neutral-800 dark:text-white ">
+
+
+{% include 'includes/aside.html' %}
+
+<main class="dashboard-main overflow-hidden">
+    <div class="navbar-header border-b border-neutral-200 dark:border-neutral-600">
+        <div class="flex items-center justify-between">
+            <div class="col-auto">
+                <div class="flex flex-wrap items-center gap-[16px]">
+                    <button type="button" class="sidebar-toggle">
+                        <iconify-icon icon="heroicons:bars-3-solid" class="icon non-active"></iconify-icon>
+                        <iconify-icon icon="iconoir:arrow-right" class="icon active"></iconify-icon>
+                    </button>
+                    <button type="button" class="sidebar-mobile-toggle d-flex !leading-[0]">
+                        <iconify-icon icon="heroicons:bars-3-solid" class="icon !text-[30px]"></iconify-icon>
+                    </button>
+                    <form class="navbar-search">
+                        <input type="text" name="search" placeholder="Search" />
+                        <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+                    </form>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="flex flex-wrap items-center gap-3">
+                    <button type="button" id="theme-toggle"
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:text-white">
+                        <span id="theme-toggle-dark-icon" class="hidden">
+                            <i class="ri-sun-line"></i>
+                        </span>
+                        <span id="theme-toggle-light-icon" class="hidden">
+                            <i class="ri-moon-line"></i>
+                        </span>
+                    </button>
+
+                    
+
+                    
+
+                    <!-- Notification Start  -->
+                    <button data-dropdown-toggle="dropdownNotification"
+                        class="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
+                        type="button">
+                        <iconify-icon icon="iconoir:bell"
+                            class="text-xl text-neutral-900 dark:text-white"></iconify-icon>
+                    </button>
+                    <div id="dropdownNotification"
+                        class="z-10 hidden w-full max-w-[394px] overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-neutral-700">
+                        <div
+                            class="m-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
+                            <h6 class="mb-0 text-lg font-semibold text-neutral-900">
+                                Notification
+                            </h6>
+                            <span
+                                class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-primary-600 dark:bg-neutral-600 dark:text-white">{{request.user.get_oustandings.count}}</span>
+                        </div>
+                        <div class="scroll-sm !border-t-0">
+                            <div class="max-h-[400px] overflow-y-auto">
+                                
+                                {% for outsting in request.user.get_oustandings %}
+                                    <a href="{{outsting.get_payments_url}}" class="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-success-200 text-success-600 dark:bg-success-600/25">
+                                                <iconify-icon icon="bitcoin-icons:verify-outline" class="text-2xl"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1 text-sm">{{outsting.contribution_type.name}} ({{outsting.amount_due}})</h6>
+                                                <p class="mb-0 line-clamp-1 text-sm">
+                                                    Your payment is due on {{outsting.due_date}}.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="shrink-0">
+                                            <span class="text-sm text-neutral-500">23 Mins ago</span>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                                    
+                                
+                                
+                            </div>
+
+                            
+                            {% if request.user.get_oustandings.count > 0 %}
+                                <div class="px-4 py-3 text-center">
+                                    <a href="{% url 'contributions:my-contributions' %}"
+                                        class="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See
+                                        All Outstanding
+                                    </a>
+                                </div>
+                            {% endif %}
+                                
+                            
+                        </div>
+                    </div>
+                    <!-- Notification End  -->
+
+                    <button data-dropdown-toggle="dropdownProfile" class="flex items-center justify-center rounded-full"
+                        type="button">
+                        <img src="{% if request.user.profile_image %}{{request.user.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}" alt="image" class="object-fit-cover h-10 w-10 rounded-full" />
+                    </button>
+                    <div id="dropdownProfile"
+                        class="dropdown-menu-sm z-10 hidden rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700">
+                        <div
+                            class="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
+                            <div>
+                                <h6 class="mb-0 text-lg font-semibold text-neutral-900">
+                                    {{request.user.title}}. {{request.user.get_full_name}}
+                                </h6>
+                                <span class="text-neutral-500">{{request.user.role}}</span>
+                            </div>
+                            <button type="button" class="hover:text-danger-600">
+                                <iconify-icon icon="radix-icons:cross-1" class="icon text-xl"></iconify-icon>
+                            </button>
+                        </div>
+
+                        <div class="scroll-sm max-h-[400px] overflow-y-auto pe-2">
+                            <ul class="flex flex-col">
+                                <li>
+                                    <a class="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600"
+                                        href="{{request.user.get_update_url}}">
+                                        <iconify-icon icon="solar:user-linear" class="icon text-xl"></iconify-icon>
+                                        My Profile</a>
+                                </li>
+                                
+                                {% if request.user.is_staff %}
+                                    <li>
+                                        <a class="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="{% url 'admin:index' %}">
+                                            <iconify-icon icon="icon-park-outline:setting-two" class="icon text-xl"></iconify-icon>
+                                            Admin</a>
+                                    </li>
+                                {% endif %}
+                                    
+                                
+                                <li>
+                                    <a class="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600"
+                                        href="{% url 'accounts:logout' %}">
+                                        <iconify-icon icon="lucide:power" class="icon text-xl"></iconify-icon>
+                                        Log Out</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="dashboard-main-body">
+
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+            <div class="grid gap-2">
+                <h6 class="font-semibold mb-0 dark:text-white">
+                    {% block dash_title2 %}
+                    Dashboard
+                    {% endblock dash_title2 %}</h6>
+                    
+                    {% block statement_title %}
+                        
+                    {% endblock statement_title %}
+            </div>
+             
+            
+                
+            <ul class="flex items-center gap-[6px]">
+                <li class="font-medium">
+                    <a href="{% url 'accounts:dashboard' %}"
+                        class="flex items-center gap-2 text-neutral-600 hover:text-primary-600 dark:text-white dark:hover:text-primary-600">
+                        <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="text-neutral-600 dark:text-white">-</li>
+                <li class="text-neutral-600 font-medium dark:text-white">
+                    {% block dash_title %}
+                        
+                    {% endblock dash_title %}
+                </li>
+            </ul>
+        </div>
+        {% include 'includes/messages.html' %}
+        {% block content %}
+            
+        {% endblock content %}
+            
+
+        
+    </div>
+
+    {% include 'includes/footer.html' %}
+</main>
+
+<!-- jQuery library js -->
+<script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
+<!-- Apex Chart js -->
+<script src="{% static 'js/lib/apexcharts.min.js' %}"></script>
+<!-- Data Table js -->
+<script src="{% static 'js/lib/simple-datatables.min.js' %}"></script>
+<!-- Iconify Font js -->
+<script src="{% static 'js/lib/iconify-icon.min.js' %}"></script>
+<!-- jQuery UI js -->
+<script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
+<!-- Vector Map js -->
+<script src="{% static 'js/lib/jquery-jvectormap-2.0.5.min.js' %}"></script>
+<script src="{% static 'js/lib/jquery-jvectormap-world-mill-en.js' %}"></script>
+<!-- Popup js -->
+<script src="{% static 'js/lib/magnifc-popup.min.js' %}"></script>
+<!-- Slick Slider js -->
+<script src="{% static 'js/lib/slick.min.js' %}"></script>
+<!-- prism js -->
+<script src="{% static 'js/lib/prism.js' %}"></script>
+<!-- file upload js -->
+<script src="{% static 'js/lib/file-upload.js' %}"></script>
+<!-- audio player -->
+<script src="{% static 'js/lib/audioplayer.js' %}"></script>
+
+<script src="{% static 'js/flowbite.min.js' %}"></script>
+<!-- main js -->
+<script src="{% static 'js/app.js' %}"></script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register("{% static 'js/serviceworker.js' %}")
+                .then(function (registration) {
+                    console.log('ServiceWorker registered with scope:', registration.scope);
+                })
+                .catch(function (error) {
+                    console.log('ServiceWorker registration failed:', error);
+                });
+        });
+    }
+</script>
+{% block scripts %}
+    
+{% endblock scripts %}
+    
+<div id="installPrompt" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center relative">
+        <button id="closeInstallPrompt"
+            class="absolute top-2 right-3 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+
+        <img src="{% static 'images/android-chrome-192x192.png' %}" alt="Bakgomong Logo"
+            class="mx-auto w-20 h-20 mb-4 rounded-full shadow-md">
+
+        <h2 class="text-xl font-bold text-gray-800 mb-1">Install Bakgomong App</h2>
+        <p class="text-gray-500 text-sm mb-5">Add Bakgomong Clan Portal to your home screen for easy access and offline
+            use.</p>
+
+        <button id="installButton" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+            Install App
+        </button>
+    </div>
+</div>
+<script>
+    let deferredPrompt;
+    const installPrompt = document.getElementById('installPrompt');
+    const installButton = document.getElementById('installButton');
+    const closePrompt = document.getElementById('closeInstallPrompt');
+
+    // Detect PWA install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome from showing default mini-infobar
+        e.preventDefault();
+        deferredPrompt = e;
+        // Show our custom prompt after slight delay
+        setTimeout(() => installPrompt.classList.remove('hidden'), 2000);
+    });
+
+    // Handle click on Install button
+    installButton.addEventListener('click', async () => {
+        installPrompt.classList.add('hidden');
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const {outcome} = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('User accepted install');
+            } else {
+                console.log('User dismissed install');
+            }
+            deferredPrompt = null;
+        }
+    });
+
+    // Close button
+    closePrompt.addEventListener('click', () => {
+        installPrompt.classList.add('hidden');
+    });
+</script>
+
+</body>
+
+</html>
