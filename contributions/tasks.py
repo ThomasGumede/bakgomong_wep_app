@@ -216,6 +216,7 @@ def send_payment_confirmation_task(member_contribution_id, treasurer_name):
             "treasurer_name": treasurer_name,
             "reference": mc.reference,
             "payment_date": mc.updated.strftime("%d %B %Y"),
+            "dashboard_link": f"{settings.SITE_URL}/member-invoice/{mc.id}",
         }
 
         html_content = render_to_string("emails/payment-confirmation.html", context)
