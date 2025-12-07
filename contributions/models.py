@@ -304,7 +304,7 @@ class Payment(AbstractCreate, AbstractPayment):
                 elif total_paid > 0:
                     new_status = PaymentStatus.PARTIALLY_PAID
                 else:
-                    new_status = PaymentStatus.NOT_PAID
+                    new_status = PaymentStatus.AWAITING_APPROVAL
 
                 # Save only if status changed
                 if self.member_contribution.is_paid != new_status:

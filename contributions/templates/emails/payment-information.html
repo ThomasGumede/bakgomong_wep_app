@@ -125,11 +125,11 @@
                         <td style="padding:28px 24px;">
                             <h1 class="h1" style="margin:0 0 12px;font-size:26px;line-height:32px;color:#0b2540;">
                                 Payment Information</h1>
-                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">Hi {{mc.account.first_name}},
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">Hi {{mc.account.get_full_name}},
                             </p>
                             <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">Thank you for your
                                 order. Please use the payment details below to complete your transaction. This invoice
-                                <strong>#{{mc.reference}}</strong> totals <strong>R {{mc.contribution_type.amount_due}}</strong>.</p>
+                                <strong>{{mc.reference}}</strong> totals <strong>R {{mc.amount_due}}</strong>.</p>
 
                             <table class="bank-details" width="100%" cellpadding="0" cellspacing="0"
                                 style="margin-top:18px;margin-bottom:18px;border:1px solid #e5e7eb;border-radius:6px;">
@@ -139,12 +139,12 @@
                                 </tr>
                                 <tr>
                                     <td>Electronic Funds Transfer (EFT)</td>
-                                    <td>Bank: BBGI Bank<br />Account Number: 123456789<br />Branch:
+                                    <td>Bank: Bakgomong Bank<br />Account Number: 123456789<br />Branch:
                                         050214<br />Reference: {{mc.reference}} - {{mc.account.get_full_name}}</td>
                                 </tr>
                                 <tr>
                                     <td>Cash Deposit</td>
-                                    <td>Bank: BBGI Bank<br />Account Number: 123456789<br />Branch:
+                                    <td>Bank: Bakgomong Bank<br />Account Number: 123456789<br />Branch:
                                         050214<br />Reference: {{mc.reference}} - {{mc.account.get_full_name}}</td>
                                 </tr>
                             </table>

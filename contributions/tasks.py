@@ -19,27 +19,50 @@ from utilities.choices import PaymentStatus
 logger = logging.getLogger('tasks')
 
 
+def send_contribution_created_notification_task(mc_ids):
 
-def send_contribution_created_notification_task(member_contribution_id):
-    """
-    Notify member immediately when a new MemberContribution is created.
-    """
-    try:
-        mc = MemberContribution.objects.get(id=member_contribution_id)
-    except MemberContribution.DoesNotExist:
-        logger.error("MemberContribution %s not found", member_contribution_id)
-        return False
+    contributions = MemberContribution.objects.filter(id__in=mc_ids).select_related("account", "contribution_type")
+    for mc in contributions:
+        try:
+            send_contribution_created_notification(mc)
+        except Exception:
+            logger.exception("Notification failed for MemberContribution %s", mc.id)
 
-    contribution = mc.contribution_type
+    logger.info("Completed batch notification for %d contributions", len(mc_ids))
+
+
+def send_contribution_created_notification(mc: MemberContribution):
+    """
+    Send a contribution notification email to a member
+    when a MemberContribution is created.
+
+    Safe for async job queues (Django-Q, Celery, Huey).
+    """
+
     member = mc.account
+    contribution = mc.contribution_type
 
+    # -------------------------------------
+    # Validate email availability
+    # -------------------------------------
     if not member or not member.email:
-        logger.warning("Member %s has no email; skipping notification", member_contribution_id)
+        logger.warning(
+            "Skipping contribution notification %s: member has no email",
+            mc.id
+        )
         return False
 
-    payment_url = f"{settings.SITE_URL}/payment/checkout/{mc.id}"
-    contr_url = f"{settings.SITE_URL}/contribution/{contribution.slug}"
- 
+    # -------------------------------------
+    # Build URLs safely
+    # -------------------------------------
+    base_url = getattr(settings, "SITE_URL", "").rstrip("/")
+
+    payment_url = f"{base_url}/payment/checkout/{mc.id}"
+    contr_url = f"{base_url}/contribution/{contribution.slug}"
+
+    # -------------------------------------
+    # Prepare email content
+    # -------------------------------------
     try:
         context = {
             "user": member.get_full_name() or member.username,
@@ -48,12 +71,17 @@ def send_contribution_created_notification_task(member_contribution_id):
             "due_date": mc.due_date,
             "reference": mc.reference,
             "payment_url": payment_url,
-            "contr_url": contr_url
+            "contr_url": contr_url,
         }
+
         html_content = render_to_string("emails/contribution-notification.html", context)
         text_content = strip_tags(html_content)
 
+        # -------------------------------------
+        # Configure email
+        # -------------------------------------
         from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+
         msg = EmailMultiAlternatives(
             subject=f"New Contribution: {contribution.name}",
             body=text_content,
@@ -61,12 +89,26 @@ def send_contribution_created_notification_task(member_contribution_id):
             to=[member.email],
         )
         msg.attach_alternative(html_content, "text/html")
+
+        # -------------------------------------
+        # Send email
+        # -------------------------------------
         msg.send()
-        logger.info("Contribution notification sent to %s for %s", member.email, mc.id)
+
+        logger.info(
+            "Contribution notification sent to %s (MC %s)",
+            member.email,
+            mc.id,
+        )
         return True
+
     except Exception:
-        logger.exception("Failed to send contribution notification for %s", member_contribution_id)
+        logger.exception(
+            "Failed to send contribution notification for MemberContribution %s",
+            mc.id
+        )
         return False
+
 
 
 def send_payment_reminder():
@@ -252,7 +294,89 @@ def send_payment_confirmation_task(member_contribution_id, treasurer_name):
         logger.exception("Failed to send payment confirmation for %s", member_contribution_id)
         return False
 
+def send_bk_payment_details_task(member_contribution_id):
+    """
+    Sends payment details email + PDF invoice (WeasyPrint) 
+    when treasurer logs payment.
+    """
+    try:
+        mc = (
+            MemberContribution.objects
+            .select_related("account", "contribution_type")
+            .prefetch_related("payment")
+            .get(id=member_contribution_id)
+        )
+        mc.is_paid = PaymentStatus.AWAITING_APPROVAL
+        mc.save(update_fields=['is_paid'])
+    except MemberContribution.DoesNotExist:
+        logger.error("MemberContribution %s not found", member_contribution_id)
+        return False
 
+    member = mc.account
+    if not member or not member.email:
+        logger.warning("MemberContribution %s missing email", member_contribution_id)
+        return False
+
+    # Detect payment object correctly
+    payment = Payment.objects.filter(member_contribution=mc).first()
+    if not payment:
+        logger.error("No Payment record found for MemberContribution %s", mc.id)
+        return False
+
+    try:
+        # Render invoice HTML
+        template = get_template("emails/invoice.html")
+        html_string = template.render({"order": payment})
+
+        # Generate PDF using WeasyPrint
+        pdf_io = BytesIO()
+        HTML(string=html_string).write_pdf(pdf_io)
+        pdf_bytes = pdf_io.getvalue()
+
+        # Save PDF to model FileField
+        payment.proof_of_payment.save(
+            f"invoice_{mc.id}.pdf",
+            ContentFile(pdf_bytes),
+            save=True
+        )
+
+        # Email context
+        context = {
+            "mc": mc,
+            "invoice_link": f"{settings.SITE_URL}/member-invoice/download/{mc.id}",
+        }
+
+        html_content = render_to_string("emails/payment-information.html", context)
+        text_content = strip_tags(html_content)
+
+        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+
+        # Prepare email
+        email = EmailMultiAlternatives(
+            subject=f"✓ Payment Details: {mc.contribution_type.name}",
+            body=text_content,
+            from_email=from_email,
+            to=[member.email],
+        )
+
+        # Attach PDF correctly
+        email.attach(
+            f"invoice_{mc.id}.pdf",
+            pdf_bytes,
+            "application/pdf"
+        )
+
+        # HTML content
+        email.attach_alternative(html_content, "text/html")
+
+        # Send email
+        email.send()
+        logger.info("Payment confirmation sent to %s", member.email)
+        return True
+
+    except Exception:
+        logger.exception("Failed to send payment confirmation for %s", member_contribution_id)
+        return False
 
 def send_payment_details_task(obj_id, obj_type='contribution', treasurer_name=None):
     """

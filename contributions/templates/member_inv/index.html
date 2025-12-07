@@ -59,40 +59,38 @@ Contributions {% endif %}
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                   
+                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
                                     {% if inv.is_paid == 'PAID' %}
-                                        <a href="{{ inv.get_absolute_url }}"
-                                            class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                            aria-label="Pay contribution {{ inv.reference }}">
-                                            View receipt
-                                        </a>
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
                                 
                                     {% elif inv.is_paid == 'NOT_PAID' or inv.is_paid == 'PENDING' or inv.is_paid == 'AWAITING PAYMENT' %}
                                 
-                                        {# Treasurer or staff, but not the invoice owner #}
-                                        {% if request.user.role == 'TREASURER' or request.user.is_staff %}
-                                            {% if request.user != inv.account %}
-                                                <a href="{% url 'contributions:log-payment' inv.id %}"
-                                                    class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                    aria-label="Log payment for {{ inv.reference }}">
-                                                    Log payment
-                                                </a>
-                                            {% endif %}
-                                        
-                                            {# Regular member paying their own NOT_PAID invoice #}
-                                        {% elif request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
-                                                <a href="{% url 'contributions:checkout' inv.id %}"
-                                                    class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                    aria-label="Pay contribution {{ inv.reference }}">
-                                                    Pay now
-                                                </a>
-                                        {% else %}
-                                                <a href="{{ inv.get_absolute_url }}"
-                                                    class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                    aria-label="Pay contribution {{ inv.reference }}">
-                                                    View receipt
-                                                </a>
-                                        {% endif %}
+                                    {# Treasurer or staff, but not the invoice owner #}
+                                    {% if request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
+                                
+                                    <a href="{% url 'contributions:checkout' inv.id %}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        Pay now
+                                    </a>
+                                    {# Regular member paying their own NOT_PAID invoice #}
+                                    {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
+                                    <a href="{% url 'contributions:log-payment' inv.id %}"
+                                        class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Log payment for {{ inv.reference }}">
+                                        Log payment
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
+                                    {% endif %}
                                 
                                     {% endif %}
                                 

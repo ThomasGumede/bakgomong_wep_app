@@ -72,7 +72,7 @@ def checkout(request, id):
                 if payment_method in [PaymentMethod.CASH, PaymentMethod.BANK]:
                     # Queue email with banking details (non-blocking)
                     payment.update_member_contribution_status(PaymentStatus.AWAITING_APPROVAL)
-                    async_task("contributions.tasks.send_payment_details_task", member_contribution.pk)
+                    async_task("contributions.tasks.send_bk_payment_details_task", member_contribution.pk)
                     messages.success(
                         request,
                         f"Payment of R{member_contribution.amount_due:.2f} for {contribution_type.name} has been recorded successfully!"
