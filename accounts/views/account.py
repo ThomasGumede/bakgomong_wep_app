@@ -39,7 +39,7 @@ def account_overview(request, username):
     model = get_object_or_404(users, username=username)
     
     context['user'] = model
-    if request.user.role not in EXECUTIVE_ROLES or not request.user.is_staff:
+    if request.user.role not in EXECUTIVE_ROLES or not request.user.is_staff or not request.user.is_family_leader and request.user != model:
         template = "accounts/profile.html"
     else:
         template = "accounts/account-overview.html"
@@ -90,22 +90,22 @@ def add_member(request, family_slug):
     if request.method == "POST":
         form = MemberForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            role = form.cleaned_data['role']
-            EXECUTIVE_ROLES = [
-                Role.CLAN_CHAIRPERSON,
-                Role.DEP_CHAIRPERSON,
-                Role.SECRETARY,
-                Role.DEP_SECRETARY,
-                Role.TREASURER,
-                Role.KGOSANA,
-            ]
-            if role in EXECUTIVE_ROLES:
-                executive = User.objects.filter(role=role).first()
-                if executive:
-                    messages.error(request, f'Sorry, only one member can be {role}. Please choose another role')
-                    return render(
-                        request=request, template_name=template_name, context={"form": form}
-                    )
+            # role = form.cleaned_data['role']
+            # EXECUTIVE_ROLES = [
+            #     Role.CLAN_CHAIRPERSON,
+            #     Role.DEP_CHAIRPERSON,
+            #     Role.SECRETARY,
+            #     Role.DEP_SECRETARY,
+            #     Role.TREASURER,
+            #     Role.KGOSANA,
+            # ]
+            # if role in EXECUTIVE_ROLES:
+            #     executive = User.objects.filter(role=role).first()
+            #     if executive:
+            #         messages.error(request, f'Sorry, only one member can be {role}. Please choose another role')
+            #         return render(
+            #             request=request, template_name=template_name, context={"form": form}
+            #         )
             try:
                 with transaction.atomic():
                     user = form.save(commit=False)
@@ -116,6 +116,7 @@ def add_member(request, family_slug):
                     
                 # queue verification email (non-blocking) via django-q
                 async_task("accounts.tasks.send_verification_email_task", user.pk)
+                async_task("accounts.tasks.send_notification_new_member_task", user.pk)
                 logger.info("Queued verification email for user %s (pk=%s)", user.username, user.pk)
                 messages.success(
                     request,

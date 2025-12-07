@@ -6,8 +6,8 @@ from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.conf import settings
-from django.db.models import Sum, Q
-
+from django.db.models import Sum
+from django_q.tasks import async_task
 from django.contrib.auth import get_user_model
 import logging
 
@@ -114,7 +114,9 @@ def add_family(request):
                     leader = family.leader
                     leader.family = family
                     leader.save(update_fields=["family"])
-
+                    
+                    # Notify executives about new family (non-blocking) via django-q
+                    async_task("accounts.tasks.send_notification_new_family_task", family.slug)
                 messages.success(request, "Family added successfully.")
                 return redirect("accounts:get-families")
 

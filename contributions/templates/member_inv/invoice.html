@@ -263,12 +263,12 @@ Invoice
             </a>
             {% endif %}
             
-            <button type="button"
+            <a href="{% url 'contributions:download-member-invoice' contribution.id %}"
                 class="btn btn-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg inline-flex items-center gap-1"
-                onclick="printInvoice()">
+                >
                 <iconify-icon icon="basil:printer-outline" class="text-xl"></iconify-icon>
                 Print
-            </button>
+            </a>
         </div>
     </div>
     <div class="card-body md:py-[60px]">
@@ -329,7 +329,7 @@ Invoice
                                         </tr>
                                         <tr>
                                             <td>Status</td>
-                                            <td class="ps-2">: {{contribution.is_paid}}</td>
+                                            <td class="ps-2">: {{contribution.get_is_paid_display}}</td>
                                         </tr>
                                         
                                     </tbody>

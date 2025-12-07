@@ -205,6 +205,34 @@
                                     </div>
                                     <div class="col-span-12 sm:col-span-6">
                                         <div class="mb-5">
+                                            <label for="id_birth_date"
+                                                class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Date of birth</label>
+                                            <input type="date" class="form-control rounded-lg" id="id_birth_date"
+                                                placeholder="Enter yor date of birth" name="birth_date" value="{{form.birth_date.value}}">
+                                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.birth_date.help_text}}</span>
+                                            {% if form.birth_date.errors %}
+                                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.birth_date.errors.as_text}}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-span-12 sm:col-span-6">
+                                        <div class="mb-5">
+                                            <label for="id_langueges_spoken"
+                                                class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Langueges
+                                                spoken</label>
+                                            <input type="text" class="form-control rounded-lg" id="id_langueges_spoken"
+                                                placeholder="Enter langueges spoken seperated by comma" name="langueges_spoken"
+                                                value="{{form.langueges_spoken.value}}">
+                                            <span
+                                                class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.langueges_spoken.help_text}}</span>
+                                            {% if form.langueges_spoken.errors %}
+                                            <span
+                                                class="text-[11px] text-red-500 block font-normal capitalize">{{form.langueges_spoken.errors.as_text}}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-span-12 sm:col-span-6">
+                                        <div class="mb-5">
                                             <label for="id_email"
                                                 class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Email
                                                 <span class="text-danger-600">*</span></label>

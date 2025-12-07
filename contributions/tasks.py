@@ -215,6 +215,7 @@ def send_payment_confirmation_task(member_contribution_id, treasurer_name):
             "amount_paid": mc.amount_due,
             "treasurer_name": treasurer_name,
             "reference": mc.reference,
+            "status": PaymentStatus(mc.is_paid).label,
             "payment_date": mc.updated.strftime("%d %B %Y"),
             "dashboard_link": f"{settings.SITE_URL}/member-invoice/{mc.id}",
         }

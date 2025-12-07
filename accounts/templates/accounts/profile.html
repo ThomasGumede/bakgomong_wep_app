@@ -18,10 +18,7 @@
             <div class="flex justify-center w-full">
                 <div class="relative cursor-pointer"> <img src="{% if user.profile_image %}{{user.profile_image.url}}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
                         class="w-[150px] h-[150px] rounded-full ring-4 ring-white/10 mx-auto" id="profile-img" alt="profile-img">
-                    <span
-                        class="absolute bottom-0 end-0 block p-1 rounded-full ring-2 ring-white/10 text-white bg-white/10 dark:bg-bgdark leading-none cursor-pointer">
-                        <i class="ri ri-pencil-line cursor-pointer"></i> <input type="file"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="profile-change"> </span>
+                    
                 </div>
             </div>
             <div class="text-white">
@@ -118,7 +115,7 @@
                                                 <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Birthday
                                                 </td>
                                                 <td class="!p-2">:</td>
-                                                <td class="!p-2 !text-gray-500 dark:!text-white">03 September 1990</td>
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.birth_date}}</td>
                                             </tr>
                                             <tr class="!border-0">
                                                 <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Gender</td>
@@ -129,7 +126,7 @@
                                                 <td class="!p-2 font-medium !text-gray-500 dark:!text-white w-[252px]">Languages
                                                 </td>
                                                 <td class="!p-2">:</td>
-                                                <td class="!p-2 !text-gray-500 dark:!text-white">Setswana, English
+                                                <td class="!p-2 !text-gray-500 dark:!text-white">{{user.languages_spoken}}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -181,7 +178,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <h5 class="box-title my-3">Education Information</h5>
+                                <!-- <h5 class="box-title my-3">Education Information</h5>
                                 <div class="overflow-auto">
                                     <table class="ti-custom-table border-0 whitespace-nowrap">
                                         <tbody>
@@ -222,7 +219,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div> -->
                             </div>
                         
                         </div>

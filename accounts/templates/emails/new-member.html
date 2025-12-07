@@ -128,7 +128,7 @@
                                 </tr>
                                 <tr>
                                     <td class="label" style="padding:6px 8px;">Full Name</td>
-                                    <td class="value" style="padding:6px 8px;">{{full_name}}</td>
+                                    <td class="value" style="padding:6px 8px;">{{user.get_full_name}}</td>
                                 </tr>
                                 <tr>
                                     <td class="label" style="padding:6px 8px;">Member Number</td>
@@ -136,19 +136,19 @@
                                 </tr>
                                 <tr>
                                     <td class="label" style="padding:6px 8px;">Phone</td>
-                                    <td class="value" style="padding:6px 8px;">{{phone}}</td>
+                                    <td class="value" style="padding:6px 8px;">{{user.phone}}</td>
                                 </tr>
                                 <tr>
                                     <td class="label" style="padding:6px 8px;">Email</td>
-                                    <td class="value" style="padding:6px 8px;">{{email}}</td>
+                                    <td class="value" style="padding:6px 8px;">{{user.email}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" style="padding:6px 8px;">Clan / Category</td>
-                                    <td class="value" style="padding:6px 8px;">{{clan}}</td>
+                                    <td class="label" style="padding:6px 8px;">Family</td>
+                                    <td class="value" style="padding:6px 8px;">{{user.family}}</td>
                                 </tr>
                                 <tr>
                                     <td class="label" style="padding:6px 8px;">Registered On</td>
-                                    <td class="value" style="padding:6px 8px;">{{registered_date}}</td>
+                                    <td class="value" style="padding:6px 8px;">{{user.created}}</td>
                                 </tr>
                             </table>
 
@@ -158,7 +158,7 @@
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="{{profile_link}}"
+                                        <a href="{{user.get_profile_link}}" target="_blank"
                                             style="display:inline-block;background:#0b6e99;color:#ffffff;padding:12px 22px;font-size:14px;border-radius:6px;font-weight:700;text-decoration:none;">View
                                             Member Profile</a>
                                     </td>

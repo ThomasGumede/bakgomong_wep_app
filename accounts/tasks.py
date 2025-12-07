@@ -1,8 +1,13 @@
 import logging
 from django.contrib.auth import get_user_model
-from accounts.models import Family
+# from accounts.models import Family
 from accounts.utils import custom_mail
 from utilities.choices import Role
+from django.template.loader import get_template, render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
+from django.utils import timezone
+from django.conf import settings
 
 logger = logging.getLogger("tasks")
 
@@ -55,10 +60,7 @@ def send_email_confirmation_task(user_pk, new_email):
         logger.exception("send_email_confirmation_task failed for %s -> %s", user_pk, new_email)
         return False
 
-def send_notification_new_family_task(family_slug):
-    try:
-        family = Family.objects.get(slug=family_slug)
-        allowed_roles = [ 
+allowed_roles = [ 
             Role.DEP_SECRETARY, 
             Role.CLAN_CHAIRPERSON,
             Role.DEP_CHAIRPERSON,
@@ -67,17 +69,96 @@ def send_notification_new_family_task(family_slug):
             Role.SECRETARY,
             
         ]
-        executives = get_user_model().objects.filter(role__in=allowed_roles)
-        for member in executives:
-            email = custom_mail.send_html_email('New Family Added', [member.email], 'emails/new-family.html', {'full_name': family.name, 'leader': family.leader, 'registered_date': family.created})
-            if email:
-                logger.info('email send for family')
-            else:
-                logger.error(f'Failed to send email for new family to {member.email}')
+def send_notification_new_family_task(family_slug):
+    """
+    Notify executives when a new family is added.
+    """
+    from accounts.models import Family  # Load model inside function to avoid circular imports
+
+    try:
+        family = Family.objects.select_related("leader").get(slug=family_slug)
     except Family.DoesNotExist:
-        logger.exception("Family not found")
+        logger.error("send_notification_new_family_task: Family '%s' not found", family_slug)
         return False
 
+    User = get_user_model()
+    executives = User.objects.filter(role__in=allowed_roles).values_list("email", flat=True)
+
+    if not executives:
+        logger.warning("No executives found for allowed roles.")
+        return False
+
+    html_content = render_to_string(
+        "emails/new-family.html",
+        {
+            "full_name": family.name,
+            "leader": family.leader,
+            "registered_date": family.created,
+        },
+    )
+    text_content = strip_tags(html_content)
+
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+
+    for email in executives:
+        try:
+            msg = EmailMultiAlternatives(
+                subject=f"New Family Added: {family.name}",
+                body=text_content,
+                from_email=from_email,
+                to=[email],
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+        except Exception:
+            logger.exception("Failed sending new family notification to %s", email)
+
+    logger.info("Notification emails sent for new family %s", family.name)
+    return True
+
+
+
+def send_notification_new_member_task(user_pk):
+    """
+    Notify executives when a new member is added.
+    """
+    User = get_user_model()
+
+    try:
+        user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        logger.error("send_notification_new_member_task: User %s not found", user_pk)
+        return False
+
+    executives = User.objects.filter(role__in=allowed_roles).values_list("email", flat=True)
+
+    if not executives:
+        logger.warning("No executives found for allowed roles.")
+        return False
+
+    html_content = render_to_string(
+        "emails/new-member.html",
+        {"user": user},
+    )
+    text_content = strip_tags(html_content)
+
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+
+    for email in executives:
+        try:
+            msg = EmailMultiAlternatives(
+                subject=f"New Member Added: {user.get_full_name()}",
+                body=text_content,
+                from_email=from_email,
+                to=[email],
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+        except Exception:
+            logger.exception("Failed sending new member notification to %s", email)
+
+    logger.info("Notification emails sent for new member %s", user.get_full_name())
+    return True
 
 def send_html_email_task(subject, to_email, template_name, context, attachments=None):
     """

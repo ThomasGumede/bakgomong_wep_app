@@ -107,6 +107,8 @@ class Account(AbstractUser, AbstractProfile):
     biography = models.TextField(blank=True)
     role = models.CharField(max_length=100, choices=Role.choices, default=Role.MEMBER)
     family = models.ForeignKey(Family, related_name='members', on_delete=models.SET_NULL, null=True, blank=True)
+    birth_date = models.DateField(help_text=_("Enter your date of birth"), null=True, blank=True)
+    langueges_spoken = models.CharField(max_length=300, help_text=_("Enter languages you speak, separated by commas"), blank=True, null=True)
     is_approved = models.BooleanField(default=False, help_text=_("Should be approved by executives"))
     is_family_leader = models.BooleanField(default=False, help_text=_("Tick if member is a family leader"))
     created = models.DateTimeField(auto_now_add=True)
