@@ -132,8 +132,8 @@ if DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
     YOCO_SECRET_KEY = config('YOCO_TEST_API_KEY')
 else:
-    ALLOWED_HOSTS = ['wedodev.co.za', 'www.wedodev.co.za', 'localhost']
-    CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1', 'https://localhost', 'https://wedodev.co.za', 'https://www.wedodev.co.za']
+    ALLOWED_HOSTS = ['bakgomong.co.za', 'www.bakgomong.co.za', 'localhost']
+    CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1', 'https://localhost', 'https://bakgomong.co.za', 'https://www.bakgomong.co.za']
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     X_FRAME_OPTIONS = "SAMEORIGIN"
     YOCO_SECRET_KEY = config('YOCO_TEST_API_KEY')
@@ -152,9 +152,9 @@ else:
     
     SILENCED_SYSTEM_CHECKS = ['security.W019']
     ADMINS = [
-    ("Wandile Gumede", "wedodevs@gmail.com"),
+    ("Wandile Gumede", "bakgomongs@gmail.com"),
     ]
-    MANAGERS = [('admin@bakgomong.co.za', 'wedodevs@gmail.com'), ('support@bakgomong.co.za',)]
+    MANAGERS = [('admin@bakgomong.co.za', 'bakgomongs@gmail.com'), ('support@bakgomong.co.za',)]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -256,7 +256,7 @@ TWILIO_FROM='+12067456246'
 if DEBUG:
     SITE_URL = "http://127.0.0.1:8000"
 else:
-    SITE_URL = "https://wedodev.co.za"
+    SITE_URL = "https://bakgomong.co.za"
 
 INSTALLED_APPS += [
     "django_q",
