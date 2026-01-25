@@ -106,6 +106,7 @@ class Account(AbstractUser, AbstractProfile):
     maiden_name = models.CharField(help_text=_("Enter your maiden name"), max_length=300, blank=True, null=True)
     biography = models.TextField(blank=True)
     role = models.CharField(max_length=100, choices=Role.choices, default=Role.MEMBER)
+    id_number = models.CharField(max_length=15, help_text=_("Enter your ID number"), unique=True, blank=True, null=True, db_index=True)
     family = models.ForeignKey(Family, related_name='members', on_delete=models.SET_NULL, null=True, blank=True)
     birth_date = models.DateField(help_text=_("Enter your date of birth"), null=True, blank=True)
     langueges_spoken = models.CharField(max_length=300, help_text=_("Enter languages you speak, separated by commas"), blank=True, null=True)

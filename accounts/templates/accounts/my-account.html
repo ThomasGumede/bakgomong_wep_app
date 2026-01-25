@@ -203,6 +203,18 @@
                                                 {% endif %}
                                         </div>
                                     </div>
+                                    <div class="col-span-12">
+                                        <div class="mb-5">
+                                            <label for="id_address"
+                                                class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">ID Number</label>
+                                            <input type="tel" class="form-control rounded-lg" id="id_id_number" placeholder="Enter id_number seperated by comma"
+                                                name="id_number" value="{{form.id_number.value}}">
+                                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.id_number.help_text}}</span>
+                                            {% if form.id_number.errors %}
+                                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.id_number.errors.as_text}}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                     <div class="col-span-12 sm:col-span-6">
                                         <div class="mb-5">
                                             <label for="id_birth_date"
