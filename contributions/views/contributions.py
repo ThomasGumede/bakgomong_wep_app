@@ -160,7 +160,7 @@ def delete_contribution(request, contribution_slug):
     contribution = get_object_or_404(ContributionType, slug=contribution_slug)
     
     # Prevent deletion if there are outstanding payments
-    has_payments = Payment.objects.filter(contribution_type=contribution).exists()
+    has_payments = Payment.objects.filter(member_contribution__contribution_type=contribution).exists()
     if has_payments:
         messages.error(
             request,
