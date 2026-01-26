@@ -85,8 +85,8 @@ if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localS
 }
 
 // light dark version js
-var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+// var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+// var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
 // Change the icons inside the button based on previous settings
 if(themeToggleDarkIcon || themeToggleLightIcon){

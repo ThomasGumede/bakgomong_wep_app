@@ -113,15 +113,7 @@
             </div>
             <div class="col-auto">
                 <div class="flex flex-wrap items-center gap-3">
-                    <button type="button" id="theme-toggle"
-                        class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:text-white">
-                        <span id="theme-toggle-dark-icon" class="hidden">
-                            <i class="ri-sun-line"></i>
-                        </span>
-                        <span id="theme-toggle-light-icon" class="hidden">
-                            <i class="ri-moon-line"></i>
-                        </span>
-                    </button>
+                    
 
                     
 
@@ -270,7 +262,12 @@
                 </li>
             </ul>
         </div>
-        {% include 'includes/messages.html' %}
+        
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
+            
+        
         {% block content %}
             
         {% endblock content %}
