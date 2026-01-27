@@ -14,7 +14,57 @@ from django.template.loader import get_template
 
 logger = logging.getLogger("contributions")
 
+import requests
+from django.conf import settings
+import base64
 
+
+
+def send_sms_via_bulksms(to, message):
+    """
+    BulkSMS API (supports multiple countries including South Africa).
+    Returns success bool and response.
+    """
+    if not to or not message:
+        logger.warning("send_sms_via_bulksms: missing to or message")
+        return False, {"error": "Missing phone or message"}
+
+    try:
+        # Validate phone format
+        validate_rsa_phone(to)
+    except Exception as e:
+        logger.error("Invalid phone number for BulkSMS: %s", to)
+        return False, {"error": f"Invalid phone: {str(e)}"}
+
+    url = "https://api.bulksms.com/v1/messages"
+    credentials = f"{settings.BULKSMS_USERNAME}:{settings.BULKSMS_PASSWORD}"
+    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Basic {encoded_credentials}"
+    }
+
+    payload = {
+        "to": to,
+        "body": message,
+        "from": settings.BULKSMS_SENDER,
+    }
+
+    try:
+        response = requests.post(
+            url,
+            json=payload,
+            headers=headers,
+            timeout=15
+        )
+        response.raise_for_status()
+        result = response.json()
+        logger.info("SMS sent via BulkSMS to %s", to)
+        return True, result
+    except requests.exceptions.RequestException as e:
+        logger.exception("Failed to send SMS via BulkSMS to %s", to)
+        return False, {"error": str(e)}
 
 def send_sms_via_smsportal(to, message):
     """

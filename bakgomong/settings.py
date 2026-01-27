@@ -274,3 +274,7 @@ Q_CLUSTER = {
     "orm": "default",
 }
 
+# settings.py
+BULKSMS_USERNAME = config('BULKSMS_USERNAME', default='your_username')
+BULKSMS_PASSWORD = config('BULKSMS_PASSWORD', default='your_password')
+BULKSMS_SENDER = config('BULKSMS_SENDER', default='BAKGOMONG')

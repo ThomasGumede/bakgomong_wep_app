@@ -319,4 +319,16 @@ class Payment(AbstractCreate, AbstractPayment):
                 )
 
 
+class NotificationLog(models.Model):
+    PROVIDERS = (
+        ("EMAIL", "Email"),
+        ("BULKSMS", "BulkSMS"),
+    )
 
+    provider = models.CharField(max_length=20, choices=PROVIDERS)
+    recipient = models.CharField(max_length=50)
+    message_id = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=50)
+    raw_response = models.JSONField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)

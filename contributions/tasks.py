@@ -11,7 +11,7 @@ from weasyprint import HTML
 from io import BytesIO
 
 from contributions.models import MemberContribution, Payment
-from contributions.utils.notifications import send_sms_via_smsportal, send_sms_via_twilio
+from contributions.utils.notifications import send_sms_via_smsportal, send_sms_via_bulksms
 import logging, base64
 
 from utilities.choices import PaymentStatus
@@ -100,6 +100,23 @@ def send_contribution_created_notification(mc: MemberContribution):
             member.email,
             mc.id,
         )
+        
+        # Send SMS notification if phone exists
+        if member.phone:
+            sms_message = (
+                f"New contribution was created - {contribution.name} | "
+                f"Amount: R{mc.amount_due:.2f} | "
+                f"Due: {mc.due_date:%d %b %Y} | "
+                f"Pay: {payment_url}"
+            )
+            try:
+                success, response = send_sms_via_bulksms(member.phone, sms_message)
+                if success:
+                    logger.info("SMS notification sent to %s (MC %s)", member.phone, mc.id)
+                else:
+                    logger.warning("SMS notification failed for %s (MC %s): %s", member.phone, mc.id, response)
+            except Exception:
+                logger.exception("Failed to send SMS notification to %s", member.phone)
         return True
 
     except Exception:
