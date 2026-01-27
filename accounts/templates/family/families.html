@@ -31,7 +31,7 @@ Families
                                 
                                 <th scope="col" class="text-neutral-800 dark:text-white">
                                     <div class="flex items-center gap-2">
-                                        Family Name
+                                        Family
                                         <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,7 +54,7 @@ Families
                                 
                                 <th scope="col" class="text-neutral-800 dark:text-white">
                                     <div class="flex items-center gap-2">
-                                        Total Members
+                                        Members
                                         <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                             width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -77,10 +77,18 @@ Families
                                     
                                     <td><a href="{% url 'accounts:get-family' family.slug %}" class="text-primary-600">{{family.name}}</a></td>
                                     <td>
-                                        <div class="flex items-center">
-                                            <img src="{% if family.leader.profile_image %}{{family.leader.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}" alt="{{family.leader.get_full_name}}" class="shrink-0 me-3 h-[46px] w-[46px] rounded-full">
-                                            <h6 class="text-base mb-0 font-medium grow">{{family.leader.get_full_name}}</h6>
-                                        </div>
+                                        
+                                        {% if family.leader %}
+                                            <div class="flex items-center">
+                                                <img src="{% if family.leader.profile_image %}{{family.leader.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
+                                                    alt="{{family.leader.get_full_name}}" class="shrink-0 me-3 h-[46px] w-[46px] rounded-full">
+                                                <h6 class="text-base mb-0 font-medium grow">{{family.leader.get_full_name}}</h6>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-neutral-500 italic">No leader assigned</span>
+                                        {% endif %}
+                                            
+                                        
                                     </td>
                                     
                                     
