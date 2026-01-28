@@ -36,13 +36,13 @@ def send_sms_via_bulksms(to, message):
         logger.error("Invalid phone number for BulkSMS: %s", to)
         return False, {"error": f"Invalid phone: {str(e)}"}
 
-    url = "https://api.bulksms.com/v1/messages"
+    url = settings.BULKSMS_API_URL
     credentials = f"{settings.BULKSMS_USERNAME}:{settings.BULKSMS_PASSWORD}"
     encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Basic {encoded_credentials}"
+        "Authorization": "Basic ODM5ODk4RTAzREVCNDNENkJFRDA4NUNGNDQ4MDdENzgtMDEtMDoxdkFsYU1vRjZ2VlNkb2tUYUYzRzJyVmF6dlhpIw==",
     }
 
     payload = {

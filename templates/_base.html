@@ -270,7 +270,12 @@
                 </li>
             </ul>
         </div>
-        {% include 'includes/messages.html' %}
+        
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
+            
+        
         {% block content %}
             
         {% endblock content %}

@@ -102,7 +102,7 @@ class AccountAdmin(UserAdmin):
         }),
         ("Member Info", {
             "fields": (
-                "biography", 
+                "biography", "employment_status", "member_classification", "maiden_name",
             ),
         }),
         ("Contact & Socials", {
@@ -143,9 +143,12 @@ class AccountAdmin(UserAdmin):
                 "email",
                 "phone",
                 "gender",
-                "maiden_name",
-                "biography",
+                "address",
             )
+        }),("Member Info", {
+            "fields": (
+                "biography", "employment_status", "member_classification", "maiden_name",
+            ),
         }),
         
         (_("Clan Information"), {

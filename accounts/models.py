@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from accounts.utils.file_handlers import handle_profile_upload
 from utilities.abstracts import AbstractCreate, AbstractProfile
-from utilities.choices import SCOPE_CHOICES, Gender, PaymentStatus, Role, Title
+from utilities.choices import SCOPE_CHOICES, Gender, PaymentStatus, Role, Title, EmploymentStatus, MemberClassification
 
 # class Role(AbstractCreate):
 #     pass
@@ -109,6 +109,8 @@ class Account(AbstractUser, AbstractProfile):
     id_number = models.CharField(max_length=15, help_text=_("Enter your ID number"), unique=True, blank=True, null=True, db_index=True)
     family = models.ForeignKey(Family, related_name='members', on_delete=models.SET_NULL, null=True, blank=True)
     birth_date = models.DateField(help_text=_("Enter your date of birth"), null=True, blank=True)
+    employment_status = models.CharField(max_length=20, choices=EmploymentStatus.choices, help_text=_("Select employment status"), null=True, blank=True)
+    member_classification = models.CharField(max_length=20, choices=MemberClassification.choices, help_text=_("Select member classification"), null=True, blank=True)
     langueges_spoken = models.CharField(max_length=300, help_text=_("Enter languages you speak, separated by commas"), blank=True, null=True)
     is_approved = models.BooleanField(default=False, help_text=_("Should be approved by executives"))
     is_family_leader = models.BooleanField(default=False, help_text=_("Tick if member is a family leader"))

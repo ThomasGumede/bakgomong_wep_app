@@ -118,7 +118,7 @@ class RegistrationForm(UserCreationForm):
 class MemberForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ("username", "title", "family", "profile_image", "first_name", "last_name", 'maiden_name', "biography", "gender", "email", "phone", "address", 'password1', 'password2', 'birth_date', 'langueges_spoken')
+        fields = ("username", "title", "family", "profile_image", "first_name", "last_name", 'maiden_name', "biography", "gender", "email", "phone", "address", 'password1', 'password2', 'birth_date', 'langueges_spoken', "employment_status", "member_classification", 'id_number')
 
         widgets = {
             'email': forms.EmailInput(attrs={
@@ -144,6 +144,9 @@ class MemberForm(UserCreationForm):
             'gender': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
             'title': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
             'family': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'birth_date': forms.DateInput(attrs={"type": "date", "class": "form-control rounded-lg bg-white dark:bg-neutral-700"}),
+            'employment_status': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'member_classification': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
         }
 
     def __init__(self, *args, **kwargs):

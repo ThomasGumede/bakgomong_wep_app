@@ -215,6 +215,32 @@ Add Family Member
                                 </div>
                                 <div class="col-span-12 sm:col-span-6">
                                     <div class="mb-5">
+                                        <label for="id_member_classification"
+                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Member Classification
+                                            <span class="text-danger-600">*</span> </label>
+                                        {{form.member_classification}}
+                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.member_classification.help_text}}</span>
+                                        {% if form.member_classification.errors %}
+                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.member_classification.errors.as_text}}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-span-12 sm:col-span-6">
+                                    <div class="mb-5">
+                                        <label for="id_employment_status"
+                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Employment Status
+                                            <span class="text-danger-600">*</span> </label>
+                                        {{form.employment_status}}
+                                        <span
+                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.employment_status.help_text}}</span>
+                                        {% if form.employment_status.errors %}
+                                        <span
+                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.employment_status.errors.as_text}}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-span-12 sm:col-span-6">
+                                    <div class="mb-5">
                                         <label for="id_address"
                                             class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Address</label>
                                         <input type="tel" class="form-control rounded-lg" id="id_address"
@@ -232,7 +258,7 @@ Add Family Member
                                     <div class="mb-5">
                                         <label for="id_birth_date"
                                             class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Date of birth</label>
-                                        <input type="date" class="form-control rounded-lg" id="id_birth_date" placeholder="Enter yor date of birth"
+                                        <input type="date" class="form-control rounded-lg" id="id_birth_date" placeholder="Enter your date of birth"
                                             name="birth_date" value="{{form.birth_date.value}}">
                                         <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.birth_date.help_text}}</span>
                                         {% if form.birth_date.errors %}
@@ -241,6 +267,18 @@ Add Family Member
                                     </div>
                                 </div>
                                 <div class="col-span-12 sm:col-span-6">
+                                    <div class="mb-5">
+                                        <label for="id_id_number"
+                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">ID Number</label>
+                                        <input type="text" class="form-control rounded-lg" id="id_id_number" placeholder="Enter your ID Number"
+                                            name="id_number" value="{{form.id_number.value}}">
+                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.id_number.help_text}}</span>
+                                        {% if form.id_number.errors %}
+                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.id_number.errors.as_text}}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-span-12">
                                     <div class="mb-5">
                                         <label for="id_langueges_spoken"
                                             class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Langueges

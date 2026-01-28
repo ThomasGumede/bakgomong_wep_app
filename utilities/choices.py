@@ -22,6 +22,22 @@ class Gender(models.TextChoices):
     MALE = ("MALE", "Male")
     FEMALE = ("FEMALE", "Female")
     OTHER = ("OTHER", "Other")
+
+class EmploymentStatus(models.TextChoices):
+    EMPLOYED = ("EMPLOYED", "Employed")
+    SELF_EMPLOYED = ("SELF_EMPLOYED", "Self-Employed")
+    UNEMPLOYED = ("UNEMPLOYED", "Unemployed")
+    RETIRED = ("RETIRED", "Retired")
+    STUDENT = ("STUDENT", "Student")
+    HOMEMAKER = ("HOMEMAKER", "Homemaker")
+    DISABLED = ("DISABLED", "Disabled")
+
+class MemberClassification(models.TextChoices):
+    RELATIVE = ("RELATIVE", "Relative")
+    CHILD = ("CHILD", "Child")
+    PARENT = ("PARENT", "Parent")
+    GRANDPARENT = ("GRANDPARENT", "Grandparent")
+    OTHER = ("OTHER", "Other")
     
 class Role(models.TextChoices):
     KGOSANA = ("KGOSANA", "Kgosana")

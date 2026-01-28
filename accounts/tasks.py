@@ -11,6 +11,39 @@ from django.conf import settings
 
 logger = logging.getLogger("tasks")
 
+def send_sms_task(user_pk):
+    """
+    Background task: send welcome SMS to user.
+    Returns (success bool, response dict).
+    """
+    from contributions.utils.notifications import send_sms_via_bulksms
+    User = get_user_model()
+    
+    try:
+        user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        logger.error("send_sms_task: user %s not found", user_pk)
+        return False, {"error": "User not found"}
+    
+    # Validate phone exists
+    if not user.phone:
+        logger.warning("send_sms_task: user %s has no phone number", user_pk)
+        return False, {"error": "User has no phone number"}
+    
+    try:
+        message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla. Your account has been created successfully."
+        success, response = send_sms_via_bulksms(user.phone, message)
+        
+        if success:
+            logger.info("Welcome SMS sent to %s (User %s)", user.phone, user_pk)
+        else:
+            logger.warning("Failed to send welcome SMS to %s: %s", user.phone, response)
+        
+        return success, response
+    except Exception:
+        logger.exception("send_sms_task failed for user %s", user_pk)
+        return False, {"error": "Exception occurred while sending SMS"}
+
 def send_verification_email_task(user_pk):
     """
     Background task: send verification email to user id (no request object).

@@ -275,6 +275,8 @@ Q_CLUSTER = {
 }
 
 # settings.py
-BULKSMS_USERNAME = config('BULKSMS_USERNAME', default='your_username')
-BULKSMS_PASSWORD = config('BULKSMS_PASSWORD', default='your_password')
+BULKSMS_USERNAME = config('BULKSMS_API_TOKEN_ID', default='your_username')
+BULKSMS_PASSWORD = config('BULKSMS_API_TOKEN_SECRET', default='your_password')
 BULKSMS_SENDER = config('BULKSMS_SENDER', default='BAKGOMONG')
+BULKSMS_API_URL = config('BULKSMS_API_URL', default='https://api.bulksms.com/v1/messages')
+BULKSMS_API_KEY = config('BULKSMS_API_KEY', default='your_api_key')
