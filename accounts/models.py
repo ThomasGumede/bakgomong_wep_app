@@ -17,6 +17,9 @@ from utilities.choices import SCOPE_CHOICES, Gender, PaymentStatus, Role, Title,
 # class Role(AbstractCreate):
 #     pass
 
+# class KgotlaBalance(AbstractCreate):
+#     title = models.CharField(help_text=_(@))
+
 class Family(AbstractCreate):
     name = models.CharField(max_length=300, help_text=_('Enter family name e.g Dladla Family'), unique=True)
     slug = models.SlugField(max_length=400, unique=True, db_index=True)

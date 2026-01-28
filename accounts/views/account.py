@@ -39,7 +39,7 @@ def account_overview(request, username):
     model = get_object_or_404(users, username=username)
     
     context['user'] = model
-    if request.user.role not in EXECUTIVE_ROLES or not request.user.is_staff or not request.user.is_family_leader and request.user != model:
+    if request.user.role not in EXECUTIVE_ROLES  and request.user != model:
         template = "accounts/profile.html"
     else:
         template = "accounts/account-overview.html"
