@@ -5,14 +5,12 @@ from django.conf import settings
 from django.template.loader import get_template, render_to_string
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
-from django_q.tasks import async_task
 from django.core.files.base import ContentFile
 from weasyprint import HTML
 from io import BytesIO
-
 from contributions.models import MemberContribution, Payment
-from contributions.utils.notifications import send_sms_via_smsportal, send_sms_via_bulksms
-import logging, base64
+from contributions.utils.notifications import send_smsportal_sms
+import logging
 
 from utilities.choices import PaymentStatus
 
@@ -30,7 +28,6 @@ def send_contribution_created_notification_task(mc_ids):
 
     logger.info("Completed batch notification for %d contributions", len(mc_ids))
 
-
 def send_contribution_created_notification(mc: MemberContribution):
     """
     Send a contribution notification email to a member
@@ -45,9 +42,9 @@ def send_contribution_created_notification(mc: MemberContribution):
     # -------------------------------------
     # Validate email availability
     # -------------------------------------
-    if not member or not member.email:
+    if not member or (not member.email and not member.phone):
         logger.warning(
-            "Skipping contribution notification %s: member has no email",
+            "Skipping contribution notification %s: member has no email or phone",
             mc.id
         )
         return False
@@ -64,53 +61,54 @@ def send_contribution_created_notification(mc: MemberContribution):
     # Prepare email content
     # -------------------------------------
     try:
-        context = {
-            "user": member.get_full_name() or member.username,
-            "contribution_name": contribution.name,
-            "amount": mc.amount_due,
-            "due_date": mc.due_date,
-            "reference": mc.reference,
-            "payment_url": payment_url,
-            "contr_url": contr_url,
-        }
+        if member.email:
+            context = {
+                "user": member.get_full_name() or member.username,
+                "contribution_name": contribution.name,
+                "amount": mc.amount_due,
+                "due_date": mc.due_date,
+                "reference": mc.reference,
+                "payment_url": payment_url,
+                "contr_url": contr_url,
+            }
 
-        html_content = render_to_string("emails/contribution-notification.html", context)
-        text_content = strip_tags(html_content)
+            html_content = render_to_string("emails/contribution-notification.html", context)
+            text_content = strip_tags(html_content)
 
-        # -------------------------------------
-        # Configure email
-        # -------------------------------------
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+            # -------------------------------------
+            # Configure email
+            # -------------------------------------
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
 
-        msg = EmailMultiAlternatives(
-            subject=f"New Contribution: {contribution.name}",
-            body=text_content,
-            from_email=from_email,
-            to=[member.email],
-        )
-        msg.attach_alternative(html_content, "text/html")
+            msg = EmailMultiAlternatives(
+                subject=f"New Contribution: {contribution.name}",
+                body=text_content,
+                from_email=from_email,
+                to=[member.email],
+            )
+            msg.attach_alternative(html_content, "text/html")
 
-        # -------------------------------------
-        # Send email
-        # -------------------------------------
-        msg.send()
+            # -------------------------------------
+            # Send email
+            # -------------------------------------
+            msg.send()
 
-        logger.info(
-            "Contribution notification sent to %s (MC %s)",
-            member.email,
-            mc.id,
-        )
-        
+            logger.info(
+                "Contribution notification sent to %s (MC %s)",
+                member.email,
+                mc.id,
+            )
+            
         # Send SMS notification if phone exists
         if member.phone:
             sms_message = (
                 f"New contribution was created - {contribution.name} | "
                 f"Amount: R{mc.amount_due:.2f} | "
                 f"Due: {mc.due_date:%d %b %Y} | "
-                f"Pay: {payment_url}"
+                f"Pay online now: {payment_url}"
             )
             try:
-                success, response = send_sms_via_bulksms(member.phone, sms_message)
+                success, response = send_smsportal_sms(member.phone, sms_message)
                 if success:
                     logger.info("SMS notification sent to %s (MC %s)", member.phone, mc.id)
                 else:
@@ -125,8 +123,6 @@ def send_contribution_created_notification(mc: MemberContribution):
             mc.id
         )
         return False
-
-
 
 def send_payment_reminder():
     """
@@ -185,8 +181,11 @@ def send_payment_reminder():
                 f"Pay: {payment_url}"
             )
             try:
-                send_sms_via_smsportal(member.phone, sms_message)
-                logger.info("SMS reminder sent to %s for %s", member.phone, mc.id)
+                success, response = send_smsportal_sms(member.phone, sms_message)
+                if success:
+                    logger.info("SMS reminder sent to %s for %s", member.phone, mc.id)
+                else:
+                    logger.warning("SMS reminder failed for %s: %s", member.phone, response)
             except Exception:
                 logger.exception("Failed to send SMS reminder to %s", member.phone)
 
@@ -222,7 +221,6 @@ def send_payment_reminder():
                 len(upcoming), len(due_today), len(overdue))
     return True
 
-
 def send_payment_confirmation_task(member_contribution_id, treasurer_name):
     """
     Sends payment confirmation email + PDF invoice (WeasyPrint) 
@@ -240,8 +238,8 @@ def send_payment_confirmation_task(member_contribution_id, treasurer_name):
         return False
 
     member = mc.account
-    if not member or not member.email:
-        logger.warning("MemberContribution %s missing email", member_contribution_id)
+    if not member:
+        logger.warning("MemberContribution %s missing email or phone", member_contribution_id)
         return False
 
     # Detect payment object correctly
@@ -267,43 +265,66 @@ def send_payment_confirmation_task(member_contribution_id, treasurer_name):
             save=True
         )
 
-        # Email context
-        context = {
-            "user": member.get_full_name() or member.username,
-            "contribution_name": mc.contribution_type.name,
-            "amount_paid": mc.amount_due,
-            "treasurer_name": treasurer_name,
-            "reference": mc.reference,
-            "status": PaymentStatus(mc.is_paid).label,
-            "payment_date": mc.updated.strftime("%d %B %Y"),
-            "dashboard_link": f"{settings.SITE_URL}/member-invoice/{mc.id}",
-        }
+        if member.email:
+            # Email context
+            context = {
+                "user": member.get_full_name() or member.username,
+                "contribution_name": mc.contribution_type.name,
+                "amount_paid": mc.amount_due,
+                "treasurer_name": treasurer_name,
+                "reference": mc.reference,
+                "status": PaymentStatus(mc.is_paid).label,
+                "payment_date": mc.updated.strftime("%d %B %Y"),
+                "dashboard_link": f"{settings.SITE_URL}/member-invoice/{mc.id}",
+            }
 
-        html_content = render_to_string("emails/payment-confirmation.html", context)
-        text_content = strip_tags(html_content)
+            html_content = render_to_string("emails/payment-confirmation.html", context)
+            text_content = strip_tags(html_content)
 
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
 
-        # Prepare email
-        email = EmailMultiAlternatives(
-            subject=f"✓ Payment Confirmed: {mc.contribution_type.name}",
-            body=text_content,
-            from_email=from_email,
-            to=[member.email],
-        )
+            # Prepare email
+            email = EmailMultiAlternatives(
+                subject=f"✓ Payment Confirmed: {mc.contribution_type.name}",
+                body=text_content,
+                from_email=from_email,
+                to=[member.email],
+            )
 
-        # Attach PDF correctly
-        email.attach(
-            f"invoice_{mc.id}.pdf",
-            pdf_bytes,
-            "application/pdf"
-        )
+            # Attach PDF correctly
+            email.attach(
+                f"invoice_{mc.id}.pdf",
+                pdf_bytes,
+                "application/pdf"
+            )
 
-        # HTML content
-        email.attach_alternative(html_content, "text/html")
+            # HTML content
+            email.attach_alternative(html_content, "text/html")
 
-        # Send email
-        email.send()
+            # Send email
+            sent = email.send()
+            if sent:
+                logger.info("Payment confirmation email sent to %s", member.email)
+            else:
+                logger.info("Payment confirmation email failed to send to %s", member.email)
+                
+        if member.phone:
+            sms_message = (
+                f"Payment Confirmed - {mc.contribution_type.name} | "
+                f"Amount: R{mc.amount_due:.2f} | "
+                f"Status: {PaymentStatus(mc.is_paid).label} | "
+                f"Ref: {mc.reference} | "
+                f"View: {settings.SITE_URL}/member-invoice/{mc.id}"
+            )
+            try:
+                success, response = send_smsportal_sms(member.phone, sms_message)
+                if success:
+                    logger.info("Payment confirmation SMS sent to %s", member.phone)
+                else:
+                    logger.warning("Payment confirmation SMS failed for %s: %s", member.phone, response)
+            except Exception:
+                logger.exception("Failed to send payment confirmation SMS to %s", member.phone)
+                
         logger.info("Payment confirmation sent to %s", member.email)
         return True
 
@@ -330,8 +351,8 @@ def send_bk_payment_details_task(member_contribution_id):
         return False
 
     member = mc.account
-    if not member or not member.email:
-        logger.warning("MemberContribution %s missing email", member_contribution_id)
+    if not member:
+        logger.warning("MemberContribution %s missing email or phone", member_contribution_id)
         return False
 
     # Detect payment object correctly
@@ -357,38 +378,62 @@ def send_bk_payment_details_task(member_contribution_id):
             save=True
         )
 
-        # Email context
-        context = {
-            "mc": mc,
-            "invoice_link": f"{settings.SITE_URL}/member-invoice/download/{mc.id}",
-        }
+        if member.email:
+            # Email context
+            context = {
+                "mc": mc,
+                "invoice_link": f"{settings.SITE_URL}/member-invoice/download/{mc.id}",
+            }
 
-        html_content = render_to_string("emails/payment-information.html", context)
-        text_content = strip_tags(html_content)
+            html_content = render_to_string("emails/payment-information.html", context)
+            text_content = strip_tags(html_content)
 
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
 
-        # Prepare email
-        email = EmailMultiAlternatives(
-            subject=f"✓ Payment Details: {mc.contribution_type.name}",
-            body=text_content,
-            from_email=from_email,
-            to=[member.email],
-        )
+            # Prepare email
+            email = EmailMultiAlternatives(
+                subject=f"✓ Payment Details: {mc.contribution_type.name}",
+                body=text_content,
+                from_email=from_email,
+                to=[member.email],
+            )
 
-        # Attach PDF correctly
-        email.attach(
-            f"invoice_{mc.id}.pdf",
-            pdf_bytes,
-            "application/pdf"
-        )
+            # Attach PDF correctly
+            email.attach(
+                f"invoice_{mc.id}.pdf",
+                pdf_bytes,
+                "application/pdf"
+            )
 
-        # HTML content
-        email.attach_alternative(html_content, "text/html")
+            # HTML content
+            email.attach_alternative(html_content, "text/html")
 
-        # Send email
-        email.send()
-        logger.info("Payment confirmation sent to %s", member.email)
+            # Send email
+            sent = email.send()
+            if sent:
+                logger.info("Payment details email sent to %s", member.email)
+            else:
+                logger.info("Payment details email failed to send to %s", member.email)
+                
+        
+        if member.phone:
+            sms_message = (
+                f"Payment Details Received - {mc.contribution_type.name} | "
+                f"Amount: R{mc.amount_due:.2f} | "
+                f"Status: Awaiting Approval | "
+                f"Ref: {mc.reference} | "
+                f"View: {settings.SITE_URL}/member-invoice/{mc.id}"
+            )
+            try:
+                success, response = send_smsportal_sms(member.phone, sms_message)
+                if success:
+                    logger.info("Payment details SMS sent to %s", member.phone)
+                else:
+                    logger.warning("Payment details SMS failed for %s: %s", member.phone, response)
+            except Exception:
+                logger.exception("Failed to send payment details SMS to %s", member.phone)
+                
+        logger.info("Payment confirmation sent to %s", member.get_full_name() or member.username)
         return True
 
     except Exception:

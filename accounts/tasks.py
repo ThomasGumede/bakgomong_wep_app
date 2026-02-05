@@ -58,11 +58,21 @@ def send_verification_email_task(user_pk):
 
     try:
         # custom_mail.send_verification_email(user, request=None) works without request
-        return custom_mail.send_verification_email(user, None)
+        if user.email:
+            logger.info("Sending verification email to %s (User %s)", user.email, user_pk)
+            return custom_mail.send_verification_email(user, None)
+        if user.phone:
+            logger.info("Sending verification SMS to user %s", user)
+            from contributions.utils.notifications import send_smsportal_sms
+            sms_message = f"Welcome to Bakgomong Kgotla Ya Malla, {user.get_full_name()}! Your account has been created. You can now login using your ID/Phone/Email/Username and password."
+            success, response = send_smsportal_sms(user.phone, sms_message)
+            if success:
+                logger.info("Verification SMS sent to %s (User %s)", user.phone, user_pk)
+            else:
+                logger.warning("Failed to send verification SMS to %s: %s", user.phone, response)
     except Exception:
         logger.exception("send_verification_email_task failed for %s", user_pk)
         return False
-
 
 def send_password_reset_email_task(user_pk):
     User = get_user_model()
@@ -78,7 +88,6 @@ def send_password_reset_email_task(user_pk):
         logger.exception("send_password_reset_email_task failed for %s", user_pk)
         return False
 
-
 def send_email_confirmation_task(user_pk, new_email):
     User = get_user_model()
     try:
@@ -91,6 +100,20 @@ def send_email_confirmation_task(user_pk, new_email):
         return custom_mail.send_email_confirmation_email(user, new_email, None)
     except Exception:
         logger.exception("send_email_confirmation_task failed for %s -> %s", user_pk, new_email)
+        return False
+
+def send_notification_new_meeting_task(meeting_pk, to, subject):
+    from accounts.models import Meeting
+    try:
+        meeting = Meeting.objects.get(pk=meeting_pk)
+    except Meeting.DoesNotExist:
+        logger.error("send_notification_new_meeting_task: Meeting %s not found", meeting_pk)
+        return False
+
+    try:
+        return custom_mail.send_new_meeting_notification(meeting, to, subject)
+    except Exception:
+        logger.exception("send_notification_new_meeting_task failed for %s", meeting_pk)
         return False
 
 allowed_roles = [ 
@@ -148,8 +171,6 @@ def send_notification_new_family_task(family_slug):
 
     logger.info("Notification emails sent for new family %s", family.name)
     return True
-
-
 
 def send_notification_new_member_task(user_pk):
     """

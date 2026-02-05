@@ -1,0 +1,229 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upcoming Meeting</title>
+    <style>
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            -ms-interpolation-mode: bicubic;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #f4f6f8;
+            font-family: Helvetica, Arial, sans-serif;
+            color: #111827;
+        }
+
+        @media screen and (max-width:600px) {
+            .container {
+                width: 100% !important;
+            }
+
+            .stack {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .pad-sm {
+                padding: 12px !important;
+            }
+
+            .h1 {
+                font-size: 22px !important;
+                line-height: 28px !important;
+            }
+        }
+
+        .preheader {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            color: transparent;
+            height: 0;
+            width: 0;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #0b2540;
+            width: 160px;
+        }
+
+        .value {
+            color: #374151;
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    <div class="preheader">
+        An upcoming meeting has been scheduled. Please see the details below.
+    </div>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center" style="padding:20px 16px;">
+                <table class="container" width="600" style="background:#ffffff;border-radius:8px;overflow:hidden;">
+
+                    ```
+                    <!-- HEADER -->
+                    <tr>
+                        <td style="padding:20px 24px;background:#f1f5f9;">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left">
+                                        <img src="https://www.bakgomong.co.za/static/images/logo-icon.png" width="56"
+                                            height="56" alt="BAKGOMONG" style="border-radius:8px;" />
+                                    </td>
+                                    <td align="right" style="font-size:18px;font-weight:700;color:#0b2540;">
+                                        BAKGOMONG | Meeting Notice
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- CONTENT -->
+                    <tr>
+                        <td style="padding:28px 24px;">
+                            <h1 class="h1" style="margin:0 0 12px;font-size:26px;line-height:32px;color:#0b2540;">
+                                Upcoming Meeting
+                            </h1>
+
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">
+                                Dear {{ member_name }},
+                            </p>
+
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">
+                                Please be informed of the upcoming meeting scheduled as outlined below.
+                                Your participation is important.
+                            </p>
+
+                            <!-- DETAILS TABLE -->
+                            <table width="100%" cellpadding="0" cellspacing="0"
+                                style="margin:18px 0;border:1px solid #e5e7eb;border-radius:6px;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="padding:8px;text-align:left;">Field</th>
+                                    <th style="padding:8px;text-align:left;">Details</th>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Meeting Title</td>
+                                    <td class="value" style="padding:6px 8px;">{{ meeting.title }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Date</td>
+                                    <td class="value" style="padding:6px 8px;">{{ meeting.date_time_formatter }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Duration</td>
+                                    <td class="value" style="padding:6px 8px;">{{ meeting.duration }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Venue / Link</td>
+                                    <td class="value" style="padding:6px 8px;">{% if meeting.venue %}{{ meeting.venue }}{% else %}{{ meeting.link }}{% endif %}</td>
+                                </tr>
+                                {% if meeting.family %}
+                                <tr>
+                                    <td class="label" style="padding:6px 8px;">Family</td>
+                                    <td class="value" style="padding:6px 8px;">{{ meeting.family }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+
+                            <p style="margin:0 0 18px;color:#6b7280;font-size:15px;line-height:22px;">
+                                You may view full meeting details using the link below:
+                            </p>
+
+                            <!-- CTA -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="https://{{ site_url }}{{ meeting.get_absolute_url }}" target="_blank" style="display:inline-block;background:#0b6e99;color:#ffffff;
+                                          padding:12px 22px;font-size:14px;border-radius:6px;
+                                          font-weight:700;text-decoration:none;">
+                                            View Meeting Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <hr style="border:none;border-top:1px solid #eef2f6;margin:20px 0;" />
+
+                            <p style="margin:0;color:#6b7280;font-size:13px;line-height:20px;">
+                                If you are unable to attend, please notify the relevant office in advance.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- FOOTER -->
+                    <tr>
+                        <td style="padding:18px 24px;background:#fbfdff;color:#6b7280;font-size:13px;">
+                            <table width="100%">
+                                <tr>
+                                    <td class="stack">
+                                        <strong style="color:#0b2540;display:block;margin-bottom:6px;">
+                                            Bakgomong Contribution System
+                                        </strong>
+                                        <div>12 Commerce Road, Cape Town, 8001</div>
+                                        <div style="margin-top:6px;">
+                                            support@bakgomong.co.za • +27 21 555 1234
+                                        </div>
+                                    </td>
+                                    <td align="right" class="stack" style="padding-top:6px;">
+                                        <a href="#"
+                                            style="color:#0b6e99;font-weight:600;text-decoration:none;">Privacy</a>
+                                        &nbsp;•&nbsp;
+                                        <a href="#"
+                                            style="color:#0b6e99;font-weight:600;text-decoration:none;">Terms</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="margin-top:14px;color:#9aa4b2;font-size:12px;">
+                                You are receiving this email because you are a member of BAKGOMONG.
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+        ```
+
+    </table>
+
+</body>
+
+</html>

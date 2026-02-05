@@ -5,10 +5,9 @@ from django.urls import reverse
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 
-from contributions.models import ContributionType, MemberContribution, Payment
+from contributions.models import ContributionType, MemberContribution, Payment, SMSLog
 
 logger = logging.getLogger("contributions.admin")
-
 
 @admin.register(ContributionType)
 class ContributionTypeAdmin(admin.ModelAdmin):
@@ -47,7 +46,6 @@ class ContributionTypeAdmin(admin.ModelAdmin):
                 "ContributionType created: %s (slug: %s) by %s",
                 obj.name, obj.slug, request.user.username
             )
-
 
 @admin.register(MemberContribution)
 class MemberContributionAdmin(admin.ModelAdmin):
@@ -113,7 +111,6 @@ class MemberContributionAdmin(admin.ModelAdmin):
         }),
     )
 
-    
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     def account_link(self, obj):
@@ -249,3 +246,19 @@ class PaymentAdmin(admin.ModelAdmin):
                 obj.is_approved,
                 request.user.username
             )
+
+
+@admin.register(SMSLog)
+class SMSLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "phone_number",
+        "status",
+        "created",
+        "sent_at",
+    )
+    list_filter = ("status",)
+    search_fields = ("phone_number", "message")
+    readonly_fields = (
+        "provider_response",
+        "error_message",
+    )

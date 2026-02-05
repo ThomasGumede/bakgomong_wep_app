@@ -5,10 +5,7 @@ from django.utils.text import slugify
 from accounts.models import Family
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-import random, uuid
-from django.utils.crypto import get_random_string
 from django.db import transaction
-
 from utilities.abstracts import AbstractCreate, AbstractPayment
 from utilities.choices import SCOPE_CHOICES,  LogPaymentStatus, PaymentMethod, PaymentStatus, Recurrence
 
@@ -154,7 +151,6 @@ class MemberContribution(AbstractCreate):
         return reverse("contributions:member-contribution", kwargs={"id": self.id})
     
     get_payments_url = lambda self: reverse("contributions:checkout", kwargs={"id": self.id})
-
 
 class Payment(AbstractCreate, AbstractPayment):
     
@@ -318,7 +314,6 @@ class Payment(AbstractCreate, AbstractPayment):
                     new_status
                 )
 
-
 class NotificationLog(models.Model):
     PROVIDERS = (
         ("EMAIL", "Email"),
@@ -332,3 +327,33 @@ class NotificationLog(models.Model):
     raw_response = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+class SMSStatus(models.TextChoices):
+    PENDING = "pending", _("Pending")
+    SENT = "sent", _("Sent")
+    FAILED = "failed", _("Failed")
+
+class SMSLog(models.Model):
+    phone_number = models.CharField(max_length=20)
+    message = models.TextField()
+    status = models.CharField(
+        max_length=20,
+        choices=SMSStatus.choices,
+        default=SMSStatus.PENDING
+    )
+    provider_message_id = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+    provider_response = models.JSONField(blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    sent_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.phone_number} - {self.status}"

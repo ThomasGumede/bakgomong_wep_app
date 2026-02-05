@@ -18,7 +18,46 @@ from utilities.choices import SCOPE_CHOICES, Gender, PaymentStatus, Role, Title,
 #     pass
 
 # class KgotlaBalance(AbstractCreate):
-#     title = models.CharField(help_text=_(@))
+#     title = models.CharField(help_text=_('Enter balance title e.g General Fund Balance'), max_length=300, unique=True)
+#     slug = models.SlugField(max_length=400, unique=True, db_index=True)
+#     balance = models.DecimalField(help_text=_('Enter current balance amount'), max_digits=12, decimal_places=2, default=0)
+#     updated_by = models.ForeignKey(
+#         get_user_model(),
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="updated_kgotla_balances"
+#     )
+#     updated = models.DateTimeField(auto_now=True)
+#     created = models.DateTimeField(auto_now_add=True)
+    
+#     def __str__(self):
+#         return f"{self.title}: R{self.balance}"
+    
+#     class Meta:
+#         verbose_name = _("Kgotla Balance")
+#         verbose_name_plural = _("Kgotla Balances")
+#         ordering = ["-updated"]
+    
+#     def get_full_balance(self):
+#         return f"R{self.balance:,.2f}"
+    
+#     def get_total_balance(self):
+#         from contributions.models import MemberContribution
+#         total_contributions = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
+#         return self.balance + total_contributions
+    
+#     def save(self, *args, **kwargs):
+#         # Generate slug on creation
+        
+#         base = slugify(self.title) or "kgotla-balance"
+#         slug = base
+#         counter = 1
+#         while KgotlaBalance.objects.filter(slug=slug).exists():
+#             slug = f"{base}-{counter}"
+#             counter += 1
+#         self.slug = slug
+#         super(KgotlaBalance, self).save(*args, **kwargs)
 
 class Family(AbstractCreate):
     name = models.CharField(max_length=300, help_text=_('Enter family name e.g Dladla Family'), unique=True)
@@ -318,7 +357,17 @@ class Meeting(AbstractCreate):
         related_name="meetings",
         help_text=_("Optional: assign this meeting to a specific family if needed."),
     )
-    
+    meeting_status = models.CharField(
+        max_length=20,
+        choices=[
+            ("scheduled", "Scheduled"),
+            ("in_progress", "In Progress"),
+            ("completed", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        default="scheduled",
+        help_text=_("Status of the meeting (e.g., Scheduled, In Progress, Completed)."),
+    )
 
     class Meta:
         verbose_name = _("Meeting")
@@ -376,7 +425,10 @@ class Meeting(AbstractCreate):
 
     def is_for_family(self):
         return self.audience == SCOPE_CHOICES.FAMILY and self.family is not None
-
+    
+    def get_absolute_url(self):
+        return reverse("accounts:clan-meetings")
+    
     def get_audience_display_name(self):
         """Human-readable version of who the meeting is for."""
         if self.audience == SCOPE_CHOICES.CLAN:

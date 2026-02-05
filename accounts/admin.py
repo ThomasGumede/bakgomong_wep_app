@@ -75,17 +75,19 @@ class AccountAdmin(UserAdmin):
     profile_image_preview.short_description = _("Profile Image Preview")
     
     list_display = ("profile_image_preview", "username", "first_name", "email", "family", "role", "is_active", "is_approved")
-    list_filter = ("role", "is_active", "gender",)
+    list_filter = ("role", "is_active", "gender", "is_approved", "created")
     search_fields = ("username", "first_name", "email", "phone", "family__name")
     list_select_related = ("family",)
     autocomplete_fields = ("family",)
     ordering = ("-created",)
-    readonly_fields = ("created", "updated", "profile_image_preview")
+    list_per_page = 50
+    date_hierarchy = "created"
+    readonly_fields = ("created", "updated", "profile_image_preview", "last_login")
+    filter_horizontal = ("groups",)
     actions = [approve_members]
     add_fieldsets = (
-        ("Personal Info", {
+        (_("Personal Info"), {
             "fields": (
-                "profile_image_preview",
                 "profile_image",
                 "username",
                 "first_name",
@@ -97,37 +99,33 @@ class AccountAdmin(UserAdmin):
                 "gender",
                 "password1",
                 "password2",
-                
             ),
         }),
-        ("Member Info", {
+        (_("Member Info"), {
             "fields": (
-                "biography", "employment_status", "member_classification", "maiden_name",
+                "biography",
+                "employment_status",
+                "member_classification",
+                "maiden_name",
+                "family",
             ),
         }),
-        ("Contact & Socials", {
+        (_("Contact Information"), {
             "fields": (
                 "phone",
                 "address",
-                
             ),
         }),
-        
-        ("Permissions", {
+        (_("Permissions"), {
             "fields": (
                 "role",
-                "family",
                 "is_active",
                 "is_staff",
                 "is_approved",
                 "is_superuser",
                 "is_family_leader",
                 "groups",
-                
             ),
-        }),
-        ("Important Dates", {
-            "fields": ("last_login", "created", "updated"),
         }),
     )
     fieldsets = (
@@ -144,21 +142,29 @@ class AccountAdmin(UserAdmin):
                 "phone",
                 "gender",
                 "address",
-            )
-        }),("Member Info", {
-            "fields": (
-                "biography", "employment_status", "member_classification", "maiden_name",
             ),
         }),
-        
+        (_("Member Info"), {
+            "fields": (
+                "biography",
+                "employment_status",
+                "member_classification",
+                "maiden_name",
+            ),
+        }),
         (_("Clan Information"), {
-            "fields": ("role", "family", "is_family_leader",)
+            "fields": ("role", "family", "is_family_leader"),
         }),
         (_("Permissions & Status"), {
-            "fields": ("is_active", "is_staff", "is_superuser", "is_approved", "groups",)
+            "fields": ("is_active", "is_staff", "is_superuser", "is_approved", "groups"),
         }),
-        (_("Timestamps"), {
-            "fields": ("created", "updated")
+        (_("Password Management"), {
+            "classes": ("collapse",),
+            "fields": ("password",),
+            "description": _("Reset password (collapsible section)"),
+        }),
+        (_("Important Dates"), {
+            "fields": ("last_login", "created", "updated"),
         }),
     )
 
