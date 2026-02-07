@@ -14,7 +14,7 @@ logger = logging.getLogger("accounts")
 
 @admin.action(description="Approve selected members/family")
 def approve_members(modeladmin, request, queryset):
-    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.superuser:
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.is_superuser:
         messages.error(request, "Only executives are allowed to approve members.")
         return
     
@@ -25,7 +25,7 @@ def approve_members(modeladmin, request, queryset):
     
 @admin.action(description="Welcome new member")
 def welcome_new_member(modeladmin, request, queryset):
-    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.superuser:
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.is_superuser:
         messages.error(request, "Only executives are allowed to welcome new members.")
         return
     
