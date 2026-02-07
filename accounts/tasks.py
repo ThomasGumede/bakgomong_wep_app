@@ -8,6 +8,7 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 logger = logging.getLogger("tasks")
 
@@ -239,7 +240,22 @@ def welcome_member_task(user_pk):
     send_verification_email_task(user_pk)
     send_sms_task(user_pk)    
     
-    
+def send_notification_new_meeting_to_members_task(meeting_pk):
+    from accounts.models import Meeting
+    try:
+        meeting = Meeting.objects.get(pk=meeting_pk)
+        users = meeting.get_audience_members()
+        for user in users:
+            if user.email:
+                send_notification_new_meeting_task(meeting_pk, user.email, f"New Meeting Scheduled: {meeting.title}")
+            if getattr(user, "phone", None):
+                from contributions.utils.notifications import send_smsportal_sms
+                sms_message = f"New Upcoming Meeting: {meeting.title} on {meeting.date_time_formatter}, at {meeting.meeting_venue}. Contact excecutives for more information."
+                send_smsportal_sms(user.phone, sms_message)
+                
+    except Meeting.DoesNotExist:
+        logger.error("send_notification_new_meeting_to_members_task: Meeting %s not found", meeting_pk)
+        return False
     
     
     

@@ -441,6 +441,23 @@ class Meeting(AbstractCreate):
             return f"{self.family.name}"
         return "—"
     
+    def get_audience_members(self):
+        """Returns a queryset of members who should attend this meeting based on the audience."""
+        User = get_user_model()
+        if self.audience == SCOPE_CHOICES.CLAN:
+            return User.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+        elif self.audience == SCOPE_CHOICES.FAMILY and self.family:
+            return User.objects.filter(is_active=True, is_approved=True, family=self.family).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+        elif self.audience == SCOPE_CHOICES.FAMILY_LEADERS:
+            return User.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+        elif self.audience == SCOPE_CHOICES.EXECUTIVES:
+            return User.objects.filter(is_active=True, is_approved=True, role__in=[
+                Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
+                Role.KGOSANA, Role.SECRETARY, Role.TREASURER
+            ]).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+        else:
+            return User.objects.none()
+    
     # -----------------------------------------------
     # 🔐 ACCESS CONTROL LOGIC
     # -----------------------------------------------
