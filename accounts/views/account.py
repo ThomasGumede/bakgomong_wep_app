@@ -115,7 +115,7 @@ def add_member(request, family_slug):
                     user.save()
                     
                 # queue verification email (non-blocking) via django-q
-                async_task("accounts.tasks.send_sms_task", user.pk)
+                # async_task("accounts.tasks.send_sms_task", user.pk)
                 async_task("accounts.tasks.send_verification_email_task", user.pk)
                 # async_task("accounts.tasks.send_notification_new_member_task", user.pk)
                 logger.info("Queued verification email for user %s (pk=%s)", user.username, user.pk)

@@ -33,6 +33,15 @@ def welcome_new_member(modeladmin, request, queryset):
         async_task("accounts.tasks.welcome_member_task", account.id)
     messages.success(request, f"Welcome tasks queued for {queryset.count()} new member(s).")
 
+@admin.action(description="Notify members of new meeting")
+def notify_members_of_new_meeting(modeladmin, request, queryset):
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are allowed to notify members of new meetings.")
+        return
+    
+    for meeting in queryset:
+        async_task("accounts.tasks.send_notification_new_meeting_task", meeting.id, to=None)
+    messages.success(request, f"Notification tasks queued for {queryset.count()} meeting(s).")
 # ------------------------------------------------------------
 # Inline display: show all members under a family
 # ------------------------------------------------------------

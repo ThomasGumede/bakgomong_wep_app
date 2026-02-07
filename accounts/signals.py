@@ -32,7 +32,7 @@ def notify_members_on_meeting_create(sender, instance: Meeting, created, **kwarg
             logger.warning("No members found for ContributionType %s (scope %s)", instance.id, instance.scope)
             return
         email_subject = f"New Meeting Scheduled: {instance.title}"
-        sms_message = f"New Meeting: {instance.title} on {instance.date_time_formatter}, at {instance.meeting_venue}. Contact excecutives for more information."
+        sms_message = f"New Upcoming Meeting: {instance.title} on {instance.date_time_formatter}, at {instance.meeting_venue}. Contact excecutives for more information."
         
         for member in members_qs:
             logger.info("Queuing notifications for Meeting %s to member %s (email: %s, phone: %s)", 
