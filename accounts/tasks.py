@@ -31,7 +31,7 @@ def send_sms_task(user_pk):
         return False, {"error": "User has no phone number"}
     
     try:
-        message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla. Your account has been created successfully."
+        message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla Ya Malla. Your account has been created successfully on our system."
         success, response = send_smsportal_sms(user.phone, message)
         
         if success:
