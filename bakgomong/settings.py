@@ -2,7 +2,6 @@ import os, re
 from pathlib import Path
 from bakgomong.logging import LOGGING
 from decouple import config, Csv
-from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,8 +35,6 @@ INSTALLED_APPS = [
     'contributions',
     
     'tinymce',
-    'django_celery_beat',
-    'django_celery_results',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -160,27 +157,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Celery
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_EAGER_PROPAGATES = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_RESULT_EXTENDED = True
-CELERY_worker_state_db = True
-CELERY_result_persistent = True
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_TIMEZONE = 'Africa/Johannesburg'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
-
-CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  # Optional, for timeout adjustments
-CELERY_TASK_IGNORE_RESULT = True
-CELERY_ACKS_LATE = True  # Ensures tasks are acknowledged after execution
-CELERY_RETRY_POLICY = {
-    'max_retries': 3,
-    'interval_start': 0,
-    'interval_step': 0.2,
-    'interval_max': 0.5,
-}
 
 # Tailwind
 INSTALLED_APPS += ['tailwind', 'theme']
@@ -246,9 +222,13 @@ EMAIL_HOST_USER = 'noreply@bakgomong.co.za'
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = 'BAKMGOMONG <noreply@bakgomong.co.za>'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-
-SMSPORTAL_CLIENT_ID=config('Client_ID')
-SMSPORTAL_API_SECRET=config('API_Secret')
+if DEBUG:
+    SMSPORTAL_CLIENT_ID=config('Client_ID')
+    SMSPORTAL_API_SECRET=config('API_Secret')
+else:
+    SMSPORTAL_CLIENT_ID=config('Client_ID_LIVE')
+    SMSPORTAL_API_SECRET=config('API_Secret_LIVE')
+    
 SMSPORTAL_URL='https://rest.smsportal.com/bulkmessages'
 TWILIO_SID=config('TWILIO_SID')
 TWILIO_AUTH_TOKEN=config('TWILIO_AUTH_TOKEN')

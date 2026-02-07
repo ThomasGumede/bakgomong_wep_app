@@ -1,0 +1,11 @@
+command=/home/bakgomong_wep_app/env/bin/python manage.py qcluster
+user=root
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs=600
+redirect_stderr=true
+stdout_logfile=/var/log/django-q.log
+stderr_logfile=/var/log/django-q-error.log
+environment=DJANGO_SETTINGS_MODULE="bakgomong.settings",PYTHONUNBUFFERED="1

@@ -124,7 +124,7 @@ class AccountAdmin(UserAdmin):
                 "is_approved",
                 "is_superuser",
                 "is_family_leader",
-                "groups",
+                
             ),
         }),
     )
@@ -156,7 +156,7 @@ class AccountAdmin(UserAdmin):
             "fields": ("role", "family", "is_family_leader"),
         }),
         (_("Permissions & Status"), {
-            "fields": ("is_active", "is_staff", "is_superuser", "is_approved", "groups"),
+            "fields": ("is_active", "is_staff", "is_superuser", "is_approved",),
         }),
         (_("Password Management"), {
             "classes": ("collapse",),
