@@ -42,6 +42,8 @@ def notify_members_of_new_meeting(modeladmin, request, queryset):
     for meeting in queryset:
         async_task("accounts.tasks.send_notification_new_meeting_to_members_task", meeting.id)
     messages.success(request, f"Notification tasks queued for {queryset.count()} meeting(s).")
+    
+
 # ------------------------------------------------------------
 # Inline display: show all members under a family
 # ------------------------------------------------------------

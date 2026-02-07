@@ -4,10 +4,22 @@ from django.utils.html import format_html
 from django.urls import reverse
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
+from django_q.tasks import async_task
 
 from contributions.models import ContributionType, MemberContribution, Payment, SMSLog
+from utilities.choices import Role
 
 logger = logging.getLogger("contributions.admin")
+
+@admin.action(description="Notify member(s) of unpaid contributions")
+def notify_members_of_unpaid_contributions(modeladmin, request, queryset):
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are allowed to notify members of unpaid contributions.")
+        return
+    
+    for mc in queryset:
+        async_task("contributions.tasks.send_notification_unpaid_contributions_task", mc.id)
+    messages.success(request, f"Notification tasks queued for {queryset.count()} member(s) with unpaid contributions.")
 
 @admin.register(ContributionType)
 class ContributionTypeAdmin(admin.ModelAdmin):
@@ -97,6 +109,7 @@ class MemberContributionAdmin(admin.ModelAdmin):
     search_fields = ("account__username", "account__first_name", "account__last_name", "reference")
     readonly_fields = ("created", "updated", "reference")
     date_hierarchy = "due_date"
+    actions = [notify_members_of_unpaid_contributions]
 
     fieldsets = (
         (_("Member & Contribution"), {

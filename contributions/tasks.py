@@ -174,12 +174,7 @@ def send_payment_reminder():
 
         # Send SMS if phone exists
         if member.phone:
-            sms_message = (
-                f"Reminder: {contribution.name}\n"
-                f"Amount: R{mc.amount_due:.2f}\n"
-                f"Due: {mc.due_date}\n"
-                f"Pay: {payment_url}"
-            )
+            sms_message = f"Payment overdue for {contribution.name}, amount R{mc.amount_due:.2f} - please pay by {mc.due_date}. Pay online: {payment_url}"
             try:
                 success, response = send_smsportal_sms(member.phone, sms_message)
                 if success:
@@ -216,11 +211,74 @@ def send_payment_reminder():
                 logger.info("Payment reminder sent to %s for %s", member.email, mc.id)
             except Exception:
                 logger.exception("Failed to send email reminder to %s", member.email)
+                
+                
 
     logger.info("Sent payment reminders: %d upcoming, %d due today, %d overdue",
                 len(upcoming), len(due_today), len(overdue))
     return True
 
+def send_notification_unpaid_contributions_task(mc_id):
+    try:
+        today = timezone.now().date()
+        mc = MemberContribution.objects.select_related("account", "contribution_type").get(id=mc_id)
+        payment_url = f"{settings.SITE_URL}/contributions/{mc.id}/pay/"
+        member = mc.account
+        # Determine reminder type
+        if mc.due_date == today + timedelta(days=10):
+            subject_prefix = "⏰ Upcoming Payment Due"
+            reminder_type = "upcoming"
+        elif mc.due_date == today:
+            subject_prefix = "📌 Payment Due Today"
+            reminder_type = "due_today"
+        else:
+            subject_prefix = "⚠️ Payment Overdue"
+            reminder_type = "overdue"
+            
+        if member.phone:
+            sms_message = f"Payment overdue for {mc.contribution_type.name}, amount R{mc.amount_due:.2f} - please pay by {mc.due_date}. Pay online: {payment_url}"
+            try:
+                success, response = send_smsportal_sms(member.phone, sms_message)
+                if success:
+                    logger.info("SMS reminder sent to %s for %s", member.phone, mc.id)
+                else:
+                    logger.warning("SMS reminder failed for %s: %s", member.phone, response)
+            except Exception:
+                logger.exception("Failed to send SMS reminder to %s", member.phone)
+                
+        if member.email:
+            try:
+                context = {
+                    "user": member.get_full_name() or member.username,
+                    "contribution_name": mc.contribution_type.name,
+                    "amount": mc.amount_due,
+                    "due_date": mc.due_date,
+                    "reference": mc.reference,
+                    "payment_url": payment_url,
+                    "reminder_type": reminder_type,
+                }
+                html_content = render_to_string("emails/payment-reminder.html", context)
+                text_content = strip_tags(html_content)
+
+                from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@bakgomong.co.za")
+                msg = EmailMultiAlternatives(
+                    subject=f"{subject_prefix}: {mc.contribution_type.name}",
+                    body=text_content,
+                    from_email=from_email,
+                    to=[member.email],
+                )
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+                logger.info("Payment reminder sent to %s for %s", member.email, mc.id)
+            except Exception:
+                logger.exception("Failed to send email reminder to %s", member.email)
+            
+    except MemberContribution.DoesNotExist:
+        logger.error("MemberContribution %s not found for unpaid notification", mc_id)
+        return False
+    except Exception:
+        logger.exception("Failed to send unpaid contribution notification for %s", mc_id)
+        return False
 def send_payment_confirmation_task(member_contribution_id, treasurer_name):
     """
     Sends payment confirmation email + PDF invoice (WeasyPrint) 
