@@ -16,7 +16,7 @@ def send_sms_task(user_pk):
     Background task: send welcome SMS to user.
     Returns (success bool, response dict).
     """
-    from contributions.utils.notifications import send_sms_via_bulksms
+    from contributions.utils.notifications import send_smsportal_sms
     User = get_user_model()
     
     try:
@@ -32,7 +32,7 @@ def send_sms_task(user_pk):
     
     try:
         message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla. Your account has been created successfully."
-        success, response = send_sms_via_bulksms(user.phone, message)
+        success, response = send_smsportal_sms(user.phone, message)
         
         if success:
             logger.info("Welcome SMS sent to %s (User %s)", user.phone, user_pk)
@@ -230,3 +230,17 @@ def send_html_email_task(subject, to_email, template_name, context, attachments=
     except Exception:
         logger.exception("send_html_email_task failed for %s", to_email)
         return False
+    
+
+def welcome_member_task(user_pk):
+    """
+    Example task to send welcome email and SMS to new member.
+    """
+    send_verification_email_task(user_pk)
+    send_sms_task(user_pk)    
+    
+    
+    
+    
+    
+    

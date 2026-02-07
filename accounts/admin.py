@@ -2,6 +2,7 @@ from django.contrib import admin, messages
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
+from django_q.tasks import async_task
 import logging
 from django.db import models
 from django.db.models import Count
@@ -13,7 +14,7 @@ logger = logging.getLogger("accounts")
 
 @admin.action(description="Approve selected members/family")
 def approve_members(modeladmin, request, queryset):
-    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER] or not request.user.is_family_leader:
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.superuser:
         messages.error(request, "Only executives are allowed to approve members.")
         return
     
@@ -21,6 +22,16 @@ def approve_members(modeladmin, request, queryset):
         is_approved=True,
     )
     messages.success(request, f"{queryset.count()} member(s) or families approved successfully.")
+    
+@admin.action(description="Welcome new member")
+def welcome_new_member(modeladmin, request, queryset):
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.superuser:
+        messages.error(request, "Only executives are allowed to welcome new members.")
+        return
+    
+    for account in queryset:
+        async_task("accounts.tasks.welcome_member_task", account.id)
+    messages.success(request, f"Welcome tasks queued for {queryset.count()} new member(s).")
 
 # ------------------------------------------------------------
 # Inline display: show all members under a family
@@ -84,7 +95,7 @@ class AccountAdmin(UserAdmin):
     date_hierarchy = "created"
     readonly_fields = ("created", "updated", "profile_image_preview", "last_login")
     filter_horizontal = ("groups",)
-    actions = [approve_members]
+    actions = [approve_members, welcome_new_member]
     add_fieldsets = (
         (_("Personal Info"), {
             "fields": (
