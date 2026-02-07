@@ -23,7 +23,7 @@
     <!-- ================== OPEN GRAPH / FACEBOOK ================== -->
     <meta property="og:title" content="Bakgomong Clan - Login">
     <meta property="og:description"
-        content="Join the Bakgomong Clan’s digital - Login — manage family payments, events, and savings online.">
+        content="Join the Bakgomong Clan's digital - Login — manage family payments, events, and savings online.">
     <meta property="og:image" content="{% static 'images/logo.png' %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
@@ -101,7 +101,7 @@
             <div class="lg:max-w-[464px] mx-auto w-full">
                 <div>
                     <a href="" class="mb-2.5 max-w-[290px]">
-                        <img src="{% static 'images/logo.png' %}" alt="">
+                        <img src="{% static 'images/logo 2.png' %}" alt="">
                     </a>
                     <h4 class="mb-3">Sign In to your Account</h4>
                     <p class="mb-8 text-secondary-light text-lg">Welcome back! please enter your detail</p>
@@ -137,9 +137,7 @@
                                     id="remeber">
                                 <label class="ps-2" for="remeber">Remember me </label>
                             </div>
-                            <a href="{% url 'accounts:password-reset' %}"
-                                class="text-primary-600 font-medium hover:underline">Forgot
-                                Password?</a>
+        
                         </div>
                     </div>
 
@@ -148,10 +146,7 @@
                         In</button>
 
 
-                    <div class="mt-8 text-center text-sm">
-                        <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}"
-                                class="text-primary-600 font-semibold hover:underline">Sign Up</a></p>
-                    </div>
+                    
 
                 </form>
             </div>

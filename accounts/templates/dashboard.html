@@ -16,10 +16,10 @@ Home
         <span class="mb-0 w-20 h-20 bg-warning-600 flex-shrink-0 text-white flex justify-center items-center ">
             <img class=" w-20 h-20"
                 src="{% static 'images/kgotla.jpg' %}"
-                alt="Bakgomong Kgotla Yamalla">
+                alt="Bakgomong Kgotla Ya Malla">
         </span>
         <div>
-            <h3 class="text-xl font-bold text-gray-700">Bakgomong Kgotla Yamalla
+            <h3 class="text-xl font-bold text-gray-700">Bakgomong Kgotla Ya Malla
             </h3>
             <p class="text-sm text-gray-600">Total Invoces: <span
                     class="font-semibold text-gray-800">{{payments.count}}</span>
@@ -33,19 +33,19 @@ Home
 
     <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
         <div class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Kgotla Account Balance</p>
+            <p class="font-medium">Bakgomong Full Account Balance</p>
             <p class="text-green-600 font-bold text-lg">R{{clan_total_paid}}</p>
         </div>
         <div class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Kgotla Outstanding Balance</p>
+            <p class="font-medium">Bakgomong Full Outstanding Balance</p>
             <p class="text-red-500 font-bold text-lg">R{{clan_total_unpaid}}</p>
         </div>
         <div class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You've Paid Kgotla:</p>
+            <p class="font-medium">You've Paid Bakgomong:</p>
             <p class="text-yellow-600 font-bold text-lg">R{{request.user.total_paid}}</p>
         </div>
         <div class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You Owe Kgotla:</p>
+            <p class="font-medium">You Owe Bakgomong:</p>
             <p class="text-red-500 font-bold text-lg">R{{request.user.total_unpaid}}</p>
         </div>
     </div>

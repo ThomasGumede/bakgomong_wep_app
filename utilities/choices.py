@@ -37,10 +37,15 @@ class MemberClassification(models.TextChoices):
     CHILD = ("CHILD", "Child")
     PARENT = ("PARENT", "Parent")
     GRANDPARENT = ("GRANDPARENT", "Grandparent")
+    GRANDCHILD = ("GRANDCHILD", "Grandchild")
+    GRANDPARENT_IN_LAW = ("GRANDPARENT_IN_LAW", "Grandparent-in-law")
+    SIBLING = ("SIBLING", "Sibling")
+    PARENT_IN_LAW = ("PARENT_IN_LAW", "Parent-in-law")
     OTHER = ("OTHER", "Other")
     
 class Role(models.TextChoices):
     KGOSANA = ("KGOSANA", "Kgosana")
+    MMAKGOSANA = ("MMAKGOSANA", "Mmakgosana")
     CLAN_CHAIRPERSON = ("CLAN_CHAIRPERSON", "Chairperson")
     MEMBER = ("MEMBER", "Member")
     DEP_CHAIRPERSON = ("DEP_CHAIRPERSON", "Deputy Chairperson")
