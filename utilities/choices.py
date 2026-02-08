@@ -52,6 +52,7 @@ class Role(models.TextChoices):
     SECRETARY = ("SECRETARY", "Secretary")
     DEP_SECRETARY = ("DEP_SECRETARY", "Deputy Secretary")
     TREASURER = ("TREASURER", "Treasurer")
+    SPONSOR = ("SPONSOR", "Sponser")
     
 class PaymentMethod(models.TextChoices):
         CASH = 'cash', _('Cash')

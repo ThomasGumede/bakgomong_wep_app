@@ -1,0 +1,122 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+Log Payments
+{% endblock dash_title %}
+
+{% block content %}
+<div class="grid grid-cols-12">
+    <div class="col-span-12">
+        <div class="card border-0 p-2">
+            <div class="card-body">
+                <div class="table-responsive scroll-sm" role="region" aria-label="Contributions table">
+                    {% if contributions and contributions|length > 0 %}
+                    <table id="selection-table" class="table bordered-table mb-0" aria-describedby="contrib-desc">
+                        <caption id="contrib-desc" class="sr-only">List of member contributions and payment status
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Reference</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Issued</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in contributions %}
+                            <tr>
+                                <td><a href="{{ inv.get_absolute_url }}" class="text-primary-600"
+                                        aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}"
+                                            alt="{{ inv.account.get_full_name }} profile"
+                                            class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
+                                        <h6 class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</h6>
+                                    </div>
+                                </td>
+                                <td>{{ inv.created|date:"d M Y" }}</td>
+                                <td>R{{ inv.amount_due|floatformat:2 }}</td>
+                                <td>
+                                    {% if inv.is_paid == 'PAID' %}
+                                    <span class="badge badge-success" role="status" aria-label="Paid">Paid</span>
+                                    {% elif inv.is_paid == 'PENDING' %}
+                                    <span class="badge badge-warning" role="status" aria-label="Pending">Pending</span>
+                                    {% else %}
+                                    <span class="badge badge-danger" role="status" aria-label="Not paid">Not paid</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
+                                    {% if inv.is_paid == 'PAID' %}
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
+                                
+                                    {% elif inv.is_paid == 'NOT_PAID' or inv.is_paid == 'PENDING' or inv.is_paid == 'AWAITING PAYMENT' %}
+                                
+                                    {# Treasurer or staff, but not the invoice owner #}
+                                    {% if request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
+                                
+                                    <a href="{% url 'contributions:checkout' inv.id %}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        Pay now
+                                    </a>
+                                    {# Regular member paying their own NOT_PAID invoice #}
+                                    {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
+                                    <a href="{% url 'contributions:log-payment' inv.id %}"
+                                        class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Log payment for {{ inv.reference }}">
+                                        Log payment
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ inv.get_absolute_url }}"
+                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                        aria-label="Pay contribution {{ inv.reference }}">
+                                        View receipt
+                                    </a>
+                                    {% endif %}
+                                
+                                    {% endif %}
+                                
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    
+                    {% else %}
+                    <div class="p-6 text-center">
+                        <h3 class="mb-2">No payments or invoices found</h3>
+                        <p class="text-muted mb-4">There are currently no payments or invoices to display.</p>
+                        {% if request.user.is_staff or request.user.role == 'TREASURER' %}
+                        <a href="{% url 'contributions:add-contribution' %}" class="btn btn-primary">Create
+                            Contribution</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // keep DataTable initialization but guard against empty table
+    if (document.getElementById("selection-table") && typeof simpleDatatables !== 'undefined') {
+        let table = new simpleDatatables.DataTable("#selection-table", {
+            searchable: true,
+            perPage: 25,
+            columns: [{select: [0, 5], sortable: false}]
+        });
+    }
+</script>
+{% endblock scripts %}

@@ -1,0 +1,126 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+Log Payment
+{% endblock dash_title %}
+{% block dash_title2 %}
+Log Payment
+{% endblock dash_title2 %}
+{% block statement_title %}
+
+{% if inv.account == request.user %}
+<p>You are paying for yourself</p>
+{% else %}
+<p>NB: You are logging payment</p>
+{% endif %}
+
+
+{% endblock statement_title %}
+{% block content %}
+
+<div class="grid grid-cols-12 gap-5">
+
+    <div class="col-span-12">
+        <div class="card border-0 p-2">
+            <div class="card-header">
+                <h5 class="text-lg font-semibold mb-0">Log Payment</h5>
+            </div>
+            <div class="card-body grid gap-3">
+                {% include 'includes/errors.html' %}
+                <form method="post" enctype="multipart/form-data" class="grid grid-cols-12 gap-4">
+
+                    {% csrf_token %}
+
+                    
+                    <div class="col-span-12">
+                        <label class="form-label">Selet Member Contribution</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.member_contribution}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.member_contribution.help_text}}</span>
+                            {% if form.member_contribution.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.member_contribution.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-span-12">
+                        <label for="id_proof_of_payment" class="form-label">Select Proof Of Payment* </label>
+                        <input class="border border-neutral-200 dark:border-neutral-600 w-full rounded-lg" type="file" id="id_proof_of_payment" name="proof_of_payment">
+                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.proof_of_payment.help_text}}</span>
+                        {% if form.proof_of_payment.errors %}
+                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.proof_of_payment.errors.as_text}}</span>
+                        {% endif %}
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Receipt number*</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.receipt}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.receipt.help_text}}</span>
+                            {% if form.receipt.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.receipt.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Reference number*</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.reference}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.reference.help_text}}</span>
+                            {% if form.reference.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.reference.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Payment Method</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.payment_method}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.payment_method.help_text}}</span>
+                            {% if form.payment_method.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.payment_method.errors.as_text}}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 col-span-12">
+                        <label class="form-label">Contribution Amount</label>
+                        <div class="icon-field has-validation">
+                            <span class="icon">
+                                <iconify-icon icon="f7:person"></iconify-icon>
+                            </span>
+                            {{form.amount}}
+                            <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.amount.help_text}}</span>
+                            {% if form.amount.errors %}
+                            <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.amount.errors.as_text}}</span>
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-span-12">
+                        <button class="btn btn-primary-600" type="submit">Proceed</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}

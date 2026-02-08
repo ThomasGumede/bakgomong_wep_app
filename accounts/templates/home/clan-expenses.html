@@ -1,0 +1,67 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block dash_title %}
+BAKGOMONG Costs
+{% endblock dash_title %}
+
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+<div
+    class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
+    <div class="flex w-fit items-center space-x-4 mb-4">
+        <span class="mb-0 w-20 h-20 bg-warning-600 flex-shrink-0 text-white flex justify-center items-center ">
+            <img class=" w-20 h-20" src="{% static 'images/kgotla.jpg' %}" alt="Bakgomong Kgotla Ya Malla">
+        </span>
+        <div>
+            <h3 class="text-xl font-bold text-gray-700">Bakgomong Kgotla Ya Malla Costs
+            </h3>
+            <p class="text-sm text-gray-600">Total Costs: <span
+                    class="font-semibold text-gray-800">R4700</span>
+            </p>
+            <p class="text-sm text-gray-600">Total Members: <span
+                    class="font-semibold text-gray-800">180+</span>
+            </p>
+
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+        <div
+            class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Bakgomong Website Cost</p>
+            <p class="text-green-600 font-bold text-lg">R170/Month</p>
+        </div>
+        <div
+            class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Bakgomong SMS Costs</p>
+            <p class="text-red-500 font-bold text-lg">R200/Month</p>
+        </div>
+        <div
+            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Bakgomong Developer Costs:</p>
+            <p class="text-yellow-600 font-bold text-lg">R4100/Once off - (R2100 remaining)</p>
+        </div>
+        <div
+            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Other Costs:</p>
+            <p class="text-red-500 font-bold text-lg">3% - 5% every online transaction</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Table End -->
+{% endblock content %}
+
+
+{% block scripts %}
+
+
+{% endblock scripts %}

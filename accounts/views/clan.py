@@ -21,6 +21,9 @@ def can_manage_meetings(user):
         user.is_superuser or 
         getattr(user, "role", None) in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.SECRETARY, Role.TREASURER, Role.DEP_SECRETARY, Role.KGOSANA]
     )
+    
+def clan_expenses(request):
+    return render(request, "home/clan-expenses.html")
 
 @login_required
 def dashboard(request):

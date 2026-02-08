@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Confirmed</title>
+    <style>
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            color: #111827;
+        }
+
+        @media screen and (max-width:600px) {
+            .container {
+                width: 100% !important;
+            }
+
+            .stack {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .button-stack {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .button-stack a {
+                display: block !important;
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+
+            .pad-sm {
+                padding: 12px !important;
+            }
+
+            .h1 {
+                font-size: 22px !important;
+                line-height: 28px !important;
+            }
+
+            .details {
+                font-size: 12px !important;
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            background: #10b981;
+            color: #ffffff;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .preheader {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            color: transparent;
+            height: 0;
+            width: 0;
+        }
+
+        .success-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .details td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .details th {
+            padding: 12px;
+            background: #f3f4f6;
+            text-align: left;
+            font-weight: 600;
+            color: #0b2540;
+            font-size: 14px;
+        }
+
+        .alert-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 18px 0;
+        }
+
+        .alert-box strong {
+            color: #059669;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #eef2f6;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="preheader">Your payment has been confirmed. Thank you for your contribution to BAKGOMONG.</div>
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" valign="top" style="padding:20px 16px;">
+                <table class="container" border="0" cellpadding="0" cellspacing="0" width="600"
+                    style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+
+                    <!-- HEADER -->
+                    <tr>
+                        <td
+                            style="padding:20px 24px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="left" style="vertical-align:middle;">
+                                        <img src="https://www.wedodev.co.za/static/images/logo-icon.png" width="48"
+                                            height="48" alt="BAKGOMONG" style="display:block;border-radius:6px;" />
+                                    </td>
+                                    <td align="right" style="vertical-align:middle;padding-left:16px;">
+                                        <div style="font-size:16px;font-weight:700;">BAKGOMONG</div>
+                                        <div style="font-size:12px;opacity:0.9;">Kgotla Community</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- MAIN CONTENT -->
+                    <tr>
+                        <td style="padding:32px 24px;">
+                            <!-- SUCCESS BADGE -->
+                            <div style="text-align:center;margin-bottom:20px;">
+                                <div class="success-badge">✓</div>
+                            </div>
+
+                            <h1 class="h1"
+                                style="margin:0 0 12px;font-size:26px;line-height:32px;color:#0b2540;text-align:center;">
+                                Payment Confirmed
+                            </h1>
+                            <p style="margin:0 0 24px;color:#6b7280;font-size:15px;line-height:22px;text-align:center;">
+                                Thank you {{ user }}, your payment has been successfully received and confirmed.
+                            </p>
+
+                            <!-- SUCCESS ALERT -->
+                            <div class="alert-box">
+                                <strong>✓ Payment Status: CONFIRMED</strong><br>
+                                Amount Paid: <strong>R{{ amount_paid }}</strong>
+                            </div>
+
+                            <!-- PAYMENT DETAILS TABLE -->
+                            <table class="details" width="100%" cellpadding="0" cellspacing="0"
+                                style="border:1px solid #e5e7eb;border-radius:6px;margin:24px 0;">
+                                <tr>
+                                    <th style="width:40%;">Details</th>
+                                    <th style="width:60%;">Information</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>Contribution Type</strong></td>
+                                    <td>{{ contribution_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amount Paid</strong></td>
+                                    <td style="font-size:16px;font-weight:600;color:#10b981;">R{{ amount_paid }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reference Number</strong></td>
+                                    <td><code
+                                            style="background:#f3f4f6;padding:4px 8px;border-radius:3px;font-family:monospace;">{{ reference }}</code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Payment Date</strong></td>
+                                    <td>{{ payment_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Confirmed By</strong></td>
+                                    <td>{{ treasurer_name }}</td>
+                                </tr>
+                            </table>
+
+                            <hr />
+
+                            <!-- NEXT STEPS -->
+                            <h3 style="margin:18px 0 12px;color:#0b2540;font-size:15px;font-weight:600;">What's Next?
+                            </h3>
+                            <ul style="margin:0;padding-left:20px;color:#6b7280;font-size:13px;line-height:22px;">
+                                <li>Your contribution is now marked as <strong>{{status}}</strong> in the system.</li>
+                                <li>You will receive a final receipt via email shortly.</li>
+                                <li>Contact the treasurer if you have any questions.</li>
+                            </ul>
+
+                            <hr />
+
+                            <!-- CTA BUTTON -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ dashboard_link }}" class="btn" style="width:100%;max-width:300px;">
+                                            📊 View Dashboard
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- SUPPORT -->
+                            <p style="margin:18px 0 0;color:#6b7280;font-size:13px;line-height:20px;text-align:center;">
+                                <strong>Have questions?</strong> Contact our support team at
+                                <a href="mailto:support@bakgomong.co.za"
+                                    style="color:#10b981;font-weight:600;text-decoration:none;">support@bakgomong.co.za</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- FOOTER -->
+                    <tr>
+                        <td
+                            style="padding:24px;background:#fbfdff;color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="stack" style="vertical-align:top;">
+                                        <strong style="color:#0b2540;display:block;margin-bottom:8px;">Kgotla Ya
+                                            Bakgomong</strong>
+                                        <div style="line-height:18px;">
+                                            stand 23 Malla Section<br>
+                                            Phokeng, 0335<br>
+                                            South Africa
+                                        </div>
+                                        <div style="margin-top:8px;">
+                                            <a href="mailto:support@bakgomong.co.za"
+                                                style="color:#10b981;text-decoration:none;">support@bakgomong.co.za</a>
+                                            &nbsp;•&nbsp;
+                                            <a href="tel:+27215551234" style="color:#10b981;text-decoration:none;">+27
+                                                21 555 1234</a>
+                                        </div>
+                                    </td>
+                                    <td align="right" class="stack"
+                                        style="vertical-align:top;padding-top:0;text-align:left;margin-top:12px;">
+                                        <a href="{{ site_url }}/privacy"
+                                            style="text-decoration:none;color:#10b981;font-weight:600;margin-right:12px;">Privacy</a>
+                                        &nbsp;•&nbsp;
+                                        <a href="{{ site_url }}/terms"
+                                            style="text-decoration:none;color:#10b981;font-weight:600;margin-left:12px;">Terms</a>
+                                        &nbsp;•&nbsp;
+                                        <a href="{{ site_url }}/unsubscribe"
+                                            style="text-decoration:none;color:#10b981;font-weight:600;margin-left:12px;">Unsubscribe</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="margin-top:16px;color:#9aa4b2;font-size:11px;line-height:16px;">
+                                You are receiving this email because you are a member of <strong>Kgotla Ya
+                                    BAKGOMONG</strong>.
+                                If you believe this was sent in error, please contact us immediately at
+                                <a href="mailto:support@bakgomong.co.za"
+                                    style="color:#10b981;">support@bakgomong.co.za</a>.
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
