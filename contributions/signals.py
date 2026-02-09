@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 from accounts.models import Account
-from utilities.choices import Role, PaymentStatus, Recurrence
+from utilities.choices import MemberClassification, Role, PaymentStatus, Recurrence
 from contributions.utils.notifications import generate_reference
 from contributions.models import ContributionType, MemberContribution, SCOPE_CHOICES
 
@@ -43,16 +43,16 @@ def create_member_contributions(sender, instance: ContributionType, created, **k
     try:
         # Determine target members
         if instance.scope == SCOPE_CHOICES.CLAN:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD])
         elif instance.scope == SCOPE_CHOICES.FAMILY and instance.family:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True, family=instance.family).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, family=instance.family).exclude(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD])
         elif instance.scope == SCOPE_CHOICES.FAMILY_LEADERS:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD])
         elif instance.scope == SCOPE_CHOICES.EXECUTIVES:
             members_qs = Account.objects.filter(is_active=True, is_approved=True, role__in=[
                 Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
                 Role.KGOSANA, Role.SECRETARY, Role.TREASURER
-            ]).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            ]).exclude(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD])
         else:
             logger.warning("Unknown scope '%s' for ContributionType %s", instance.scope, instance.id)
             return

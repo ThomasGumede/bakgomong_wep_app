@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django_q.tasks import async_task
 import logging
 from accounts.models import Account, Meeting
-from utilities.choices import SCOPE_CHOICES, Role, Role
+from utilities.choices import SCOPE_CHOICES, Role, Role, MemberClassification
 
 logger = logging.getLogger("accounts.signals")
 
@@ -14,16 +14,16 @@ def notify_members_on_meeting_create(sender, instance: Meeting, created, **kwarg
 
     try:
         if instance.audience == SCOPE_CHOICES.CLAN:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD])
         elif instance.audience == SCOPE_CHOICES.FAMILY and instance.family:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True, family=instance.family).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, family=instance.family).exclude(member_classification__in=[MemberClassification.CHILD, MemberClassification.GRANDCHILD])
         elif instance.audience == SCOPE_CHOICES.FAMILY_LEADERS:
-            members_qs = Account.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=[MemberClassification.CHILD, MemberClassification.GRANDCHILD])
         elif instance.audience == SCOPE_CHOICES.EXECUTIVES:
             members_qs = Account.objects.filter(is_active=True, is_approved=True, role__in=[
                 Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
                 Role.KGOSANA, Role.SECRETARY, Role.TREASURER
-            ]).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+            ]).exclude(member_classification__in=[MemberClassification.CHILD, MemberClassification.GRANDCHILD])
         else:
             logger.warning("Unknown audience '%s' for Meeting %s", instance.audience, instance.id)
             return

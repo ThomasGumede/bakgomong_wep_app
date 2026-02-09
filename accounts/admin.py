@@ -99,7 +99,7 @@ class AccountAdmin(UserAdmin):
     profile_image_preview.short_description = _("Profile Image Preview")
     
     list_display = ("profile_image_preview", "username", "first_name", "email", "family", "role", "is_active", "is_approved")
-    list_filter = ("role", "is_active", "gender", "is_approved", "created")
+    list_filter = ("role", "is_active", "gender", "is_approved", "created", "member_classification", "employment_status")
     search_fields = ("username", "first_name", "email", "phone", "family__name")
     list_select_related = ("family",)
     autocomplete_fields = ("family",)

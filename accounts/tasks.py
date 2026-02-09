@@ -2,7 +2,7 @@ import logging
 from django.contrib.auth import get_user_model
 # from accounts.models import Family
 from accounts.utils import custom_mail
-from utilities.choices import Role
+from utilities.choices import MemberClassification, Role
 from django.template.loader import get_template, render_to_string
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
@@ -21,7 +21,7 @@ def send_sms_task(user_pk):
     User = get_user_model()
     
     try:
-        user = User.objects.get(pk=user_pk)
+        user = User.objects.exclude(member_classification__in=[MemberClassification.CHILD, MemberClassification.GRANDCHILD]).get(pk=user_pk)
     except User.DoesNotExist:
         logger.error("send_sms_task: user %s not found", user_pk)
         return False, {"error": "User not found"}
@@ -52,7 +52,7 @@ def send_verification_email_task(user_pk):
     """
     User = get_user_model()
     try:
-        user = User.objects.get(pk=user_pk)
+        user = User.objects.exclude(member_classification__in=[MemberClassification.CHILD, MemberClassification.GRANDCHILD]).get(pk=user_pk)
     except User.DoesNotExist:
         logger.error("send_verification_email_task: user %s not found", user_pk)
         return False
