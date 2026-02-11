@@ -17,16 +17,16 @@ executive_roles = [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETA
 @admin.action(description="Allocate member to default family")
 def allocate_member_to_default_family(modeladmin, request, queryset):
     if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
-        messages.error(request, "Only executives are to perfom this task.")
+        messages.error(request, "Only executives are allowed to allocate members to families.")
         return
-
-    for member in queryset:
-        if member.family:
-            pass
-        else:
-            member.family = Family.objects.first()
     
-    messages.success(request, "Member allocated to default family")
+    default_family, created = Family.objects.get_or_create(name="Unassigned", defaults={"slug": "unassigned"}, is_approved=True)
+    updated_count = queryset.filter(family__isnull=True).update(family=default_family)
+    
+    if updated_count > 0:
+        messages.success(request, f"{updated_count} member(s) allocated to the default family.")
+    else:
+        messages.info(request, "No members were allocated. All selected members already belong to a family.")
     
 @admin.action(description="Approve selected members/family")
 def approve_members(modeladmin, request, queryset):
@@ -88,6 +88,7 @@ class FamilyAdmin(admin.ModelAdmin):
     
     list_display = ("name", "leader_display", "member_count", "created", "is_approved")
     search_fields = ("name", "leader__first_name", "leader__email")
+    list_editable = ("leader", "is_approved")
     list_filter = ("created", "is_approved",)
     prepopulated_fields = {"slug": ("name",)}
     inlines = [AccountInline]
@@ -112,7 +113,8 @@ class AccountAdmin(UserAdmin):
         return "—"
     profile_image_preview.short_description = _("Profile Image Preview")
     
-    list_display = ("username", "profile_image_preview", "first_name", "phone", "family", "member_classification", "is_active", "is_approved")
+    list_display = ("username", "first_name", "phone", "family", "member_classification", "is_active", "is_approved")
+    list_editable = ("family", "member_classification")
     list_filter = ("role", "is_active", "gender", "is_approved", "created", "member_classification", "employment_status")
     search_fields = ("username", "first_name", "email", "phone", "family__name")
     list_select_related = ("family",)
