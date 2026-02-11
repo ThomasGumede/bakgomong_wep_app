@@ -114,7 +114,6 @@ class AccountAdmin(UserAdmin):
     profile_image_preview.short_description = _("Profile Image Preview")
     
     list_display = ("username", "first_name", "phone", "family", "member_classification", "is_active", "is_approved")
-    list_editable = ("family", "member_classification")
     list_filter = ("role", "is_active", "gender", "is_approved", "created", "member_classification", "employment_status")
     search_fields = ("username", "first_name", "email", "phone", "family__name")
     list_select_related = ("family",)
