@@ -14,6 +14,20 @@ logger = logging.getLogger("accounts")
 
 executive_roles = [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA, Role.SPONSOR]
 
+@admin.action(description="Allocate member to default family")
+def allocate_member_to_default_family(modeladmin, request, queryset):
+    if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are to perfom this task.")
+        return
+
+    for member in queryset:
+        if member.family:
+            pass
+        else:
+            member.family = Family.objects.first()
+    
+    messages.success(request, "Member allocated to default family")
+    
 @admin.action(description="Approve selected members/family")
 def approve_members(modeladmin, request, queryset):
     if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
@@ -98,7 +112,7 @@ class AccountAdmin(UserAdmin):
         return "—"
     profile_image_preview.short_description = _("Profile Image Preview")
     
-    list_display = ("profile_image_preview", "username", "first_name", "phone", "family", "member_classification", "is_active", "is_approved")
+    list_display = ("username", "profile_image_preview", "first_name", "phone", "family", "member_classification", "is_active", "is_approved")
     list_filter = ("role", "is_active", "gender", "is_approved", "created", "member_classification", "employment_status")
     search_fields = ("username", "first_name", "email", "phone", "family__name")
     list_select_related = ("family",)
@@ -108,7 +122,7 @@ class AccountAdmin(UserAdmin):
     date_hierarchy = "created"
     readonly_fields = ("created", "updated", "profile_image_preview", "last_login")
     filter_horizontal = ("groups",)
-    actions = [approve_members, welcome_new_member]
+    actions = [approve_members, welcome_new_member, allocate_member_to_default_family]
     add_fieldsets = (
         (_("Personal Info"), {
             "fields": (
