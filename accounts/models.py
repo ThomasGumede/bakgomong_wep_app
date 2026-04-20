@@ -205,295 +205,295 @@ class Account(AbstractUser, AbstractProfile):
         from contributions.models import MemberContribution
         return MemberContribution.objects.filter(account=self, is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL])
     
-class ClanDocument(AbstractCreate):
-    class Visibility(models.TextChoices):
-        CLAN = "clan", _("Entire Clan")
-        FAMILY = "family", _("Specific Family")
-        PRIVATE = "private", _("Private (Admin Only)")
+# class ClanDocument(AbstractCreate):
+#     class Visibility(models.TextChoices):
+#         CLAN = "clan", _("Entire Clan")
+#         FAMILY = "family", _("Specific Family")
+#         PRIVATE = "private", _("Private (Admin Only)")
 
-    class Category(models.TextChoices):
-        MINUTES = "minutes", _("Meeting Minutes")
-        REPORT = "report", _("Financial / Contribution Report")
-        EVENT = "event", _("Event Notice or Program")
-        POLICY = "policy", _("Policy / Constitution")
-        OTHER = "other", _("Other")
+#     class Category(models.TextChoices):
+#         MINUTES = "minutes", _("Meeting Minutes")
+#         REPORT = "report", _("Financial / Contribution Report")
+#         EVENT = "event", _("Event Notice or Program")
+#         POLICY = "policy", _("Policy / Constitution")
+#         OTHER = "other", _("Other")
 
-    title = models.CharField(max_length=255, help_text=_("Enter the document title"))
-    slug = models.SlugField(max_length=300, unique=True, blank=True)
-    description = models.TextField(blank=True, null=True)
-    category = models.CharField(max_length=30, choices=Category.choices, default=Category.OTHER)
-    file = models.FileField(upload_to="clan_documents/%Y/%m/")
-    uploaded_by = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="uploaded_documents"
-    )
-    family = models.ForeignKey(
-        Family,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="documents",
-        help_text=_("Optional: restrict this document to a specific family"),
-    )
-    visibility = models.CharField(
-        max_length=20,
-        choices=Visibility.choices,
-        default=Visibility.CLAN,
-        help_text=_("Who can access this document"),
-    )
+#     title = models.CharField(max_length=255, help_text=_("Enter the document title"))
+#     slug = models.SlugField(max_length=300, unique=True, blank=True)
+#     description = models.TextField(blank=True, null=True)
+#     category = models.CharField(max_length=30, choices=Category.choices, default=Category.OTHER)
+#     file = models.FileField(upload_to="clan_documents/%Y/%m/")
+#     uploaded_by = models.ForeignKey(
+#         get_user_model(),
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="uploaded_documents"
+#     )
+#     family = models.ForeignKey(
+#         Family,
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="documents",
+#         help_text=_("Optional: restrict this document to a specific family"),
+#     )
+#     visibility = models.CharField(
+#         max_length=20,
+#         choices=Visibility.choices,
+#         default=Visibility.CLAN,
+#         help_text=_("Who can access this document"),
+#     )
 
-    class Meta:
-        verbose_name = _("Kgotla Document")
-        verbose_name_plural = _("Kgotla Documents")
-        ordering = ["-created"]
+#     class Meta:
+#         verbose_name = _("Kgotla Document")
+#         verbose_name_plural = _("Kgotla Documents")
+#         ordering = ["-created"]
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if not self.slug:
+#             self.slug = slugify(self.title)
+#         super().save(*args, **kwargs)
         
-    def clean(self):
-        """
-        Enforce family selection when scope is 'family',
-        and ensure family is None for other scopes.
-        """
-        from django.core.exceptions import ValidationError
+#     def clean(self):
+#         """
+#         Enforce family selection when scope is 'family',
+#         and ensure family is None for other scopes.
+#         """
+#         from django.core.exceptions import ValidationError
 
-        if self.visibility ==self.Visibility.FAMILY and not self.family:
-            raise ValidationError("A family must be selected when visibility is 'Specific Family'.")
+#         if self.visibility ==self.Visibility.FAMILY and not self.family:
+#             raise ValidationError("A family must be selected when visibility is 'Specific Family'.")
 
-        if self.visibility != self.Visibility.FAMILY and self.family is not None:
-            raise ValidationError("Family should only be set for 'Specific Family' visibility.")
+#         if self.visibility != self.Visibility.FAMILY and self.family is not None:
+#             raise ValidationError("Family should only be set for 'Specific Family' visibility.")
 
-    # -----------------------------------------------
-    # 🔐 ACCESS CONTROL LOGIC
-    # -----------------------------------------------
-    def user_has_access(self, user):
-        """
-        Determines if a given user can view/download this document.
-        """
-        # Unauthenticated users have no access
-        if not user.is_authenticated:
-            return False
+#     # -----------------------------------------------
+#     # 🔐 ACCESS CONTROL LOGIC
+#     # -----------------------------------------------
+#     def user_has_access(self, user):
+#         """
+#         Determines if a given user can view/download this document.
+#         """
+#         # Unauthenticated users have no access
+#         if not user.is_authenticated:
+#             return False
 
-        # Admins can access everything
-        if getattr(user, "role", None) == Role.CLAN_CHAIRPERSON or user.is_superuser:
-            return True
+#         # Admins can access everything
+#         if getattr(user, "role", None) == Role.CLAN_CHAIRPERSON or user.is_superuser:
+#             return True
 
-        # Clan-wide document
-        if self.visibility == self.Visibility.CLAN:
-            return True
+#         # Clan-wide document
+#         if self.visibility == self.Visibility.CLAN:
+#             return True
 
-        # Family-only document
-        if self.visibility == self.Visibility.FAMILY:
-            if self.family and user.family == self.family:
-                return True
-            return False
+#         # Family-only document
+#         if self.visibility == self.Visibility.FAMILY:
+#             if self.family and user.family == self.family:
+#                 return True
+#             return False
 
-        # Private (Admin-only)
-        if self.visibility == self.Visibility.PRIVATE:
-            return False
+#         # Private (Admin-only)
+#         if self.visibility == self.Visibility.PRIVATE:
+#             return False
 
-        return False
+#         return False
 
-    def ensure_user_has_access(self, user):
-        """
-        Raises PermissionDenied if user doesn't have access.
-        Useful in views or API endpoints.
-        """
-        if not self.user_has_access(user):
-            raise PermissionDenied(_("You do not have permission to access this document."))
-        return True
+#     def ensure_user_has_access(self, user):
+#         """
+#         Raises PermissionDenied if user doesn't have access.
+#         Useful in views or API endpoints.
+#         """
+#         if not self.user_has_access(user):
+#             raise PermissionDenied(_("You do not have permission to access this document."))
+#         return True
 
-    def file_name(self):
-        return self.file.name.split('/')[-1]
+#     def file_name(self):
+#         return self.file.name.split('/')[-1]
 
-class Meeting(AbstractCreate):
-    class MeetingType(models.TextChoices):
-        ONLINE = "online", _("Online Meeting")
-        IN_PERSON = "in_person", _("Live / In-Person Meeting")
+# class Meeting(AbstractCreate):
+#     class MeetingType(models.TextChoices):
+#         ONLINE = "online", _("Online Meeting")
+#         IN_PERSON = "in_person", _("Live / In-Person Meeting")
 
-    title = models.CharField(max_length=150, help_text=_("Enter meeting title"))
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
-    description = models.TextField(blank=True, null=True)
-    meeting_type = models.CharField(
-        max_length=20,
-        choices=MeetingType.choices,
-        default=MeetingType.IN_PERSON,
-        help_text=_("Specify whether this meeting is online or in-person."),
-    )
-    meeting_venue = models.CharField(max_length=150, help_text=_("Meeting Venue for in-person meetings"), blank=True, null=True)
-    meeting_link = models.URLField(
-        blank=True,
-        null=True,
-        help_text=_("Link for online meetings (e.g., Zoom, Google Meet)."),
-    )
-    audience = models.CharField(
-        max_length=30,
-        choices=SCOPE_CHOICES.choices,
-        default=SCOPE_CHOICES.CLAN,
-        help_text=_("Specify who this meeting is for."),
-    )
-    meeting_date = models.DateTimeField(help_text=_("Start date and time of the meeting"))
-    meeting_end_date = models.DateTimeField(help_text=_("End date and time of the meeting"))
-    created_by = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="meetings_created",
-        help_text=_("User who created this meeting"),
-    )
-    family = models.ForeignKey(
-        Family,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="meetings",
-        help_text=_("Optional: assign this meeting to a specific family if needed."),
-    )
-    meeting_status = models.CharField(
-        max_length=20,
-        choices=[
-            ("scheduled", "Scheduled"),
-            ("in_progress", "In Progress"),
-            ("completed", "Completed"),
-            ("cancelled", "Cancelled"),
-        ],
-        default="scheduled",
-        help_text=_("Status of the meeting (e.g., Scheduled, In Progress, Completed)."),
-    )
+#     title = models.CharField(max_length=150, help_text=_("Enter meeting title"))
+#     slug = models.SlugField(max_length=200, unique=True, blank=True)
+#     description = models.TextField(blank=True, null=True)
+#     meeting_type = models.CharField(
+#         max_length=20,
+#         choices=MeetingType.choices,
+#         default=MeetingType.IN_PERSON,
+#         help_text=_("Specify whether this meeting is online or in-person."),
+#     )
+#     meeting_venue = models.CharField(max_length=150, help_text=_("Meeting Venue for in-person meetings"), blank=True, null=True)
+#     meeting_link = models.URLField(
+#         blank=True,
+#         null=True,
+#         help_text=_("Link for online meetings (e.g., Zoom, Google Meet)."),
+#     )
+#     audience = models.CharField(
+#         max_length=30,
+#         choices=SCOPE_CHOICES.choices,
+#         default=SCOPE_CHOICES.CLAN,
+#         help_text=_("Specify who this meeting is for."),
+#     )
+#     meeting_date = models.DateTimeField(help_text=_("Start date and time of the meeting"))
+#     meeting_end_date = models.DateTimeField(help_text=_("End date and time of the meeting"))
+#     created_by = models.ForeignKey(
+#         get_user_model(),
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         related_name="meetings_created",
+#         help_text=_("User who created this meeting"),
+#     )
+#     family = models.ForeignKey(
+#         Family,
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name="meetings",
+#         help_text=_("Optional: assign this meeting to a specific family if needed."),
+#     )
+#     meeting_status = models.CharField(
+#         max_length=20,
+#         choices=[
+#             ("scheduled", "Scheduled"),
+#             ("in_progress", "In Progress"),
+#             ("completed", "Completed"),
+#             ("cancelled", "Cancelled"),
+#         ],
+#         default="scheduled",
+#         help_text=_("Status of the meeting (e.g., Scheduled, In Progress, Completed)."),
+#     )
 
-    class Meta:
-        verbose_name = _("Meeting")
-        verbose_name_plural = _("Meetings")
-        ordering = ["-meeting_date"]
+#     class Meta:
+#         verbose_name = _("Meeting")
+#         verbose_name_plural = _("Meetings")
+#         ordering = ["-meeting_date"]
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(f"{self.title}-{self.meeting_date.strftime('%Y%m%d%H%M')}")
-        super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if not self.slug:
+#             self.slug = slugify(f"{self.title}-{self.meeting_date.strftime('%Y%m%d%H%M')}")
+#         super().save(*args, **kwargs)
         
-    def clean(self):
-        from django.core.exceptions import ValidationError
+#     def clean(self):
+#         from django.core.exceptions import ValidationError
 
-        if self.meeting_type == self.MeetingType.IN_PERSON and not self.meeting_venue:
-            raise ValidationError("Meeting venue is required for in-person meetings.")
+#         if self.meeting_type == self.MeetingType.IN_PERSON and not self.meeting_venue:
+#             raise ValidationError("Meeting venue is required for in-person meetings.")
 
-        if self.meeting_type == self.MeetingType.ONLINE and not self.meeting_link:
-            raise ValidationError("Online meeting link is required for online meetings.")
+#         if self.meeting_type == self.MeetingType.ONLINE and not self.meeting_link:
+#             raise ValidationError("Online meeting link is required for online meetings.")
         
-        if self.audience == SCOPE_CHOICES.FAMILY and not self.family:
-            raise ValidationError("A family must be selected when audience is 'Specific Family'.")
+#         if self.audience == SCOPE_CHOICES.FAMILY and not self.family:
+#             raise ValidationError("A family must be selected when audience is 'Specific Family'.")
 
-        if self.audience != SCOPE_CHOICES.FAMILY and self.family is not None:
-            raise ValidationError("Family should only be set for 'Specific Family' audience.")
+#         if self.audience != SCOPE_CHOICES.FAMILY and self.family is not None:
+#             raise ValidationError("Family should only be set for 'Specific Family' audience.")
 
         
-    @property
-    def date_time_formatter(self):
-        start_local = timezone.localtime(self.meeting_date)
-        end_local = timezone.localtime(self.meeting_end_date)
-        if start_local.date() == end_local.date():
-            return f"{start_local.strftime('%a %d %b %Y')}, {start_local.strftime('%H:%M')} - {end_local.strftime('%H:%M')}"
-        else:
-            return f"{start_local.strftime('%a %d %b %Y, %H:%M')} - {end_local.strftime('%a %d %b %Y, %H:%M')}"
+#     @property
+#     def date_time_formatter(self):
+#         start_local = timezone.localtime(self.meeting_date)
+#         end_local = timezone.localtime(self.meeting_end_date)
+#         if start_local.date() == end_local.date():
+#             return f"{start_local.strftime('%a %d %b %Y')}, {start_local.strftime('%H:%M')} - {end_local.strftime('%H:%M')}"
+#         else:
+#             return f"{start_local.strftime('%a %d %b %Y, %H:%M')} - {end_local.strftime('%a %d %b %Y, %H:%M')}"
         
-    @property
-    def duration(self):
-        delta = self.meeting_end_date - self.meeting_date
-        hours = delta.total_seconds() // 3600
-        minutes = (delta.total_seconds() % 3600) // 60
-        return f"{int(hours)}h {int(minutes)}min"
+#     @property
+#     def duration(self):
+#         delta = self.meeting_end_date - self.meeting_date
+#         hours = delta.total_seconds() // 3600
+#         minutes = (delta.total_seconds() % 3600) // 60
+#         return f"{int(hours)}h {int(minutes)}min"
 
-    # ---------------------------------------------
-    # 🧠 Helper Methods
-    # ---------------------------------------------
-    def is_online(self):
-        return self.meeting_type == self.MeetingType.ONLINE
+#     # ---------------------------------------------
+#     # 🧠 Helper Methods
+#     # ---------------------------------------------
+#     def is_online(self):
+#         return self.meeting_type == self.MeetingType.ONLINE
 
-    def is_for_clan(self):
-        return self.audience == SCOPE_CHOICES.CLAN
+#     def is_for_clan(self):
+#         return self.audience == SCOPE_CHOICES.CLAN
 
-    def is_for_family(self):
-        return self.audience == SCOPE_CHOICES.FAMILY and self.family is not None
+#     def is_for_family(self):
+#         return self.audience == SCOPE_CHOICES.FAMILY and self.family is not None
     
-    def get_absolute_url(self):
-        return reverse("accounts:clan-meetings")
+#     def get_absolute_url(self):
+#         return reverse("accounts:clan-meetings")
     
-    def get_audience_display_name(self):
-        """Human-readable version of who the meeting is for."""
-        if self.audience == SCOPE_CHOICES.CLAN:
-            return "Entire Kgotla"
-        elif self.audience == SCOPE_CHOICES.EXECUTIVES:
-            return "Kgotla Executives"
-        elif self.audience == SCOPE_CHOICES.FAMILY_LEADERS:
-            return "Family Leaders"
-        elif self.audience == SCOPE_CHOICES.FAMILY and self.family:
-            return f"{self.family.name}"
-        return "—"
+#     def get_audience_display_name(self):
+#         """Human-readable version of who the meeting is for."""
+#         if self.audience == SCOPE_CHOICES.CLAN:
+#             return "Entire Kgotla"
+#         elif self.audience == SCOPE_CHOICES.EXECUTIVES:
+#             return "Kgotla Executives"
+#         elif self.audience == SCOPE_CHOICES.FAMILY_LEADERS:
+#             return "Family Leaders"
+#         elif self.audience == SCOPE_CHOICES.FAMILY and self.family:
+#             return f"{self.family.name}"
+#         return "—"
     
-    def get_audience_members(self):
-        """Returns a queryset of members who should attend this meeting based on the audience."""
-        User = get_user_model()
-        if self.audience == SCOPE_CHOICES.CLAN:
-            return User.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
-        elif self.audience == SCOPE_CHOICES.FAMILY and self.family:
-            return User.objects.filter(is_active=True, is_approved=True, family=self.family).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
-        elif self.audience == SCOPE_CHOICES.FAMILY_LEADERS:
-            return User.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
-        elif self.audience == SCOPE_CHOICES.EXECUTIVES:
-            return User.objects.filter(is_active=True, is_approved=True, role__in=[
-                Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
-                Role.KGOSANA, Role.SECRETARY, Role.TREASURER
-            ]).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
-        else:
-            return User.objects.none()
+#     def get_audience_members(self):
+#         """Returns a queryset of members who should attend this meeting based on the audience."""
+#         User = get_user_model()
+#         if self.audience == SCOPE_CHOICES.CLAN:
+#             return User.objects.filter(is_active=True, is_approved=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+#         elif self.audience == SCOPE_CHOICES.FAMILY and self.family:
+#             return User.objects.filter(is_active=True, is_approved=True, family=self.family).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+#         elif self.audience == SCOPE_CHOICES.FAMILY_LEADERS:
+#             return User.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+#         elif self.audience == SCOPE_CHOICES.EXECUTIVES:
+#             return User.objects.filter(is_active=True, is_approved=True, role__in=[
+#                 Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
+#                 Role.KGOSANA, Role.SECRETARY, Role.TREASURER
+#             ]).exclude(member_classification__in=['CHILD', 'GRANDCHILD'])
+#         else:
+#             return User.objects.none()
     
-    # -----------------------------------------------
-    # 🔐 ACCESS CONTROL LOGIC
-    # -----------------------------------------------
-    def user_has_access(self, user):
-        """
-        Determines if a given user can view/download this document.
-        """
-        # Unauthenticated users have no access
-        if not user.is_authenticated:
-            return False
+#     # -----------------------------------------------
+#     # 🔐 ACCESS CONTROL LOGIC
+#     # -----------------------------------------------
+#     def user_has_access(self, user):
+#         """
+#         Determines if a given user can view/download this document.
+#         """
+#         # Unauthenticated users have no access
+#         if not user.is_authenticated:
+#             return False
 
-        # Admins can access everything
-        if getattr(user, "role", None) == Role.CLAN_CHAIRPERSON or user.is_superuser:
-            return True
+#         # Admins can access everything
+#         if getattr(user, "role", None) == Role.CLAN_CHAIRPERSON or user.is_superuser:
+#             return True
 
-        # Clan-wide document
-        if self.audience == SCOPE_CHOICES.CLAN:
-            return True
+#         # Clan-wide document
+#         if self.audience == SCOPE_CHOICES.CLAN:
+#             return True
 
-        # Family-only document
-        if self.audience == SCOPE_CHOICES.FAMILY:
-            if self.family and user.family == self.family:
-                return True
-            return False
+#         # Family-only document
+#         if self.audience == SCOPE_CHOICES.FAMILY:
+#             if self.family and user.family == self.family:
+#                 return True
+#             return False
 
-        # Private (Admin-only)
-        if self.audience == SCOPE_CHOICES.FAMILY_LEADERS or self.audience == SCOPE_CHOICES.EXECUTIVES:
-            return False
+#         # Private (Admin-only)
+#         if self.audience == SCOPE_CHOICES.FAMILY_LEADERS or self.audience == SCOPE_CHOICES.EXECUTIVES:
+#             return False
 
-        return False
+#         return False
 
-    def ensure_user_has_access(self, user):
-        """
-        Raises PermissionDenied if user doesn't have access.
-        Useful in views or API endpoints.
-        """
-        if not self.user_has_access(user):
-            raise PermissionDenied(_("You do not have permission to access this meeting."))
-        return True
+#     def ensure_user_has_access(self, user):
+#         """
+#         Raises PermissionDenied if user doesn't have access.
+#         Useful in views or API endpoints.
+#         """
+#         if not self.user_has_access(user):
+#             raise PermissionDenied(_("You do not have permission to access this meeting."))
+#         return True

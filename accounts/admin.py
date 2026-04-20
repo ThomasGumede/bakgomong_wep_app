@@ -7,12 +7,27 @@ import logging
 from django.db import models
 from django.db.models import Count
 
-from accounts.models import Account, ClanDocument, Family, Meeting
+from accounts.models import Account, Family
 from utilities.choices import Role
 
 logger = logging.getLogger("accounts")
 
 executive_roles = [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA, Role.SPONSOR]
+
+
+@admin.action(description='Reset password for selected members')
+def reset_password(modeladmin, request, queryset):
+    if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are allowed to reset member passwords.")
+        return
+    
+    for account in queryset:
+        if account.first_name and account.last_name and account.birth_date:
+            # {user.first_name.lower()[0]}{user.last_name.lower()}.{user.birth_date.strftime('%d%m%y')}@Bakgomong2026-2027
+            new_password = f"{account.first_name.lower()[0]}.{account.last_name.lower()}.{account.birth_date.strftime('%d%m%y')}@Bakgomong2026-2027"
+            account.set_password(new_password)
+            account.save()
+    messages.success(request, f"Password reset tasks queued for {queryset.count()} member(s).")
 
 @admin.action(description="Allocate member to default family")
 def allocate_member_to_default_family(modeladmin, request, queryset):
@@ -49,15 +64,15 @@ def welcome_new_member(modeladmin, request, queryset):
         async_task("accounts.tasks.welcome_member_task", account.id)
     messages.success(request, f"Welcome tasks queued for {queryset.count()} new member(s).")
 
-@admin.action(description="Notify members of new meeting")
-def notify_members_of_new_meeting(modeladmin, request, queryset):
-    if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
-        messages.error(request, "Only executives are allowed to notify members of new meetings.")
-        return
+# @admin.action(description="Notify members of new meeting")
+# def notify_members_of_new_meeting(modeladmin, request, queryset):
+#     if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
+#         messages.error(request, "Only executives are allowed to notify members of new meetings.")
+#         return
     
-    for meeting in queryset:
-        async_task("accounts.tasks.send_notification_new_meeting_to_members_task", meeting.id)
-    messages.success(request, f"Notification tasks queued for {queryset.count()} meeting(s).")
+#     for meeting in queryset:
+#         async_task("accounts.tasks.send_notification_new_meeting_to_members_task", meeting.id)
+#     messages.success(request, f"Notification tasks queued for {queryset.count()} meeting(s).")
     
 
 # ------------------------------------------------------------
@@ -85,10 +100,10 @@ class FamilyAdmin(admin.ModelAdmin):
         # use annotated value if present to avoid extra query
         return getattr(obj, "member_count", obj.members.count())
     member_count.short_description = _("Members")
-    
-    list_display = ("name", "leader_display", "member_count", "created", "is_approved")
+    list_display_links = ("leader",)
+    list_display = ("leader","name", "leader_display", "member_count", "created", "is_approved")
     search_fields = ("name", "leader__first_name", "leader__email")
-    list_editable = ("leader", "is_approved")
+    list_editable = ("is_approved",)
     list_filter = ("created", "is_approved",)
     prepopulated_fields = {"slug": ("name",)}
     inlines = [AccountInline]
@@ -123,7 +138,7 @@ class AccountAdmin(UserAdmin):
     date_hierarchy = "created"
     readonly_fields = ("created", "updated", "profile_image_preview", "last_login")
     filter_horizontal = ("groups",)
-    actions = [approve_members, welcome_new_member, allocate_member_to_default_family]
+    actions = [approve_members, welcome_new_member, allocate_member_to_default_family, reset_password]
     add_fieldsets = (
         (_("Personal Info"), {
             "fields": (
@@ -208,36 +223,36 @@ class AccountAdmin(UserAdmin):
     )
 
 
-@admin.register(ClanDocument)
-class ClanDocumentAdmin(admin.ModelAdmin):
-    list_display = ("title", "category", "visibility", "family", "uploaded_by", "created")
-    list_filter = ("visibility", "category", "family")
-    search_fields = ("title", "description")
-    prepopulated_fields = {"slug": ("title",)}
+# @admin.register(ClanDocument)
+# class ClanDocumentAdmin(admin.ModelAdmin):
+#     list_display = ("title", "category", "visibility", "family", "uploaded_by", "created")
+#     list_filter = ("visibility", "category", "family")
+#     search_fields = ("title", "description")
+#     prepopulated_fields = {"slug": ("title",)}
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        user = request.user
+#     def get_queryset(self, request):
+#         qs = super().get_queryset(request)
+#         user = request.user
 
-        # Admins see all documents
-        if user.is_superuser or getattr(user, "role", "") == Role.CLAN_CHAIRPERSON:
-            return qs
+#         # Admins see all documents
+#         if user.is_superuser or getattr(user, "role", "") == Role.CLAN_CHAIRPERSON:
+#             return qs
 
-        # Family leaders see their family's documents
-        if getattr(user, "role", "") == Role.FAMILY_LEADER:
-            return qs.filter(models.Q(visibility="clan") | models.Q(family=user.family))
+#         # Family leaders see their family's documents
+#         if getattr(user, "role", "") == Role.FAMILY_LEADER:
+#             return qs.filter(models.Q(visibility="clan") | models.Q(family=user.family))
 
-        # Regular members see only clan-wide and their family’s documents
-        return qs.filter(
-            models.Q(visibility="clan") |
-            models.Q(family=user.family, visibility="family")
-        )
+#         # Regular members see only clan-wide and their family’s documents
+#         return qs.filter(
+#             models.Q(visibility="clan") |
+#             models.Q(family=user.family, visibility="family")
+#         )
 
-@admin.register(Meeting)
-class MeetingAdmin(admin.ModelAdmin):
-    list_display = ("title", "meeting_type", "audience", "meeting_date", "created_by", "family")
-    list_filter = ("meeting_type", "audience", "meeting_date", "family")
-    search_fields = ("title", "description")
-    prepopulated_fields = {"slug": ("title",)}
-    ordering = ("-meeting_date",)
-    actions = [notify_members_of_new_meeting]
+# @admin.register(Meeting)
+# class MeetingAdmin(admin.ModelAdmin):
+#     list_display = ("title", "meeting_type", "audience", "meeting_date", "created_by", "family")
+#     list_filter = ("meeting_type", "audience", "meeting_date", "family")
+#     search_fields = ("title", "description")
+#     prepopulated_fields = {"slug": ("title",)}
+#     ordering = ("-meeting_date",)
+#     actions = [notify_members_of_new_meeting]

@@ -4,9 +4,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('bakgomong-admin/', admin.site.urls),
+    path("", include("bakgomong_kgotla_yamalla.urls", namespace="bakgomong_kgotla_yamalla")),
     path("", include("accounts.urls", namespace="accounts")),
-    # path("", include("dashboard.urls", namespace="dashboard")),
     path("", include("contributions.urls", namespace="contributions")),
 ]
 

@@ -1,5 +1,5 @@
 from accounts.forms import FamilyForm
-from accounts.models import ClanDocument, Family
+from accounts.models import Family
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -10,6 +10,7 @@ from django.db.models import Sum
 from django_q.tasks import async_task
 from django.contrib.auth import get_user_model
 import logging
+
 
 from contributions.models import MemberContribution, Payment, ContributionType
 from utilities.choices import SCOPE_CHOICES, PaymentStatus, Role
@@ -31,6 +32,7 @@ def get_family(request, family_slug=None):
     """
     Show a family's profile, members, contributions, unpaid balances, and uploaded documents.
     """
+    from bakgomong_kgotla_yamalla.models import ClanDocument
     user = request.user
     context = {}
     # Determine which families the user can view

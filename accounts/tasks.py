@@ -32,7 +32,7 @@ def send_sms_task(user_pk):
         return False, {"error": "User has no phone number"}
     
     try:
-        message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla Ya Malla. You can now login using your Username ({user.username}) and password ({user.first_name[0]}{user.last_name}@{user.birth_date.strftime('%d%m%y')}). For any assistance, please contact our support team."
+        message = f"Dear {user.get_full_name()}, welcome to Bakgomong Kgotla Ya Malla. You can now login using your Username ({user.username}) and your temporary password ({user.first_name.lower()[0]}.{user.last_name.lower()}.{user.birth_date.strftime('%d%m%y')}@Bakgomong2026-2027). For any assistance, please contact our support team."
         success, response = send_smsportal_sms(user.phone, message)
         
         if success:

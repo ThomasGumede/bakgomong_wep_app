@@ -25,7 +25,7 @@ Home
                     class="font-semibold text-gray-800">{{payments.count}}</span>
             </p>
             <p class="text-sm text-gray-600">Total Members: <span
-                    class="font-semibold text-gray-800">{{members.count}}</span>
+                    class="font-semibold text-gray-800">{{members}}</span>
             </p>
             
         </div>
@@ -34,7 +34,7 @@ Home
     <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
         <div class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
             <p class="font-medium">Bakgomong Full Account Balance</p>
-            <p class="text-green-600 font-bold text-lg">R{{clan_total_paid}}</p>
+            {{kgotla_balance.get_total_balance_after_expenses}}
         </div>
         <div class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
             <p class="font-medium">Bakgomong Full Outstanding Balance</p>

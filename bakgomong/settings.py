@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'accounts.apps.AccountsConfig',
+    'bakgomong_kgotla_yamalla.apps.BakgomongKgotlaYamallaConfig',
     'contributions',
     
     'tinymce',

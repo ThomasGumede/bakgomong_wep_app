@@ -4,7 +4,7 @@
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
-        <a href="{% url 'accounts:dashboard' %}" class="sidebar-logo">
+        <a href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}" class="sidebar-logo">
             <img src="{% static 'images/logo 2.png' %}" alt="site logo" class="light-logo">
             <img src="{% static 'images/logo-dark.png' %}" alt="site logo" class="dark-logo">
             <img src="{% static 'images/logo-icon.png' %}" alt="site logo" class="logo-icon">
@@ -13,7 +13,7 @@
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
             <li>
-                <a href="{% url 'accounts:dashboard' %}">
+                <a href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
                     <span>Dashboard</span>
                 </a>
@@ -154,45 +154,25 @@
             </li>
             <li class="sidebar-menu-group-title">Company Information</li>
             <li>
-                <a href="{% url 'accounts:clan-meetings' %}">
+                <a href="{% url 'bakgomong_kgotla_yamalla:clan-expenses' %}">
+                    <iconify-icon icon="octicon:info-24" class="menu-icon"></iconify-icon>
+                    <span>Finances</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'bakgomong_kgotla_yamalla:clan-meetings' %}">
                     <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
                     <span>Meetings</span>
                 </a>
             </li>
             <li>
-                <a href="{% url 'accounts:clan-documents' %}">
+                <a href="{% url 'bakgomong_kgotla_yamalla:clan-documents' %}">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
                     <span>Documents</span>
                 </a>
             </li>
-            <li>
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="octicon:info-24" class="menu-icon"></iconify-icon>
-                    <span>Terms & Conditions</span>
-                </a>
-            </li>
-            <li class="dropdown">
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
-                    <span>Settings</span>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{% url 'accounts:clan-expenses' %}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
-                            Kgotla Expenses</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-warning-600 w-auto"></i>
-                            Notification</a>
-                    </li>
-                    
-
-                    <li>
-                        <a href="javascript:void(0)"><i class="ri-circle-fill circle-icon text-danger-600 w-auto"></i>
-                            Payment Gateway</a>
-                    </li>
-                </ul>
-            </li>
+            
+            
         </ul>
     </div>
 </aside>

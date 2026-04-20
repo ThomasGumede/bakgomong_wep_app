@@ -1,0 +1,349 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block seo %}
+<title>Kgotla Finances</title>
+{% endblock seo %}
+{% block dash_title %}
+Kgotla Finances
+{% endblock dash_title %}
+{% block content %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-6">
+
+    
+    <div
+        class="card shadow-none border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-lg h-full bg-gradient-to-r from-success-600/10 to-bg-white">
+        <div class="card-body p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <p class="font-medium text-neutral-900 dark:text-white mb-1">Total Balance</p>
+                    <h6 class="mb-0 dark:text-white">R{{ kgotla_balance.get_total_balance|floatformat:2 }}</h6>
+                </div>
+                <div class="w-[50px] h-[50px] bg-success-600 rounded-full flex justify-center items-center">
+                    <iconify-icon icon="solar:wallet-bold" class="text-white text-2xl mb-0"></iconify-icon>
+                </div>
+            </div>
+            <p class="font-medium text-sm text-neutral-600 dark:text-white mt-3 mb-0 flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 text-success-600 dark:text-success-400"><iconify-icon
+                        icon="bxs:up-arrow" class="text-xs"></iconify-icon> +R20,000</span>
+                Last 30 days income
+            </p>
+        </div>
+    </div><!-- card end -->
+    <div
+        class="card shadow-none border border-gray-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-lg h-full bg-gradient-to-r from-red-600/10 to-bg-white">
+        <div class="card-body p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <p class="font-medium text-neutral-900 dark:text-white mb-1">Total Expense</p>
+                    <h6 class="mb-0 dark:text-white">R{{ total_expenses_balance|floatformat:2 }}</h6>
+                </div>
+                <div class="w-[50px] h-[50px] bg-red-600 rounded-full flex justify-center items-center">
+                    <iconify-icon icon="fa6-solid:file-invoice-dollar" class="text-white text-2xl mb-0"></iconify-icon>
+                </div>
+            </div>
+            <p class="font-medium text-sm text-neutral-600 dark:text-white mt-3 mb-0 flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 text-success-600 dark:text-success-400"><iconify-icon
+                        icon="bxs:up-arrow" class="text-xs"></iconify-icon> +R5,000</span>
+                Last 30 days expense
+            </p>
+        </div>
+    </div><!-- card end -->
+    {{kgotla_balance.get_total_other_balance_after_expenses}}
+    
+</div>
+
+{% if expenses.count > 0 %}
+<!-- Table Start -->
+<div class="grid mt-10 grid-cols-12">
+    <div class="col-span-12">
+        <div class="card border-0 overflow-hidden p-2">
+            <div class="card-header">
+                <h6 class="card-title mb-0 text-lg">All Expenses</h6>
+            </div>
+
+            <div class="card-body">
+                <table id="selection-table"
+                    class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Name
+                            
+                                </div>
+                            </th>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Added By
+                                    
+                                </div>
+                            </th>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Date Incurred
+                                    
+                                </div>
+                            </th>
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Amount
+                                    
+                                </div>
+                            </th>
+
+
+                            <th scope="col" class="text-neutral-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    Approved
+                                    
+
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for expense in expenses %}
+                        <tr>
+
+                            <td>{{expense.title}}</td>
+                            <td>
+                                <a href="{% url 'accounts:user-details' expense.added_by.username %}" class="flex items-center">
+                                    <img src="{% if expense.added_by.profile_image %}{{expense.added_by.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
+                                        alt="{{expense.added_by.get_full_name}}"
+                                        class="shrink-0 me-3 h-[46px] w-[46px] rounded-lg">
+                                    <h6 class="text-base mb-0 font-medium grow">{{expense.added_by.get_full_name}}</h6>
+                                </a>
+                            </td>
+                            <td>{{expense.incurred_date|date:"Y-m-d"}}</td>
+                            <td>R{{expense.amount|floatformat:2}}/{{expense.recurring}}</td>
+
+
+                            <td class="text-center">
+                                <span
+                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">{{expense.approved}}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    if (document.getElementById("selection-table") && typeof simpleDatatables.DataTable !== 'undefined') {
+
+        let multiSelect = true;
+        let rowNavigation = false;
+        let table = null;
+
+        const resetTable = function () {
+            if (table) {
+                table.destroy();
+            }
+
+            const options = {
+                columns: [
+                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
+                ],
+                rowRender: (row, tr, _index) => {
+                    if (!tr.attributes) {
+                        tr.attributes = {};
+                    }
+                    if (!tr.attributes.class) {
+                        tr.attributes.class = "";
+                    }
+                    if (row.selected) {
+                        tr.attributes.class += " selected";
+                    } else {
+                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
+                    }
+                    return tr;
+                }
+            };
+            if (rowNavigation) {
+                options.rowNavigation = true;
+                options.tabIndex = 1;
+            }
+
+            table = new simpleDatatables.DataTable("#selection-table", options);
+
+            // Mark all rows as unselected
+            table.data.data.forEach(data => {
+                data.selected = false;
+            });
+
+            table.on("datatable.selectrow", (rowIndex, event) => {
+                event.preventDefault();
+                const row = table.data.data[rowIndex];
+                if (row.selected) {
+                    row.selected = false;
+                } else {
+                    if (!multiSelect) {
+                        table.data.data.forEach(data => {
+                            data.selected = false;
+                        });
+                    }
+                    row.selected = true;
+                }
+                table.update();
+            });
+        };
+
+        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
+        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
+        if (isMobile) {
+            rowNavigation = false;
+        }
+
+        resetTable();
+    }
+
+    if (document.getElementById("selection-table-2") && typeof simpleDatatables.DataTable !== 'undefined') {
+
+        let multiSelect = true;
+        let rowNavigation = false;
+        let table = null;
+
+        const resetTable = function () {
+            if (table) {
+                table.destroy();
+            }
+
+            const options = {
+                columns: [
+                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
+                ],
+                rowRender: (row, tr, _index) => {
+                    if (!tr.attributes) {
+                        tr.attributes = {};
+                    }
+                    if (!tr.attributes.class) {
+                        tr.attributes.class = "";
+                    }
+                    if (row.selected) {
+                        tr.attributes.class += " selected";
+                    } else {
+                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
+                    }
+                    return tr;
+                }
+            };
+            if (rowNavigation) {
+                options.rowNavigation = true;
+                options.tabIndex = 1;
+            }
+
+            table = new simpleDatatables.DataTable("#selection-table-2", options);
+
+            // Mark all rows as unselected
+            table.data.data.forEach(data => {
+                data.selected = false;
+            });
+
+            table.on("datatable.selectrow", (rowIndex, event) => {
+                event.preventDefault();
+                const row = table.data.data[rowIndex];
+                if (row.selected) {
+                    row.selected = false;
+                } else {
+                    if (!multiSelect) {
+                        table.data.data.forEach(data => {
+                            data.selected = false;
+                        });
+                    }
+                    row.selected = true;
+                }
+                table.update();
+            });
+        };
+
+        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
+        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
+        if (isMobile) {
+            rowNavigation = false;
+        }
+
+        resetTable();
+    }
+
+    if (document.getElementById("selection-table-3") && typeof simpleDatatables.DataTable !== 'undefined') {
+
+        let multiSelect = true;
+        let rowNavigation = false;
+        let table = null;
+
+        const resetTable = function () {
+            if (table) {
+                table.destroy();
+            }
+
+            const options = {
+                columns: [
+                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
+                ],
+                rowRender: (row, tr, _index) => {
+                    if (!tr.attributes) {
+                        tr.attributes = {};
+                    }
+                    if (!tr.attributes.class) {
+                        tr.attributes.class = "";
+                    }
+                    if (row.selected) {
+                        tr.attributes.class += " selected";
+                    } else {
+                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
+                    }
+                    return tr;
+                }
+            };
+            if (rowNavigation) {
+                options.rowNavigation = true;
+                options.tabIndex = 1;
+            }
+
+            table = new simpleDatatables.DataTable("#selection-table-3", options);
+
+            // Mark all rows as unselected
+            table.data.data.forEach(data => {
+                data.selected = false;
+            });
+
+            table.on("datatable.selectrow", (rowIndex, event) => {
+                event.preventDefault();
+                const row = table.data.data[rowIndex];
+                if (row.selected) {
+                    row.selected = false;
+                } else {
+                    if (!multiSelect) {
+                        table.data.data.forEach(data => {
+                            data.selected = false;
+                        });
+                    }
+                    row.selected = true;
+                }
+                table.update();
+            });
+        };
+
+        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
+        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
+        if (isMobile) {
+            rowNavigation = false;
+        }
+
+        resetTable();
+    }
+</script>
+{% endblock scripts %}
