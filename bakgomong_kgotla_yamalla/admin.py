@@ -22,7 +22,7 @@ def notify_members_of_new_meeting(modeladmin, request, queryset):
         return
     
     for meeting in queryset:
-        async_task("accounts.tasks.send_notification_new_meeting_to_members_task", meeting.id)
+        async_task("bakgomong_kgotla_yamalla.tasks.send_notification_new_meeting_to_members_task", meeting.id)
     messages.success(request, f"Notification tasks queued for {queryset.count()} meeting(s).")
     
 

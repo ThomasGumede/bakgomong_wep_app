@@ -103,19 +103,7 @@ def send_email_confirmation_task(user_pk, new_email):
         logger.exception("send_email_confirmation_task failed for %s -> %s", user_pk, new_email)
         return False
 
-def send_notification_new_meeting_task(meeting_pk, to, subject):
-    from accounts.models import Meeting
-    try:
-        meeting = Meeting.objects.get(pk=meeting_pk)
-    except Meeting.DoesNotExist:
-        logger.error("send_notification_new_meeting_task: Meeting %s not found", meeting_pk)
-        return False
 
-    try:
-        return custom_mail.send_new_meeting_notification(meeting, to, subject)
-    except Exception:
-        logger.exception("send_notification_new_meeting_task failed for %s", meeting_pk)
-        return False
 
 allowed_roles = [ 
             Role.DEP_SECRETARY, 
@@ -240,22 +228,7 @@ def welcome_member_task(user_pk):
     send_verification_email_task(user_pk)
     send_sms_task(user_pk)    
     
-def send_notification_new_meeting_to_members_task(meeting_pk):
-    from accounts.models import Meeting
-    try:
-        meeting = Meeting.objects.get(pk=meeting_pk)
-        users = meeting.get_audience_members()
-        for user in users:
-            if user.email:
-                send_notification_new_meeting_task(meeting_pk, user.email, f"New Meeting Scheduled: {meeting.title}")
-            if getattr(user, "phone", None):
-                from contributions.utils.notifications import send_smsportal_sms
-                sms_message = f"New Upcoming Meeting: {meeting.title} on {meeting.date_time_formatter}, at {meeting.meeting_venue}. Contact excecutives for more information."
-                send_smsportal_sms(user.phone, sms_message)
-                
-    except Meeting.DoesNotExist:
-        logger.error("send_notification_new_meeting_to_members_task: Meeting %s not found", meeting_pk)
-        return False
+
     
     
     
