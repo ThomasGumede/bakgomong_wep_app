@@ -23,7 +23,7 @@ def can_manage_meetings(user):
 def clan_documents(request):
     documents = ClanDocument.objects.all()
     docs = [doc for doc in documents if doc.user_has_access(request.user)]
-    return render(request, 'home/documents.html', {'docs': docs})
+    return render(request, 'home/documents.html', {'docs': docs, "family": getattr(request.user, "family", None)})
 
 
 @login_required
@@ -31,7 +31,7 @@ def clan_meetings(request):
     form = MeetingForm()
     meetings = Meeting.objects.all()
     meets = [meet for meet in meetings if meet.user_has_access(request.user)]
-    return render(request, 'home/meetings.html', {"form": form, 'meetings': meets})
+    return render(request, 'home/meetings.html', {"form": form, 'meetings': meets, "family": getattr(request.user, "family", None)})
 
 
 @login_required
@@ -51,7 +51,7 @@ def meeting_create(request):
         form = MeetingForm()
         
     
-    return render(request, "home/meetings.html", {"form": form, "meetings": meets})
+    return render(request, "home/meetings.html", {"form": form, "meetings": meets, "family": getattr(request.user, "family", None)})
 
 
 # -------------------------
@@ -80,7 +80,7 @@ def meeting_update(request, meeting_slug):
             messages.error(request, f"{error}: {form.errors[error].as_text()}")
         return redirect("accounts:clan-meetings")
 
-    return render(request, "home/meetings.html", {"form": form, "meetings": meets})
+    return render(request, "home/meetings.html", {"form": form, "meetings": meets, "family": getattr(request.user, "family", None)})
 
 
 # -------------------------
@@ -100,7 +100,7 @@ def meeting_delete(request, meeting_slug):
         messages.success(request, "Meeting deleted successfully.")
         return redirect("accounts:clan-meetings")
 
-    return render(request, "home/meetings.html", {"form": form, "meetings": meets})
+    return render(request, "home/meetings.html", {"form": form, "meetings": meets, "family": getattr(request.user, "family", None)})
 
 def get_clan_meetings_api(request):
     try:
