@@ -103,7 +103,26 @@ def send_email_confirmation_task(user_pk, new_email):
         logger.exception("send_email_confirmation_task failed for %s -> %s", user_pk, new_email)
         return False
 
+def send_reset_password_confirmation_task(user_pk, new_password):
+    User = get_user_model()
+    try:
+        user = User.objects.get(pk=user_pk)
+    except User.DoesNotExist:
+        logger.error("send_reset_password_confirmation_task: user %s not found", user_pk)
+        return False
 
+    try:
+        message = f"Hello {user.get_full_name()}, your password has been reset. Your new password is: {new_password}. Please log in and change it as soon as possible."
+        if user.phone:
+            from contributions.utils.notifications import send_smsportal_sms
+            success, response = send_smsportal_sms(user.phone, message)
+            if success:
+                logger.info("Password reset confirmation SMS sent to %s (User %s)", user.phone, user_pk)
+            else:
+                logger.warning("Failed to send password reset confirmation SMS to %s: %s", user.phone, response)
+    except Exception:
+        logger.exception("send_reset_password_confirmation_task failed for %s", user_pk)
+        return False
 
 allowed_roles = [ 
             Role.DEP_SECRETARY, 
