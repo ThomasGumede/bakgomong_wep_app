@@ -27,7 +27,7 @@ def reset_password(modeladmin, request, queryset):
             new_password = f"{account.first_name.lower()[0]}.{account.last_name.lower()}.{account.birth_date.strftime('%d%m%y')}@Bakgomong2026-2027"
             account.set_password(new_password)
             account.save()
-            async_task("accounts.tasks.send_password_reset_notification_task", account.id, new_password)
+            async_task("accounts.tasks.send_reset_password_confirmation_task", account.id, new_password)
     messages.success(request, f"Password reset tasks queued for {queryset.count()} member(s).")
 
 @admin.action(description="Allocate member to default family")
