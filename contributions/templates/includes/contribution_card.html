@@ -1,0 +1,180 @@
+<div
+    class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
+
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-100">
+
+        <div class="flex items-start justify-between">
+
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition">
+                    {{ contribution.name }}
+                </h3>
+
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ contribution.get_category_display }}
+                </p>
+            </div>
+
+            {% if contribution.is_active %}
+            <span
+                class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                Active
+            </span>
+            {% else %}
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                Closed
+            </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-5">
+
+        {% if contribution.description %}
+        <p class="text-sm text-gray-600 line-clamp-3">
+            {{ contribution.description }}
+        </p>
+        {% endif %}
+
+        <div class="grid grid-cols-2 gap-4">
+
+            <div>
+                <p class="text-xs uppercase tracking-wide text-gray-400">
+                    Amount
+                </p>
+
+                <p class="text-2xl font-bold text-indigo-600">
+                    R{{ contribution.amount }}
+                </p>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wide text-gray-400">
+                    Unpaid Amount
+                </p>
+            
+                <p class="font-medium text-gray-800">
+                    R{{ contribution.total_unpaid|floatformat:2 }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-xs uppercase tracking-wide text-gray-400">
+                    Recurrence
+                </p>
+
+                <p class="font-semibold text-gray-800">
+                    {{ contribution.get_recurrence_display }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-xs uppercase tracking-wide text-gray-400">
+                    Scope
+                </p>
+
+                <span class="inline-flex px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 text-sm">
+                    {{ contribution.get_scope_display }}
+                </span>
+            </div>
+
+            
+
+        </div>
+
+        {% if contribution.family %}
+        <div class="rounded-lg bg-amber-50 border border-amber-200 p-3">
+
+            <p class="text-xs uppercase text-amber-600 font-semibold">
+                Family Contribution
+            </p>
+
+            <p class="font-medium text-amber-800">
+                {{ contribution.family.name }}
+            </p>
+
+        </div>
+        {% else %}
+        <div class="rounded-lg bg-amber-50 border border-amber-200 p-3">
+        
+            <p class="text-xs uppercase text-amber-600 font-semibold">
+                Family Contribution
+            </p>
+        
+            <p class="font-medium text-amber-800">
+                All Families
+            </p>
+        
+        </div>
+        {% endif %}
+
+        <!-- Progress -->
+        <div>
+
+            <div class="flex justify-between text-sm mb-2">
+
+                <span class="text-gray-500">
+                    Total Collected
+                </span>
+
+                <span class="font-semibold text-green-600">
+                    R{{contribution.total_collected|floatformat:2}}
+                </span>
+
+            </div>
+
+
+            
+
+            <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
+                <div class="h-2 rounded-full bg-gray-200 overflow-hidden">
+
+                    {% if contribution.total_percentage_collected > 100 %}
+                    <div class="h-full bg-green-500 rounded-full" style="width: 100%;">
+                    </div>
+                    {% else %}
+                    <div class="h-full bg-green-500 rounded-full" style="width: {{ contribution.total_percentage_collected }}%;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+
+            <div class="text-xs text-gray-500">
+
+                Created
+
+                <span class="font-medium text-gray-700">
+                    {{ contribution.created|timesince }} ago
+                </span>
+
+            </div>
+
+            <div class="flex gap-2">
+
+                <a href="{{ contribution.get_absolute_url }}"
+                    class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition">
+                    View
+                </a>
+
+                {% if request.user.is_staff %}
+                <a href="{{ contribution.get_update_url }}"
+                    class="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-sm font-medium">
+                    Edit
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

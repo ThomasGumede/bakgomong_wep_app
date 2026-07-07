@@ -1,444 +1,180 @@
 {% extends '_base.html' %}
 {% load static %}
 {% block dash_title %}
-{{contribution.name}}
+    {{contribution.name}}
 {% endblock dash_title %}
 
 {% block content %}
 <!-- Widgets start -->
-<div class="grid grid-cols-1 sm:grid-cols-12 gap-6">
-    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
-        <div
-            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] dark:from-neutral-700 dark:to-neutral-800">
-            <div class="card-body p-0">
-                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <span
-                            class="mb-0 w-[48px] h-[48px] bg-cyan-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon1.svg' %}" alt="">
-                        </span>
-                        <div>
-                            <span class="font-medium text-neutral-600 text-base">Group Account Balance</span>
-                            <h6 class="font-semibold mt-[2px]">R{{total_collected}}</h6>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
-                    total amount collected from {{payments.count}} members
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    {% if request.user.is_staff %}
-    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
-        <div
-            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
-            <div class="card-body p-0">
-                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <span
-                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
-                        </span>
-                        <div>
-                            <span class="font-medium text-neutral-600 text-base">Outstanding Balance</span>
-                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
-                    {{outstanding_count}} Members are behind with payments
-                </p>
-            </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
-        <div
-            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
-            <div class="card-body p-0">
-                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <span
-                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
-                        </span>
-                        <div>
-                            <span class="font-medium text-neutral-600 text-base">Outstanding Balance</span>
-                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
-                    The Amount you have not paid
-                </p>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- <div class="col-span-12 sm:col-span-6 2xl:col-span-3 col-xxl-3 col-sm-6">
-        <div
-            class="p-4 shadow-none rounded-lg h-full border border-white dark:border-neutral-600 bg-gradient-to-r from-[#f2fdff] to-[#ffefdd] dark:from-neutral-700 dark:to-neutral-800">
-            <div class="card-body p-0">
-                <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <span
-                            class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                            <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
-                        </span>
-                        <div>
-                            <span class="font-medium text-neutral-600 text-base">Pending Balance</span>
-                            <h6 class="font-semibold mt-[2px]">R{{unpaid_amount}}</h6>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm mb-0 flex items-center flex-wrap gap-3 mt-3 text-neutral-600">
-                    The Amount you have not paid
-                </p>
-            </div>
-        </div>
-    </div> -->
-
+<div
+    class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
+    <div class="flex w-fit items-center space-x-4 mb-4">
+        {% if contribution.family %}
+        <div class="rounded-lg bg-amber-50 border border-amber-200 pl-3">
         
-    
-    
-    
+            <p class="text-xs uppercase text-amber-600 font-semibold">
+                Family Contribution
+            </p>
+        
+            <p class="font-medium text-amber-800">
+                {{ contribution.family.name }}
+            </p>
+        
+        </div>
+        {% else %}
+        <div class="rounded-lg bg-amber-50 border border-amber-200 p-3">
+        
+            <p class="text-xs uppercase text-amber-600 font-semibold">
+                Family Contribution
+            </p>
+        
+            <p class="font-medium text-amber-800">
+                All Families
+            </p>
+        
+        </div>
+        {% endif %}
+        <div>
+            <h3 class="text-xl font-bold text-gray-700">{{contribution.name}}
+            </h3>
+            <p class="text-sm text-gray-600">Scope: <span
+                    class="font-semibold text-gray-800">{{contribution.get_scope_display}}</span>
+            </p>
+            <p class="text-sm text-gray-600">Recurrence: <span class="font-semibold text-gray-800">{{contribution.get_recurrence_display}}</span>
+            </p>
+            
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+        <div
+            class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Total Collected</p>
+            <p class="text-green-500 font-bold text-lg">R{{contribution.total_collected|floatformat:2}} / R{{contribution.total_expected|floatformat:2}}</p>
+        </div>
+        <div
+            class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">Outstanding Balance</p>
+            <p class="text-red-500 font-bold text-lg">R{{contribution.total_unpaid|floatformat:2}}</p>
+        </div>
+        <div
+            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">You've Paid Bakgomong:</p>
+            <p class="text-yellow-600 font-bold text-lg">R{{contribution.total_collected|floatformat:2}}</p>
+        </div>
+        <div
+            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
+            <p class="font-medium">You Owe Bakgomong:</p>
+            <p class="text-red-500 font-bold text-lg">R{{contribution.total_unpaid|floatformat:2}}</p>
+        </div>
+    </div>
 </div>
+
 <!-- Widgets end -->
-
-
 {% if payments.count > 0 %}
-<!-- Table Start -->
-<div class="card border-0 rounded-2xl mt-6 p-2">
-    <div class="card-header">
-        <div class="flex items-center flex-wrap gap-2 justify-between">
-            <h6 class="font-bold text-lg mb-0">Payment History</h6>
-
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="overflow-x-auto">
-            <div >
-                <table id="selection-table" class="table bordered-table sm-table mb-0">
-                    <thead>
-                        <tr>
-                            <th scope="col">Members </th>
-                            
-                            <th scope="col">Inv No</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Payment Method</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Invoice</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {% for payment in payments %}
-
-                        <tr>
-                            <td class="">
-                                <div class="flex items-center">
-                                    <img src="{% if payment.account.profile_image %}{{payment.account.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}" alt=""
-                                        class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
-                                    <div class="grow">
-                                        <h6 class="text-base mb-0 font-medium">{{payment.account.get_full_name}}</h6>
-                                    </div>
-                                </div>
-                            </td>
-                            
-                            <td>{{payment.reference}}</td>
-                            <td>R{{payment.amount}}</td>
-                            <td>{{payment.payment_method}}</td>
-                            <td>{{payment.payment_date}}</td>
-                            <td>
-                                <a href=""
-                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Paid</a>
-                            </td>
-                            <td>
-                                <a href="{{ payment.member_contribution.get_absolute_url }}"
-                                    class="bg-success-focus dark:bg-success-500 text-success-main dark:text-danger-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                    aria-label="Pay contribution {{ payment.reference }}">
-                                    View receipt
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-</div>
-{% endif %}
-{% if outstandings.count > 0 %}
-<div class="card border-0 rounded-2xl mt-6 p-2">
-    <div class="card-header">
-        <div class="flex items-center flex-wrap gap-2 justify-between">
-            <h6 class="font-bold text-lg mb-0">Out standing payments</h6>
-            <a href=""
-                class="text-primary-600 dark:text-primary-600 hover-text-primary flex items-center gap-1">
-                View All
-                <iconify-icon icon="solar:alt-arrow-right-linear" class="icon"></iconify-icon>
-            </a>
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="overflow-x-auto">
-            <div >
-                <table id="selection-table-2" class="table bordered-table sm-table mb-0">
-                    <thead>
-                        <tr>
-                            <th scope="col">Members </th>
-                            
-                            <th scope="col">Inv No</th>
-                            <th scope="col">Amount</th>
-
-                            <th scope="col">Due Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        {% for outstanding in outstandings %}
+<div class="grid grid-cols-12 mt-4">
+    <div class="col-span-12">
+        <div class="card border-0 p-2">
+            <div class="card-body">
+                <div class="table-responsive scroll-sm" role="region" aria-label="Contributions table">
+                    
+                    <table id="selection-table" class="table bordered-table mb-0" aria-describedby="contrib-desc">
+                        <caption id="contrib-desc" class="sr-only">List of member contributions and payment status
+                        </caption>
+                        <thead>
                             <tr>
-                                <td class="">
+                                <th scope="col">Reference</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Issued</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in payments %}
+                            <tr>
+                                <td><a href="{{ inv.get_absolute_url }}" class="text-primary-600"
+                                        aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
+                                <td>
                                     <div class="flex items-center">
-                                        <img src="{% if outstanding.account.profile_image %}{{outstanding.account.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}" alt=""
-                                            class="w-10 h-10 rounded-full flex-shrink-0 me-3 overflow-hidden">
-                                        <div class="grow">
-                                            <h6 class="text-base mb-0 font-medium">{{outstanding.account.get_full_name}}</h6>
-                                        </div>
+                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
+                                            alt="{{ inv.account.get_full_name }} profile"
+                                            class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
+                                        <h6 class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</h6>
                                     </div>
                                 </td>
-                                
-                                <td>{{outstanding.reference}}</td>
-                                <td>R{{outstanding.amount_due}}</td>
-                            
+                                <td>{{ inv.created|date:"d M Y" }}</td>
+                                <td>R{{ inv.amount_due|floatformat:2 }}</td>
                                 <td>
-                                    {% if outstanding.is_overdue %}
-                                    <span
-                                        class="text-danger-600 bg-danger-100 dark:bg-danger-600/25 dark:text-danger-600 px-6 py-1.5 rounded-full font-medium text-sm">{{outstanding.due_date}}
-                                        (Overdue)</span>
+                                    {% if inv.is_paid == 'PAID' %}
+                                        <span class="badge badge-success" role="status" aria-label="Paid">Paid</span>
+                                    {% elif inv.is_paid == 'PENDING' %}
+                                        <span class="badge badge-warning" role="status" aria-label="Pending">Pending</span>
                                     {% else %}
-                                    {{outstanding.due_date}}
+                                        <span class="badge badge-danger" role="status" aria-label="Not paid">Not paid</span>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <span
-                                        class="
-                                            {% if outstanding.is_paid == 'PAID' %}
-                                                bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400
-                                            {% elif outstanding.is_paid == 'PENDING' %}
-                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
-                                            {% elif outstanding.is_paid == 'AWAITING APPROVAL' %}
-                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
-                                            {% else %}
-                                                bg-danger-600/25 bg-danger-100 text-danger-600 dark:bg-danger-600/25 dark:text-danger-400
-                                            {% endif %}
-                                            px-6 py-1.5 rounded-full font-medium text-sm
-                                        "
-                                    >
-                                        {{ outstanding.get_is_paid_display }}
-                                    </span>
                                 </td>
                                 <td class="text-center">
-                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
-                                    {% if outstanding.is_paid == 'PAID' %}
-                                    <a href="{{ outstanding.get_absolute_url }}"
+                                    
+                                    {% if inv.is_paid == 'PAID' %}
+                                    <a href="{{ inv.get_absolute_url }}"
                                         class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ outstanding.reference }}">
+                                        aria-label="Pay contribution {{ inv.reference }}">
                                         View receipt
                                     </a>
-                                
-                                    {% elif outstanding.is_paid == 'NOT_PAID' or outstanding.is_paid == 'PENDING' or outstanding.is_paid == 'AWAITING PAYMENT' %}
-                                
-                                    {# Treasurer or staff, but not the outstandingoice owner #}
-                                    {% if request.user == outstanding.account and outstanding.is_paid == 'NOT_PAID' %}
-                                
-                                    <a href="{% url 'contributions:checkout' outstanding.id %}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ outstanding.reference }}">
-                                        Pay now
-                                    </a>
-                                    {# Regular member paying their own NOT_PAID outstandingoice #}
-                                    {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != outstanding.account %}
-                                    <a href="{% url 'contributions:log-payment' outstanding.id %}"
-                                        class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Log payment for {{ outstanding.reference }}">
-                                        Log payment
-                                    </a>
-                                    {% else %}
-                                    <a href="{{ outstanding.get_absolute_url }}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ outstanding.reference }}">
-                                        View receipt
-                                    </a>
+
+                                    {% elif inv.is_paid == 'NOT_PAID' or inv.is_paid == 'PENDING' or inv.is_paid == 'AWAITING PAYMENT' %}
+
+                                        {% if request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
+                                            <a href="{% url 'contributions:checkout' inv.id %}"
+                                                class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                                aria-label="Pay contribution {{ inv.reference }}">
+                                                Pay now
+                                            </a>
+                                            
+                                            {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
+                                                <a href="{% url 'contributions:log-payment' inv.id %}"
+                                                    class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                                    aria-label="Log payment for {{ inv.reference }}">
+                                                    Log payment
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ inv.get_absolute_url }}"
+                                                    class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
+                                                    aria-label="Pay contribution {{ inv.reference }}">
+                                                    View receipt
+                                                </a>
+                                            {% endif %}
+
                                     {% endif %}
-                                
-                                    {% endif %}
-                                
+
                                 </td>
                             </tr>
-                        {% endfor %}
-                            
-                        
-
-
-                    </tbody>
-                </table>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
             </div>
         </div>
-
     </div>
 </div>
-
 {% endif %}
 <!-- Table End -->
 {% endblock content %}
 
 
 {% block scripts %}
-
 <script>
-    if (document.getElementById("selection-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-
-        let multiSelect = true;
-        let rowNavigation = false;
-        let table = null;
-
-        const resetTable = function () {
-            if (table) {
-                table.destroy();
-            }
-
-            const options = {
-                columns: [
-                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
-                ],
-                rowRender: (row, tr, _index) => {
-                    if (!tr.attributes) {
-                        tr.attributes = {};
-                    }
-                    if (!tr.attributes.class) {
-                        tr.attributes.class = "";
-                    }
-                    if (row.selected) {
-                        tr.attributes.class += " selected";
-                    } else {
-                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
-                    }
-                    return tr;
-                }
-            };
-            if (rowNavigation) {
-                options.rowNavigation = true;
-                options.tabIndex = 1;
-            }
-
-            table = new simpleDatatables.DataTable("#selection-table", options);
-
-            // Mark all rows as unselected
-            table.data.data.forEach(data => {
-                data.selected = false;
-            });
-
-            table.on("datatable.selectrow", (rowIndex, event) => {
-                event.preventDefault();
-                const row = table.data.data[rowIndex];
-                if (row.selected) {
-                    row.selected = false;
-                } else {
-                    if (!multiSelect) {
-                        table.data.data.forEach(data => {
-                            data.selected = false;
-                        });
-                    }
-                    row.selected = true;
-                }
-                table.update();
-            });
-        };
-
-        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
-        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
-        if (isMobile) {
-            rowNavigation = false;
-        }
-
-        resetTable();
-    }
-
-    if (document.getElementById("selection-table-2") && typeof simpleDatatables.DataTable !== 'undefined') {
-
-        let multiSelect = true;
-        let rowNavigation = false;
-        let table = null;
-
-        const resetTable = function () {
-            if (table) {
-                table.destroy();
-            }
-
-            const options = {
-                columns: [
-                    {select: [0, 6], sortable: false} // Disable sorting on the first column (index 0 and 6)
-                ],
-                rowRender: (row, tr, _index) => {
-                    if (!tr.attributes) {
-                        tr.attributes = {};
-                    }
-                    if (!tr.attributes.class) {
-                        tr.attributes.class = "";
-                    }
-                    if (row.selected) {
-                        tr.attributes.class += " selected";
-                    } else {
-                        tr.attributes.class = tr.attributes.class.replace(" selected", "");
-                    }
-                    return tr;
-                }
-            };
-            if (rowNavigation) {
-                options.rowNavigation = true;
-                options.tabIndex = 1;
-            }
-
-            table = new simpleDatatables.DataTable("#selection-table-2", options);
-
-            // Mark all rows as unselected
-            table.data.data.forEach(data => {
-                data.selected = false;
-            });
-
-            table.on("datatable.selectrow", (rowIndex, event) => {
-                event.preventDefault();
-                const row = table.data.data[rowIndex];
-                if (row.selected) {
-                    row.selected = false;
-                } else {
-                    if (!multiSelect) {
-                        table.data.data.forEach(data => {
-                            data.selected = false;
-                        });
-                    }
-                    row.selected = true;
-                }
-                table.update();
-            });
-        };
-
-        // Row navigation makes no sense on mobile, so we deactivate it and hide the checkbox.
-        const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
-        if (isMobile) {
-            rowNavigation = false;
-        }
-
-        resetTable();
+    // keep DataTable initialization but guard against empty table
+    if (document.getElementById("selection-table") && typeof simpleDatatables !== 'undefined') {
+        let table = new simpleDatatables.DataTable("#selection-table", {
+            searchable: true,
+            perPage: 25,
+            columns: [{select: [0, 5], sortable: false}]
+        });
     }
 </script>
+
 {% endblock scripts %}

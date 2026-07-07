@@ -36,43 +36,20 @@ def get_contribution(request, contribution_slug):
     contribution = get_object_or_404(ContributionType, slug=contribution_slug)
 
     payments = None
-    outstandings = None
-    
     mcs = MemberContribution.objects.filter(contribution_type=contribution)
-    payments = Payment.objects.filter(member_contribution__contribution_type=contribution)
+    
     
     
     
     # Display based on roles
     if is_treasurer_or_admin(user):
-        payments = payments.filter(is_approved=LogPaymentStatus.APPROVED).select_related("account")
-        outstandings = mcs.filter(
-        is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]
-        ).select_related("account")
+        payments = mcs.select_related("account")
     else:
-        payments = payments.filter(is_approved=LogPaymentStatus.APPROVED).filter(account=user)
-        outstandings = mcs.filter(
-        is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL], account=user
-        ).select_related("account")
-
-    
-
-    
-    
-    # Aggregate totals (single query)
-    unpaid_amount = outstandings.aggregate(total=Sum('amount_due'))['total'] or 0
-    total_collected = mcs.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
-    total_collected_m = mcs.filter(account=user).aggregate(total=Sum("amount_due"))["total"] or 0
-    outstanding_count = outstandings.count()
+        payments = mcs.filter(account=user)
 
     context = {
         "contribution": contribution,
         "payments": payments,
-        "total_collected": total_collected,
-        "total_collected_m": total_collected_m,
-        "unpaid_amount": unpaid_amount,
-        "outstanding_count": outstanding_count,
-        "outstandings": outstandings,  # Show first 20 outstanding
     }
 
     return render(request, "contributions/contribution.html", context)

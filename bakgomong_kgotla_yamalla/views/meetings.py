@@ -10,6 +10,7 @@ from django.core import serializers
 from bakgomong_kgotla_yamalla.forms import MeetingForm
 from bakgomong_kgotla_yamalla.models import ClanDocument, Meeting
 from django.core.exceptions import PermissionDenied
+from bakgomong_kgotla_yamalla.utils.calendar import generate_ics
 from contributions.models import ContributionType, MemberContribution
 from utilities.choices import PaymentStatus, Role
 
@@ -33,6 +34,13 @@ def clan_meetings(request):
     meets = [meet for meet in meetings if meet.user_has_access(request.user)]
     return render(request, 'meetings/meetings.html', {"form": form, 'meetings': meets, "family": getattr(request.user, "family", None)})
 
+@login_required
+def meeting_details(request, meeting_slug):
+    meeting = get_object_or_404(Meeting, slug=meeting_slug)
+    if not meeting.user_has_access(request.user):
+        raise PermissionDenied("You do not have access to this meeting.")
+    
+    return render(request, 'meetings/meeting-details.html', {'meeting': meeting, "family": getattr(request.user, "family", None)})
 
 @login_required
 def meeting_create(request):
@@ -46,7 +54,7 @@ def meeting_create(request):
             meeting = form.save(commit=False)
             meeting.created_by = request.user
             meeting.save()
-            return redirect("accounts:clan-meetings")
+            return redirect("bakgomong_kgotla_yamalla:meeting-details", meeting_slug=meeting.slug)
     else:
         form = MeetingForm()
         
@@ -72,13 +80,13 @@ def meeting_update(request, meeting_slug):
         if form.is_valid():
             form.save()
             messages.success(request, "Meeting updated successfully.")
-            return redirect("accounts:clan-meetings")
+            return redirect("bakgomong_kgotla_yamalla:meeting-details", meeting_slug=meeting.slug)
     else:
         form = MeetingForm(instance=meeting)
         messages.info(request, "Unable to update the meeting Please fix the errors below.")
         for error in form.errors:
             messages.error(request, f"{error}: {form.errors[error].as_text()}")
-        return redirect("accounts:clan-meetings")
+        return redirect("bakgomong_kgotla_yamalla:clan-meetings")
 
     return render(request, "meetings/meetings.html", {"form": form, "meetings": meets, "family": getattr(request.user, "family", None)})
 
@@ -98,7 +106,7 @@ def meeting_delete(request, meeting_slug):
     if request.method == "POST":
         meeting.delete()
         messages.success(request, "Meeting deleted successfully.")
-        return redirect("accounts:clan-meetings")
+        return redirect("bakgomong_kgotla_yamalla:clan-meetings")
 
     return render(request, "meetings/meetings.html", {"form": form, "meetings": meets, "family": getattr(request.user, "family", None)})
 
@@ -109,3 +117,10 @@ def get_clan_meetings_api(request):
         return JsonResponse({"success": True, "meetings": data}, status=200)
     except Exception as ex:
         return JsonResponse({"success": False, "message": f"Something went wrong: {ex}"}, status=200)
+    
+def add_to_calendar_apple(request, meeting_slug):
+    meeting = get_object_or_404(Meeting, slug=meeting_slug)
+    if not meeting.user_has_access(request.user):
+        raise PermissionDenied("You do not have access to this meeting.")
+    
+    return generate_ics(meeting)

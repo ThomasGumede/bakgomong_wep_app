@@ -1,5 +1,6 @@
 from django.db import models, transaction, IntegrityError
 import uuid
+from uuid import UUID
 from django.urls import reverse
 from django.utils import timezone
 from django.dispatch import receiver
@@ -13,44 +14,37 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from accounts.models import Family
 from accounts.utils.file_handlers import handle_profile_upload
-from utilities.abstracts import AbstractCreate, AbstractProfile
-from utilities.choices import SCOPE_CHOICES, Gender, PaymentStatus, Recurrence, Role, Title, EmploymentStatus, MemberClassification
+from bakgomong_kgotla_yamalla.utils.calendar import google_calendar_url, office365_calendar_url, outlook_calendar_url
+from utilities.abstracts import AbstractCreate
+from django.core.exceptions import ValidationError
+from utilities.choices import SCOPE_CHOICES, PaymentStatus, Recurrence, Role
 
+SINGLETON_ID = UUID("00000000-0000-0000-0000-000000060121")
 class SingletonModel(models.Model):
-    """
-    Abstract base class for singleton models. Ensures only one instance exists.
-    """
-    singleton_pk = uuid.uuid4()  # Fixed primary key for the singleton instance
-    
     class Meta:
         abstract = True
 
     def save(self, *args, **kwargs):
-        self.pk = self.singleton_pk  # Always set the primary key to the fixed value
-        
-        if self.__class__.objects.exclude(id=self.pk).exists():
-            raise Exception(f"An instance of {self.__class__.__name__} already exists. Cannot create another.")
-        
-        super(SingletonModel, self).save(*args, **kwargs)
-        
+        # Only prevent creating another object
+        if self._state.adding and self.__class__.objects.exists():
+            raise ValidationError(
+                f"Only one {self.__class__.__name__} instance is allowed."
+            )
+
+        super().save(*args, **kwargs)
+
     def delete(self, *args, **kwargs):
-        raise Exception(f"Deletion of {self.__class__.__name__} instance is not allowed.")
-    
-    @classmethod
-    def load(cls):
-        try:
-            return cls.objects.get(pk=cls.singleton_pk)
-        except cls.DoesNotExist:
-            try:
-                with transaction.atomic():
-                    return cls.objects.create(pk=cls.singleton_pk)
-            except IntegrityError:
-                return cls.objects.get(pk=cls.singleton_pk)
+        raise ValidationError(
+            f"{self.__class__.__name__} cannot be deleted."
+        )
 
     @classmethod
     def load(cls):
-        obj, created = cls.objects.get_or_create()
-        return obj
+        obj = cls.objects.first()
+        if obj:
+            return obj
+
+        return cls.objects.create()
 
 
 class KgotlaBalance(SingletonModel, AbstractCreate):
@@ -77,30 +71,40 @@ class KgotlaBalance(SingletonModel, AbstractCreate):
     def get_full_balance(self):
         return f"R{self.balance:,.2f}"
     
-    def get_total_balance(self):
+    @property
+    def total_contributions(self):
         from contributions.models import MemberContribution
-        total_contributions = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
+
+        return (
+            MemberContribution.objects.filter(
+                is_paid=PaymentStatus.PAID
+            )
+            .aggregate(total=Sum("amount_due"))
+            .get("total") or 0
+        )
+    
+    
+    def get_total_balance(self):
+        total_contributions = self.total_contributions
         new_balance = self.balance + total_contributions
-        return new_balance
+        return new_balance or 0
     
     def get_expenses_balance(self):
         from .models import KgotlaExpense
         total_expenses = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
-        return total_expenses
+        return total_expenses or 0
     
     def get_total_balance_after_expenses(self):
-        from contributions.models import MemberContribution
-        total_contributions = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
-        total_expenses = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
+        total_contributions = self.total_contributions
+        total_expenses = self.get_expenses_balance()
         new_balance = self.balance + total_contributions - total_expenses
         if new_balance < 0:
             return mark_safe(f'<p class="text-red-600 font-bold text-lg">R{new_balance:,.2f} (-R{total_expenses:,.2f})</p>')
         return mark_safe(f'<p class="text-green-600 font-bold text-lg">R{new_balance:,.2f} (-R{total_expenses:,.2f})</p>')
     
     def get_total_other_balance_after_expenses(self):
-        from contributions.models import MemberContribution
-        total_contributions = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
-        total_expenses = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
+        total_contributions = self.total_contributions
+        total_expenses = self.get_expenses_balance()
         new_balance = self.balance + total_contributions - total_expenses
         if new_balance < 0:
             return mark_safe(f'''
@@ -130,7 +134,7 @@ class KgotlaBalance(SingletonModel, AbstractCreate):
                             <div class="card-body p-5">
                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                     <div>
-                                        <p class="font-medium text-neutral-900 dark:text-white mb-1">Total Balance</p>
+                                        <p class="font-medium text-neutral-900 dark:text-white mb-1">Total Actual Balance</p>
                                         <h6 class="mb-0 dark:text-white">R{new_balance:,.2f}</h6>
                                     </div>
                                     <div class="w-[50px] h-[50px] bg-success-600 rounded-full flex justify-center items-center">
@@ -138,25 +142,20 @@ class KgotlaBalance(SingletonModel, AbstractCreate):
                                     </div>
                                 </div>
                                 <p class="font-medium text-sm text-neutral-600 dark:text-white mt-3 mb-0 flex items-center gap-2">
-                                    <span class="inline-flex items-center gap-1 text-success-600 dark:text-success-400"><iconify-icon
-                                            icon="bxs:up-arrow" class="text-xs"></iconify-icon> +R20,000</span>
-                                    Last 30 days income
+                                    <span class="inline-flex items-center gap-1 text-success-600 dark:text-success-400">Total balance after expenses</span>
                                 </p>
                             </div>
                         </div>
                          ''')
     
     def save(self, *args, **kwargs):
-        # Generate slug on creation
-        
-        base = slugify(self.title) or "kgotla-balance"
-        slug = base
-        counter = 1
-        while KgotlaBalance.objects.filter(slug=slug).exists():
-            slug = f"{base}-{counter}"
-            counter += 1
-        self.slug = slug
+        self.slug = slugify(self.title) or "kgotla-balance"
         super(KgotlaBalance, self).save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = _("Update Kgotla Balance")
+        verbose_name_plural = _("Update Kgotla Balance")
+        ordering = ["-updated"]
 
 class KgotlaExpense(AbstractCreate):
     title = models.CharField(help_text=_('Enter expense title e.g "Catering for Annual Meeting"'), max_length=300)
@@ -426,6 +425,20 @@ class Meeting(AbstractCreate):
         hours = delta.total_seconds() // 3600
         minutes = (delta.total_seconds() % 3600) // 60
         return f"{int(hours)}h {int(minutes)}min"
+    
+    @property
+    def google_calendar_url(self):
+        return google_calendar_url(self)
+
+
+    @property
+    def outlook_calendar_url(self):
+        return outlook_calendar_url(self)
+
+
+    @property
+    def office365_calendar_url(self):
+        return office365_calendar_url(self)
 
     # ---------------------------------------------
     # 🧠 Helper Methods
@@ -440,7 +453,7 @@ class Meeting(AbstractCreate):
         return self.audience == SCOPE_CHOICES.FAMILY and self.family is not None
     
     def get_absolute_url(self):
-        return reverse("accounts:clan-meetings")
+        return reverse("bakgomong_kgotla_yamalla:meeting-details", kwargs={"meeting_slug": self.slug})
     
     def get_audience_display_name(self):
         """Human-readable version of who the meeting is for."""

@@ -90,12 +90,33 @@ class ContributionType(AbstractCreate):
 
         if self.scope != SCOPE_CHOICES.FAMILY and self.family is not None:
             raise ValidationError("Family should only be set for 'Specific Family' scope.")
-            
+    @property
+    def total_expected(self):
+        from .models import MemberContribution 
+        result = MemberContribution.objects.filter(contribution_type=self).aggregate(total=Sum("amount_due"))
+        return result["total"] or 0
+         
     @property
     def total_collected(self):
-        from .models import Payment 
-        result = Payment.objects.filter(contribution_type=self).aggregate(total=Sum("amount"))
+        from .models import MemberContribution 
+        result = MemberContribution.objects.filter(contribution_type=self).filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))
         return result["total"] or 0
+    
+    @property
+    def total_unpaid(self):
+        from .models import MemberContribution 
+        result = MemberContribution.objects.filter(contribution_type=self).filter(is_paid=PaymentStatus.NOT_PAID).aggregate(total=Sum("amount_due"))
+        return result["total"] or 0
+    
+    
+    
+    @property
+    def total_percentage_collected(self):
+        total_collected = self.total_collected
+        total_expected = self.total_collected + self.total_unpaid
+        if total_expected == 0:
+            return 0
+        return (total_collected / total_expected) * 100
     
     def get_absolute_url(self):
         return reverse("contributions:get-contribution", kwargs={"contribution_slug": self.slug})

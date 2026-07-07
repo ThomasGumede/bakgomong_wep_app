@@ -57,30 +57,6 @@
         rel="stylesheet" />
     <!-- remix icon font css  -->
     <link rel="stylesheet" href="{% static 'css/remixicon.css' %}" />
-    <!-- Apex Chart css -->
-    <link rel="stylesheet" href="{% static 'css/lib/apexcharts.css' %}" />
-    <!-- Data Table css -->
-    <link rel="stylesheet" href="{% static 'css/lib/dataTables.min.css' %}" />
-    <!-- Text Editor css -->
-    <link rel="stylesheet" href="{% static 'css/lib/editor-katex.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/lib/editor.atom-one-dark.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/lib/editor.quill.snow.css' %}" />
-    <!-- Date picker css -->
-    <link rel="stylesheet" href="{% static 'css/lib/flatpickr.min.css' %}" />
-    <!-- Calendar css -->
-    <link rel="stylesheet" href="{% static 'css/lib/full-calendar.css' %}" />
-    <!-- Vector Map css -->
-    <link rel="stylesheet" href="{% static 'css/lib/jquery-jvectormap-2.0.5.css' %}" />
-    <!-- Popup css -->
-    <link rel="stylesheet" href="{% static 'css/lib/magnific-popup.css' %}" />
-    <!-- Slick Slider css -->
-    <link rel="stylesheet" href="{% static 'css/lib/slick.css' %}" />
-    <!-- prism css -->
-    <link rel="stylesheet" href="{% static 'css/lib/prism.css' %}" />
-    <!-- file upload css -->
-    <link rel="stylesheet" href="{% static 'css/lib/file-upload.css' %}" />
-
-    <link rel="stylesheet" href="{% static 'css/lib/audioplayer.css' %}" />
     <!-- main css -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
@@ -108,36 +84,79 @@
                 </div>
                 <form method="post">
                     {% csrf_token %}
-                    {% include 'includes/errors.html' %}
-                    <div class="icon-field mb-4 relative">
-                        <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-                            <iconify-icon icon="mage:email"></iconify-icon>
-                        </span>
-                        <input type="text" name="username"
-                            class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
-                            placeholder="ID Number or Username">
-                    </div>
-                    <div class="relative mb-5">
-                        <div class="icon-field">
-                            <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-                                <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-                            </span>
-                            <input type="password" name="password"
-                                class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
-                                id="your-password" placeholder="Password">
-                        </div>
-                        <span
-                            class="toggle-password ri-eye-line cursor-pointer absolute end-0 top-1/2 -translate-y-1/2 me-4 text-secondary-light"
-                            data-toggle="#your-password"></span>
-                    </div>
+                    {% if form.errors %}
+                    <div class="w-full mx-auto mb-10">
+                        <div class="bg-red-50 border-l-8 border-red-900">
+                            <div class="flex items-center">
+                                <div class="p-2">
+                                    <div class="flex items-center">
+                                        <div class="ml-2">
+                                            <svg class="h-8 w-8 text-red-900 mr-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <p class="px-6 py-4 text-red-900 font-semibold text-lg">Please fix the
+                                            following
+                                            errors.</p>
+                                    </div>
+                                    <div class="px-16 mb-4">
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                <li class="text-md font-bold text-red-500 text-sm">{{field.label}}: {{field.errors.as_text}}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if form.non_field_errors %}
                     
+                                        <li class="text-md font-bold text-red-500 text-sm">Issues: {{form.non_field_errors.as_text}}
+                                        </li>
+                    
+                                        {% endif %}
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="mb-4 space-y-2">
+                        <div class="icon-field  relative">
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
+                                <iconify-icon icon="mage:email"></iconify-icon>
+                            </span>
+                            <input type="text" name="username"
+                                class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
+                                placeholder="ID Number or Username or Email address" id="id_username" value="{{ form.username.value|default_if_none:'' }}">
+                            
+                            <span class="absolute end-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
+                                <iconify-icon icon="ri:check-line"></iconify-icon> </span>
+                            
+                                
+                        </div>
+                        <span class="text-sm text-gray-500 italic font-sans dark:text-white">Enter your ID Number, Username, or Email address</span>
+                    </div>
+                    <div class="mb-5 space-y-2">
+                        <div class="relative">
+                            <div class="icon-field">
+                                <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
+                                    <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+                                </span>
+                                <input type="password" name="password"
+                                    class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
+                                    id="id_password" placeholder="Password">
+                            </div>
+                            <span
+                                class="toggle-password ri-eye-line cursor-pointer absolute end-0 top-1/2 -translate-y-1/2 me-4 text-secondary-light"
+                                data-toggle="#id_password"></span>
+                        </div>
+                        <span class="text-sm text-gray-500 italic font-sans dark:text-white">Enter your password</span>
+                    </div>
 
                     <button type="submit"
-                        class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8"> Sign
-                        In</button>
-
-
+                        class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8"> Sign In</button>
                     
+                    <p class="text-base text-gray-500 italic font-sans dark:text-white">Forgot your password? <a href="#" class="text-primary font-bold hover:underline">Reset it</a></p>
 
                 </form>
             </div>
@@ -147,18 +166,11 @@
     <!-- jQuery library js -->
     <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
     <!-- Apex Chart js -->
-
-    <!-- Data Table js -->
-    <script src="{% static 'js/lib/simple-datatables.min.js' %}"></script>
     <!-- Iconify Font js -->
     <script src="{% static 'js/lib/iconify-icon.min.js' %}"></script>
     <!-- jQuery UI js -->
     <script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
-    <!-- Vector Map js -->
-    <script src="{% static 'js/lib/jquery-jvectormap-2.0.5.min.js' %}"></script>
-    <script src="{% static 'js/lib/jquery-jvectormap-world-mill-en.js' %}"></script>
-    <!-- Popup js -->
-    <script src="{% static 'js/lib/magnifc-popup.min.js' %}"></script>
+    
     <!-- Slick Slider js -->
     <script src="{% static 'js/app.js' %}"></script>
 

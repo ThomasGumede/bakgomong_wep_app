@@ -228,7 +228,7 @@ class PaymentAdmin(admin.ModelAdmin):
             "fields": ("receipt", "proof_of_payment", "proof_preview")
         }),
         (_("Related Contribution"), {
-            "fields": ("member_contribution", "contribution_type")
+            "fields": ("member_contribution",)
         }),
         (_("Approval Status"), {
             "fields": ("is_approved", "rejection_reason", "payment_verified_by", "payment_verified_date"),

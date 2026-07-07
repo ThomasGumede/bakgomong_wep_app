@@ -32,7 +32,7 @@ Contributions {% endif %}
                                         aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
                                 <td>
                                     <a href="{{inv.account.get_absolute_url}}" class="flex items-center">
-                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}"
+                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
                                             alt="{{ inv.account.get_full_name }} profile"
                                             class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
                                         <span class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</span>
