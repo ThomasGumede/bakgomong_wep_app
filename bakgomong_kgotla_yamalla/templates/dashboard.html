@@ -34,7 +34,7 @@ Home
     <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
         <div class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
             <p class="font-medium">Bakgomong Full Account Balance</p>
-            {{kgotla_balance.get_total_balance_after_expenses}}
+            <p class="text-green-500 font-bold text-lg">R{{kgotla_balance.get_total_balance}}</p>
         </div>
         <div class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
             <p class="font-medium">Bakgomong Full Outstanding Balance</p>
@@ -56,7 +56,6 @@ Home
         class="max-w-full  bg-gradient-to-r mx-auto mt-10 from-[#f2fdff] to-[#ffefdd] shadow-md dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg p-4 font-sans">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-lg mb-0">Upcoming Payment</h2>
-    
         </div>
     
         <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
