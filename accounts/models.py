@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import pre_delete, post_save
+from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.contrib.auth import get_user_model
 from accounts.utils.file_handlers import handle_profile_upload
@@ -121,6 +122,41 @@ class Account(AbstractUser, AbstractProfile):
             models.Index(fields=["is_approved"]),
             models.Index(fields=["family"]),
         ]
+        
+    def save(self, *args, **kwargs):
+        
+        # Make sure executives are staff members
+        if self.role in [Role.CLAN_CHAIRPERSON, Role.MMAKGOSANA, Role.SECRETARY, Role.DEP_SECRETARY, Role.TREASURER, Role.DEP_CHAIRPERSON, Role.SPONSOR]:
+            self.is_staff = True
+        else:
+            self.is_staff = False  
+        
+        super(Account, self).save(*args, **kwargs)
+        
+    def clean(self):
+        # Ensure only one user can have a specific role at a time
+        
+        user_with_role = Account.objects.filter(role=self.role).exclude(pk=self.pk).first()
+        if user_with_role:
+            if self.role == Role.CLAN_CHAIRPERSON:
+                raise ValidationError("There can only be one Kgosana (Kgotla Chairperson) at a time.")
+            elif self.role == Role.MMAKGOSANA:
+                raise ValidationError("There can only be one Mmakgosana (Deputy Chairperson) at a time.")
+            elif self.role == Role.SECRETARY:
+                raise ValidationError("There can only be one Secretary at a time.")
+            elif self.role == Role.DEP_SECRETARY:
+                raise ValidationError("There can only be one Deputy Secretary at a time.")
+            elif self.role == Role.TREASURER:
+                raise ValidationError("There can only be one Treasurer at a time.")
+            elif self.role == Role.DEP_CHAIRPERSON:
+                raise ValidationError("There can only be one Deputy Chairperson at a time.")
+            elif self.role == Role.SPONSOR:
+                raise ValidationError("There can only be one Sponsor at a time.")
+            elif self.role == Role.KGOSANA:
+                raise ValidationError("There can only be one Kgosana at a time.")
+            else:
+                raise ValidationError(f"There can only be one user with the role {self.role} at a time.")
+        super(Account, self).clean()
 
     def __str__(self):
         full = self.get_full_name() or ""

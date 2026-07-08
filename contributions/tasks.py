@@ -115,7 +115,7 @@ def send_contribution_created_notification(mc: MemberContribution):
                     logger.warning("SMS notification failed for %s (MC %s): %s", member.phone, mc.id, response)
             except Exception:
                 logger.exception("Failed to send SMS notification to %s", member.phone)
-        return True
+        return f"Notification sent to {member.username}"
 
     except Exception:
         logger.exception(

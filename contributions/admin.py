@@ -13,7 +13,7 @@ logger = logging.getLogger("contributions.admin")
 
 @admin.action(description="Notify member(s) of unpaid contributions")
 def notify_members_of_unpaid_contributions(modeladmin, request, queryset):
-    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA] or not request.user.is_family_leader or not request.user.is_superuser:
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA, Role.DEVELOPER] or not request.user.is_family_leader or not request.user.is_superuser:
         messages.error(request, "Only executives are allowed to notify members of unpaid contributions.")
         return
     

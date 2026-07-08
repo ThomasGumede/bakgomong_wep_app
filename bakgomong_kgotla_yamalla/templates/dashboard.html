@@ -51,13 +51,13 @@ Home
     </div>
 </div>
 
-{% if latest_unpaid %}
+
     <div
         class="max-w-full  bg-gradient-to-r mx-auto mt-10 from-[#f2fdff] to-[#ffefdd] shadow-md dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg p-4 font-sans">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-lg mb-0">Upcoming Payment</h2>
         </div>
-    
+        {% for latest_unpaid in latest_unpaids %}
         <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
             <div class="flex items-center justify-between flex-wrap mb-4">
                 <div class="flex items-center space-x-4 justify-between mb-2">
@@ -88,8 +88,13 @@ Home
                 Pay Now
             </a>
         </div>
+        {% empty %}
+        <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
+            <p>No Upcoming Payments</p>
+        </div>
+        {% endfor %}
     </div>
-{% endif %}
+
     
 
 <!-- Table End -->

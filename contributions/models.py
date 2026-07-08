@@ -90,6 +90,8 @@ class ContributionType(AbstractCreate):
 
         if self.scope != SCOPE_CHOICES.FAMILY and self.family is not None:
             raise ValidationError("Family should only be set for 'Specific Family' scope.")
+        super(ContributionType, self).clean()
+        
     @property
     def total_expected(self):
         from .models import MemberContribution 

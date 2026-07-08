@@ -39,7 +39,7 @@ def dashboard(request):
 
     # Last 5 unpaid/pending payments for user
     unpaid_statuses = [PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]
-    context["latest_unpaid"] = member_contribs_qs.filter(account=user, is_paid=PaymentStatus.NOT_PAID).order_by('-due_date').first()
+    context["latest_unpaids"] = member_contribs_qs.filter(account=user, is_paid=PaymentStatus.NOT_PAID).order_by('-due_date')
     context["members"] = Account.objects.filter(is_active=True).count()
     context["kgotla_balance"] = KgotlaBalance.objects.first()
     context["total_expenses_balance"] = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
