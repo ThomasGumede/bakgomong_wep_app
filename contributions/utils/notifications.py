@@ -11,7 +11,7 @@ from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from requests.auth import HTTPBasicAuth
 
-from contributions.models import MemberContribution
+from contributions.models import MemberContribution, SMSLog, SMSStatus
 from utilities.validators import validate_rsa_phone
 
 logger = logging.getLogger("contributions")
@@ -46,12 +46,30 @@ def send_smsportal_sms(msisdn: str, message: str) -> tuple[bool, dict]:
         result = response.json()
         if response.status_code in (200, 201):
             logger.info("SMSPortal response: %s", result)
+            SMSLog.objects.create(
+                        phone_number=msisdn,
+                        status=SMSStatus.SENT,
+                        message=message,
+                        provider_response=result
+                    )
             return True, result
         else:
             logger.error("SMSPortal error response: %s", result)
+            SMSLog.objects.create(
+                        phone_number=msisdn,
+                        status=SMSStatus.FAILED,
+                        message=message,
+                        provider_response=result
+                    )
             return False, result
     except requests.RequestException as e:
         logger.exception("SMSPortal request failed: %s", e)
+        SMSLog.objects.create(
+                        phone_number=msisdn,
+                        status=SMSStatus.FAILED,
+                        message=message,
+                        provider_response={"error": str(e)}
+                    )
         return False, {"error": str(e)}
 
 

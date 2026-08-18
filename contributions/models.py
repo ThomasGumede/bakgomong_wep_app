@@ -129,7 +129,6 @@ class ContributionType(AbstractCreate):
     def get_delete_url(self):
         return reverse("contributions:delete-contribution", kwargs={"contribution_slug": self.slug})
     
-
 class MemberContribution(AbstractCreate):
     
     account = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="member_contributions")

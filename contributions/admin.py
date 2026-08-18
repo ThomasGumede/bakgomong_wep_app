@@ -11,6 +11,17 @@ from utilities.choices import Role
 
 logger = logging.getLogger("contributions.admin")
 
+@admin.action(description="Create next month's member contributions for selected contribution types")
+def create_next_month_contributions(modeladmin, request, queryset):
+    if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA, Role.DEVELOPER] or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are allowed to create next month's member contributions.")
+        return
+    
+    for contribution_type in queryset:
+        async_task("contributions.tasks.create_next_month_member_contributions_task", contribution_type.id)
+    
+    messages.success(request, f"Tasks queued to create next month's contributions for {queryset.count()} contribution type(s).")
+
 @admin.action(description="Notify member(s) of unpaid contributions")
 def notify_members_of_unpaid_contributions(modeladmin, request, queryset):
     if not request.user.role in [Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY, Role.KGOSANA, Role.SECRETARY, Role.TREASURER, Role.MMAKGOSANA, Role.DEVELOPER] or not request.user.is_family_leader or not request.user.is_superuser:
@@ -44,6 +55,7 @@ class ContributionTypeAdmin(admin.ModelAdmin):
             "classes": ("collapse",)
         }),
     )
+    actions = [create_next_month_contributions]
 
     def save_model(self, request, obj, form, change):
         if not change:

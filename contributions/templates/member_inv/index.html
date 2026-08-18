@@ -101,38 +101,7 @@ Contributions {% endif %}
                     </table>
 
                     <!-- Pagination -->
-                    {% if contributions.has_other_pages %}
-                    <nav class="mt-4" role="navigation" aria-label="Pagination">
-                        <ul class="pagination">
-                            {% if contributions.has_previous %}
-                            <li class="page-item"><a class="page-link"
-                                    href="?page={{ contributions.previous_page_number }}"
-                                    aria-label="Previous page">&laquo; Prev</a></li>
-                            {% else %}
-                            <li class="page-item disabled"><span class="page-link">&laquo; Prev</span></li>
-                            {% endif %}
-
-                            {% for p in contributions.paginator.page_range %}
-                            {% if contributions.number == p %}
-                            <li class="page-item active" aria-current="page"><span class="page-link">{{ p }}</span></li>
-                            {% elif p <= 2 or p> contributions.paginator.num_pages|add:-3 or p >=
-                                contributions.number|add:-2 and p <= contributions.number|add:2 %} <li
-                                    class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
-                                    {% elif forloop.first %}
-                                    <li class="page-item"><span class="page-link">…</span></li>
-                                    {% endif %}
-                                    {% endfor %}
-
-                                    {% if contributions.has_next %}
-                                    <li class="page-item"><a class="page-link"
-                                            href="?page={{ contributions.next_page_number }}"
-                                            aria-label="Next page">Next &raquo;</a></li>
-                                    {% else %}
-                                    <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
-                                    {% endif %}
-                        </ul>
-                    </nav>
-                    {% endif %}
+                  
 
                     {% else %}
                     <div class="p-6 text-center">

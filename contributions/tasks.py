@@ -1,5 +1,6 @@
 from celery import shared_task
 from datetime import timedelta
+from django.db.models import Q
 from django.utils import timezone
 from django.conf import settings
 from django.template.loader import get_template, render_to_string
@@ -7,12 +8,15 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.core.files.base import ContentFile
 from weasyprint import HTML
+from django_q.tasks import async_task
 from io import BytesIO
+from accounts.models import Account
 from contributions.models import MemberContribution, Payment
-from contributions.utils.notifications import send_smsportal_sms
+from contributions.signals import calculate_due_date, chunk_list
+from contributions.utils.notifications import generate_reference, send_smsportal_sms
 import logging
 
-from utilities.choices import PaymentStatus
+from utilities.choices import SCOPE_CHOICES, MemberClassification, PaymentStatus, Recurrence, Role
 
 logger = logging.getLogger('tasks')
 
@@ -111,6 +115,7 @@ def send_contribution_created_notification(mc: MemberContribution):
                 success, response = send_smsportal_sms(member.phone, sms_message)
                 if success:
                     logger.info("SMS notification sent to %s (MC %s)", member.phone, mc.id)
+                    
                 else:
                     logger.warning("SMS notification failed for %s (MC %s): %s", member.phone, mc.id, response)
             except Exception:
@@ -528,3 +533,66 @@ def send_payment_details_task(obj_id, obj_type='contribution', treasurer_name=No
     except Exception as exc:
         logger.exception("send_payment_details_task failed for %s: %s", obj_id, exc)
         return False
+
+def create_next_month_member_contributions_task(contribution_type_id):
+    """
+    Celery task to create next month's member contributions for a given ContributionType.
+    """
+    from contributions.models import ContributionType
+    try:
+        contribution_type = ContributionType.objects.get(id=contribution_type_id, recurrence=Recurrence.MONTHLY)
+        
+        # Create next month's contributions
+        if contribution_type.scope == SCOPE_CHOICES.CLAN:
+            members_qs = Account.objects.filter(is_active=True, is_approved=True).exclude(Q(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD]) and Q(role__in=[Role.DEVELOPER, Role.SPONSOR]))
+        elif contribution_type.scope == SCOPE_CHOICES.FAMILY and contribution_type.family:
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, family=contribution_type.family).exclude(Q(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD]) and Q(role__in=[Role.DEVELOPER, Role.SPONSOR]))
+        elif contribution_type.scope == SCOPE_CHOICES.FAMILY_LEADERS:
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, is_family_leader=True).exclude(Q(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD]) and Q(role__in=[Role.DEVELOPER, Role.SPONSOR]))
+        elif contribution_type.scope == SCOPE_CHOICES.EXECUTIVES:
+            members_qs = Account.objects.filter(is_active=True, is_approved=True, role__in=[
+                        Role.CLAN_CHAIRPERSON, Role.DEP_CHAIRPERSON, Role.DEP_SECRETARY,
+                        Role.KGOSANA, Role.SECRETARY, Role.TREASURER
+                    ]).exclude(Q(member_classification__in=[MemberClassification.CHILD,  MemberClassification.GRANDCHILD]) and Q(role__in=[Role.DEVELOPER, Role.SPONSOR]))
+        else:
+            logger.warning("Unknown scope '%s' for ContributionType %s", contribution_type.scope, contribution_type.id)
+            return
+        
+        if not members_qs.exists():
+            logger.warning("No members found for ContributionType %s (scope %s)", contribution_type.id, contribution_type.scope)
+            return
+        
+                # Calculate due date
+        due_date = contribution_type.due_date or calculate_due_date(contribution_type.recurrence)
+        
+                # Create contributions in bulk
+        contributions = [
+                    MemberContribution(
+                        account=member,
+                        contribution_type=contribution_type,
+                        amount_due=contribution_type.amount,
+                        reference=generate_reference(),
+                        due_date=due_date,
+                        is_paid=PaymentStatus.NOT_PAID
+                    )
+                    for member in members_qs
+                ]
+        
+        created_entries = MemberContribution.objects.bulk_create(contributions, batch_size=1000)
+        logger.info("Created %d contributions for type %s (%s, scope=%s)", len(created_entries), contribution_type.id, contribution_type.name, contribution_type.scope)
+        
+        # Queue notifications in batches of 100
+        all_ids = list(MemberContribution.objects.filter(contribution_type=contribution_type).values_list("id", flat=True))
+        for batch in chunk_list(all_ids, size=100):
+            async_task("contributions.tasks.send_contribution_created_notification_task", batch)
+        
+        logger.info("Queued %d batched notification tasks for ContributionType %s", len(list(chunk_list(all_ids, 100))), contribution_type.id)
+        
+        logger.info("Next month's contributions created for ContributionType %s", contribution_type_id)
+        
+    except ContributionType.DoesNotExist:
+        logger.error("ContributionType %s not found", contribution_type_id)
+    except Exception as exc:
+        logger.exception("Failed to create next month's contributions for ContributionType %s: %s", contribution_type_id, exc)
+
+
