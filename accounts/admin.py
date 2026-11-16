@@ -67,9 +67,7 @@ def welcome_new_member(modeladmin, request, queryset):
 
 @admin.action(description="Set username for members without username")
 def set_username_for_members_without_username(modeladmin, request, queryset):
-    if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
-        messages.error(request, "Only executives are allowed to set usernames for members.")
-        return
+    
     
     updated_count = 0
     for account in queryset:
