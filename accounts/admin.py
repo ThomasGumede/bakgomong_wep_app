@@ -65,7 +65,37 @@ def welcome_new_member(modeladmin, request, queryset):
         async_task("accounts.tasks.welcome_member_task", account.id)
     messages.success(request, f"Welcome tasks queued for {queryset.count()} new member(s).")
 
-# @admin.action(description="Notify members of new meeting")
+@admin.action(description="Set username for members without username")
+def set_username_for_members_without_username(modeladmin, request, queryset):
+    if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
+        messages.error(request, "Only executives are allowed to set usernames for members.")
+        return
+    
+    updated_count = 0
+    for account in queryset:
+        if not account.username:
+            if account.id_number:
+                account.username = account.id_number
+            elif account.email:
+                account.username = account.email
+            else:
+                base_username = account.phone
+                username = base_username
+                counter = 1
+                while Account.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                account.username = username
+            account.save()
+            updated_count += 1
+    
+    if updated_count > 0:
+        messages.success(request, f"Username set for {updated_count} member(s) without username.")
+    else:
+        messages.info(request, "No members were updated. All selected members already have usernames.")
+# 
+# @admi
+# n.action(description="Notify members of new meeting")
 # def notify_members_of_new_meeting(modeladmin, request, queryset):
 #     if not request.user.role in executive_roles or not request.user.is_family_leader or not request.user.is_superuser:
 #         messages.error(request, "Only executives are allowed to notify members of new meetings.")

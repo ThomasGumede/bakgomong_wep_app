@@ -122,6 +122,20 @@ class Account(AbstractUser, AbstractProfile):
         ]
         
     def save(self, *args, **kwargs):
+        # if username is not provided, generate one from first and last name
+        if not self.username:
+            if self.id_number:
+                self.username = self.id_number
+            elif self.email:
+                self.username = self.email
+            else:
+                base_username = self.phone
+                username = base_username
+                counter = 1
+                while Account.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                self.username = username
         super(Account, self).save(*args, **kwargs)
         
     def clean(self):
