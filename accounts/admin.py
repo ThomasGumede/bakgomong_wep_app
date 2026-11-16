@@ -169,7 +169,7 @@ class AccountAdmin(UserAdmin):
     date_hierarchy = "created"
     readonly_fields = ("created", "updated", "profile_image_preview", "last_login")
     filter_horizontal = ("groups",)
-    actions = [approve_members, welcome_new_member, allocate_member_to_default_family, reset_password]
+    actions = [approve_members, welcome_new_member, allocate_member_to_default_family, reset_password, set_username_for_members_without_username]
     add_fieldsets = (
         (_("Personal Info"), {
             "fields": (
