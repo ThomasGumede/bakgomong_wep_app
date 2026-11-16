@@ -104,7 +104,7 @@
                     {% for member in members %}
                     <tr>
                         <td>
-                            <div class="person-inline"><span class="avatar-initials">NM</span>
+                            <div class="person-inline"><span class="avatar-initials">{{ member.first_name|slice:":1" }}{{ member.last_name|slice:":1" }}</span>
                                 <div><strong>{{ member.get_full_name }}</strong><span class="sub">{{ member.email }}</span></div>
                             </div>
                         </td>
