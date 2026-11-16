@@ -1,5 +1,6 @@
 import logging
 from decimal import Decimal, InvalidOperation
+from django.utils import timezone
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -73,7 +74,7 @@ class ContributionTypeForm(forms.ModelForm):
     
     def clean_due_date(self):
         due_date = self.cleaned_data.get('due_date')
-        if due_date is not None and due_date < forms.fields.date.today():
+        if due_date is not None and due_date < timezone.now().date():
             raise ValidationError(_("Due date cannot be in the past."))
         return due_date
     
