@@ -16,147 +16,190 @@
 
 {% block content %}
 
-<div
-    class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
-    <div class="flex w-fit items-center space-x-4 mb-4">
-        <span
-            class="mb-0 w-20 h-20 bg-warning-600 flex-shrink-0 text-white flex justify-center items-center ">
-            <img class=" w-20 h-20" src="{% static 'images/kgotla.jpg' %}"
-                alt="{{user.get_title_display}}. {{user.get_full_name}}">
-        </span>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
         <div>
-            <h3 class="text-base font-medium text-gray-700">{{family.name}} Overview
-            </h3>
-            <p class="text-sm text-gray-600">Total Invoces: <span class="font-semibold text-gray-800">{{contributions.count}}</span>
+            <p class="section-kicker">
+                MEMBER PORTAL
             </p>
-            <p class="text-sm text-gray-600">Total Members: <span class="font-semibold text-gray-800">{{members.count}}</span>
+            <h1>
+                Family overview
+            </h1>
+            <p class="heading-desc">
+                Family leadership, membership and contribution position.
             </p>
-            <p class="text-sm text-gray-600">Family Leader: <span class="font-semibold text-gray-800">{{family.leader.get_title_display}}. {{family.leader.get_full_name}}</span>
-            </p>
         </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-        <div
-            class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Total Account Balance</p>
-            <p class="text-green-600 font-bold text-lg">R{{family_balance}}</p>
+        <div class="heading-actions">
         </div>
-        <div
-            class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Total Outstanding Balance</p>
-            <p class="text-red-500 font-bold text-lg">R{{family_outstanding}}</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You've Paid:</p>
-            <p class="text-yellow-600 font-bold text-lg">R{{total_paid}}</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You Owe Family:</p>
-            <p class="text-red-500 font-bold text-lg">R{{total_unpaid}}</p>
-        </div>
-    </div>
-</div>
-
-{% if members.count > 0 %}
-<!-- Table Start -->
-<div class="grid mt-10 grid-cols-12">
-    <div class="col-span-12">
-        <div class="card border-0 overflow-hidden p-2">
-            <div class="card-header">
-                <h6 class="card-title mb-0 text-lg">Members</h6>
+    </section>
+    <div id="family-overview">
+        <div class="family-banner">
+            <div>
+                <p class="section-kicker">
+                    FAMILY PROFILE
+                </p>
+                <h2 id="family-name">{{ family.name }}</h2>
+                <p id="family-status">Approved family branch</p>
             </div>
-            <div
-                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
-
-
-                <a href="{% url 'accounts:add-member' request.user.family.slug %}"
-                    class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
-                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                    Add Member
+            <div id="family-actions">
+            </div>
+        </div>
+        <section class="metrics-grid metrics-three">
+            <article class="metric-card">
+                <div class="metric-top">
+                    Family members
+                </div>
+                <strong class="metric-value" id="family-member-count">{{ family.members.count }}</strong>
+                <p>
+                    Registered members
+                </p>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top">
+                    Contributions received
+                </div>
+                <strong class="metric-value" id="family-paid">R {{family.total_paid|floatformat:2}}</strong>
+                <p>
+                    Verified member obligations
+                </p>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top">
+                    Outstanding contributions
+                </div>
+                <strong class="metric-value" id="family-unpaid">R {{family.total_unpaid|floatformat:2}}</strong>
+                <p>
+                    Unpaid or awaiting verification
+                </p>
+            </article>
+        </section>
+        <div class="family-details-grid">
+            <section class="soft-card details-panel">
+                <div class="card-heading">
+                    <h2>
+                        Family information
+                    </h2>
+                </div>
+                <dl class="definition-list" id="family-facts">
+                    <div>
+                        <dt>Family name</dt>
+                        <dd>{{ family.name }}</dd>
+                    </div>
+                    
+                    <div>
+                        <dt>Leader</dt>
+                        <dd>{{ family.leader.get_full_name }}</dd>
+                    </div>
+                    <div>
+                        <dt>Approval</dt>
+                        <dd>Approved</dd>
+                    </div>
+                    <div>
+                        <dt>Registered on</dt>
+                        <dd>{{ family.created|date:"d M Y" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Family members</dt>
+                        <dd>{{ family.members.count }}</dd>
+                    </div>
+                </dl>
+            </section>
+            <section class="soft-card details-panel">
+                <div class="card-heading">
+                    <h2>
+                        Family leader
+                    </h2>
+                </div>
+                <div id="family-leader-detail">
+                    <div class="leader-card"><span class="avatar-initials" style="height:54px;width:54px">{{family.leader.first_name|slice:":1"}}{{family.leader.last_name|slice:":1"}}</span>
+                        <div>
+                            <h3>{{family.leader.title}} {{ family.leader.get_full_name }}</h3>
+                            <p>{{ family.leader.address }} · {{ family.leader.email }}</p>
+                            <p>Designated family leader</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <section class="soft-card mt-section">
+            <div class="card-heading">
+                <h2>
+                    Members of this family
+                </h2>
+                <a class="btn-outline staff-only" href="{% url 'accounts:add-member' %}" >
+                    + Add member
                 </a>
-
             </div>
-
-            <div class="card-body">
-                <table id="selection-table"
-                    class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
+            <div class="filter-inner">
+                <div class="filter-toolbar">
+                    <label class="search-field">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <circle cx="11" cy="11" r="7">
+                            </circle>
+                            <path d="m20 20-4-4">
+                            </path>
+                        </svg>
+                        <input aria-label="Search within this family" id="family-members-search"
+                            placeholder="Search within this family" type="search">
+                    </label>
+                </div>
+            </div>
+            <div class="soft-card table-card">
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>
                                     Member
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
-                                    Email
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
+                                </th>
+                                <th>
+                                    Title
+                                </th>
+                                <th>
                                     Role
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
+                                </th>
+                                <th>
+                                    Classification
+                                </th>
+                                <th>
                                     Status
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {% for member in members %}
-                        <tr>
-
-
-                            <td>
-                                <a href="{% url 'accounts:user-details' member.username %}" class="flex items-center">
-                                    <img src="{% if member.profile_image %}{{member.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
-                                        alt="{{member.get_full_name}}"
-                                        class="shrink-0 me-3 h-[46px] w-[46px] rounded-lg">
-                                    <h6 class="text-base mb-0 font-medium grow">{{member.get_full_name}}</h6>
-                                </a>
-                            </td>
-                            <td>{{member.email}}</td>
-                            <td>{{member.get_role_display}}</td>
-
-
-
-                            <td class="text-center">
-                                <span
-                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-
-
-                    </tbody>
-                </table>
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="family-member-rows">
+                            {% for member in family.members.all %}
+                            <tr>
+                                <td><strong>{{ member.get_full_name }}</strong><span class="sub">{{ member.username }}</span></td>
+                                <td>{{ member.title }}</td>
+                                <td>{{ member.get_role_display }}</td>
+                                <td>{{ member.get_member_classification_display }}</td>
+                                <td>{% if member.is_approved %}<span class="status status-green">Approved</span>{% else %}<span
+                                    class="status status-yellow">Pending approval</span>{% endif %}</td>
+                                <td><a class="link-inline" href="{% url 'accounts:user-details' member.username %}">View</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No members found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
-</div>
-{% endif %}
+</main>
+
 {% endblock content %}
 
 

@@ -35,7 +35,7 @@ def user_details(request, username):
 @login_required
 def account_overview(request, username):
     context = {}
-    users = get_user_model().objects.filter(is_active=True).select_related('family').prefetch_related('member_contributions', 'payments')
+    users = get_user_model().objects.select_related('family').prefetch_related('member_contributions', 'payments')
     model = get_object_or_404(users, username=username)
     
     context['user'] = model
@@ -45,10 +45,7 @@ def account_overview(request, username):
         template = "accounts/account-overview.html"
         mc = model.member_contributions.all()
         context['contributions'] =mc.order_by('-due_date')
-        context['pending_invoices'] =mc.filter(is_paid__in=[PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]).order_by('-due_date')
-        context['unpaid_invoices'] =mc.filter(is_paid=PaymentStatus.NOT_PAID).order_by('-due_date')
-        if request.user == model:
-            context['latest_unpaid'] = mc.filter(is_paid=PaymentStatus.NOT_PAID).order_by('-due_date').first()
+        
     
    
     return render(request, template, context)
@@ -72,46 +69,37 @@ def account_update(request):
 
 
 @login_required
-def get_members(request, family_slug):
-    family = get_object_or_404(Family, slug=family_slug)
-    members = get_user_model().objects.filter(is_approved=True, family=family).order_by("username").select_related("family")
-    return render(request, 'members/members.html', {'members': members, 'family': family})
+def get_members(request, family_slug=None):
+    
+    search_query = request.GET.get("search", "")
+    
+    if family_slug:
+        family = get_object_or_404(Family, slug=family_slug)
+        # if not (request.user.is_staff or getattr(request.user, "family", None) == family):
+        #     return HttpResponseForbidden()
+        members = family.members.select_related("family").all()
+    else:
+        members = get_user_model().objects.order_by("username").select_related("family")
+    
+    if search_query:
+        members = members.filter(username__icontains=search_query)
+        
+    return render(request, 'members/members.html', {'members': members})
 
 @login_required
-def add_member(request, family_slug):
-    family = get_object_or_404(Family, slug=family_slug)
+def add_member(request):
     
     template_name = "members/add-member.html"
-    success_url = "accounts:get-members"
-    
-    if not (request.user.is_staff or getattr(request.user, "family", None) == family):
-        return HttpResponseForbidden()
     
     if request.method == "POST":
         form = MemberForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            # role = form.cleaned_data['role']
-            # EXECUTIVE_ROLES = [
-            #     Role.CLAN_CHAIRPERSON,
-            #     Role.DEP_CHAIRPERSON,
-            #     Role.SECRETARY,
-            #     Role.DEP_SECRETARY,
-            #     Role.TREASURER,
-            #     Role.KGOSANA,
-            # ]
-            # if role in EXECUTIVE_ROLES:
-            #     executive = User.objects.filter(role=role).first()
-            #     if executive:
-            #         messages.error(request, f'Sorry, only one member can be {role}. Please choose another role')
-            #         return render(
-            #             request=request, template_name=template_name, context={"form": form}
-            #         )
+
             try:
                 with transaction.atomic():
                     user = form.save(commit=False)
                     user.is_active = False
                     user.is_email_activated = False
-                    user.role = Role.MEMBER
                     user.save()
                     
                 # queue verification email (non-blocking) via django-q
@@ -123,11 +111,11 @@ def add_member(request, family_slug):
                     request,
                     "Member added. A verification email has been queued for the member; they must confirm before they can log in."
                 )
-                return redirect("accounts:get-members", family_slug=family.slug)
+                return redirect("accounts:get-members")
             except Exception:
-                logger.exception("Failed to add member to family %s", family_slug)
+                logger.exception("Failed to add member to family")
                 messages.error(request, "Something went wrong while adding the member. Try again.")
-                return render(request, template_name, {"form": form, "family": family})
+                return render(request, template_name, {"form": form})
         else:
             messages.error(request, "Something went wrong while adding member")
             return render(
@@ -135,7 +123,7 @@ def add_member(request, family_slug):
             )
     else:
         form = MemberForm()
-    return render(request=request, template_name=template_name, context={"form": form, "family": family})
+    return render(request=request, template_name=template_name, context={"form": form})
 
 @login_required
 def update_member(request, family_slug, username):

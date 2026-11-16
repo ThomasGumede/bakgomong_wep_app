@@ -1,0 +1,146 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block dash_title %}
+Checkout
+{% endblock dash_title %}
+{% block dash_title2 %}
+Checkout
+{% endblock dash_title2 %}
+{% block statement_title %}
+
+{% if user == request.user %}
+<p>You are paying for yourself</p>
+{% else %}
+<p>You are paying for {{user.get_full_name}}</p>
+{% endif %}
+
+
+{% endblock statement_title %}
+{% block content %}
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Payment instructions
+            </h1>
+            <p class="heading-desc">
+                Your payment is pending until reviewed and approved.
+            </p>
+        </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="payment-flow">
+        <div class="flow-head">
+            <span class="step complete">
+                1 · Payment method
+            </span>
+            <span class="step active">
+                2 · Instructions / checkout
+            </span>
+            <span class="step">
+                3 · Verification
+            </span>
+        </div>
+        <section class="soft-card instructions-card">
+            <div class="invoice-heading">
+                <div>
+                    <span class="section-kicker">
+                        PAYMENT INSTRUCTIONS
+                    </span>
+                    <h2 id="instruction-title">{{contribution.contribution_type.name}}</h2>
+                    <p id="instruction-subtitle">Reference {{contribution.reference}} · {{contribution.contribution_type.get_scope_display}}</p>
+                </div>
+                {% if contribution.is_paid == 'PENDING' %}
+                <span class="status status-yellow" id="instruction-status">
+                    PENDING
+                </span>
+                {% elif contribution.is_paid == 'NOT_PAID' %}
+                <span class="status status-red" id="instruction-status">
+                    NOT APPROVED
+                </span>
+                {% elif contribution.is_paid == 'PAID' %}
+                <span class="status status-green" id="instruction-status">
+                    APPROVED </span>
+                {% else %}
+                <span class="status status-gray" id="instruction-status">
+                    {{contribution.get_is_paid_display}} 
+                </span>
+                {% endif %}
+            </div>
+            <div class="checkout-overview" id="instruction-member-info">
+                <div><span>Contribution</span><strong>{{contribution.contribution_type.name}}</strong></div>
+                <div><span>Scope · Frequency</span><strong>{{contribution.contribution_type.get_scope_display}} · {{contribution.contribution_type.get_recurrence_display}}</strong></div>
+                <div><span>Amount due</span><strong>R {{contribution.amount_due|floatformat:2}}</strong></div>
+            </div>
+            <div class="bank-instructions">
+                <p class="section-kicker">
+                    OFFICIAL BANK DETAILS
+                </p>
+                <h3>
+                    Where to send your payment
+                </h3>
+                <dl class="definition-list" id="bank-facts">
+                    <div>
+                        <dt>Bank name</dt>
+                        <dd>To be supplied by Kgotla management</dd>
+                    </div>
+                    <div>
+                        <dt>Account name</dt>
+                        <dd>To be supplied by Kgotla management</dd>
+                    </div>
+                    <div>
+                        <dt>Account number</dt>
+                        <dd>Not configured — verify with the Treasurer</dd>
+                    </div>
+                    <div>
+                        <dt>Branch code</dt>
+                        <dd>Not configured</dd>
+                    </div>
+                    <div>
+                        <dt>Reference to use</dt>
+                        <dd>{{contribution.reference}}</dd>
+                    </div>
+                    <div>
+                        <dt>Amount</dt>
+                        <dd>R {{contribution.amount_due|floatformat:2}}</dd>
+                    </div>
+                    <div>
+                        <dt>Send proof to</dt>
+                        <dd>Not configured — ask the Secretary / Treasurer</dd>
+                    </div>
+                </dl>
+                <div class="info-note">
+                    <strong>
+                        Bank detail verification
+                    </strong>
+                    <p>
+                        The bank account details and proof-of-payment email must be configured by your Kgotla
+                        management. Do not transfer funds using placeholder details.
+                    </p>
+                </div>
+            </div>
+            <div class="info-note" id="instruction-channel-note"><strong>EFT / bank transfer instructions</strong>
+                <p>Use the reference above for your bank transfer, then email proof of payment to the confirmed Kgotla
+                    email. The Treasurer will verify the payment.</p>
+            </div>
+            <div class="button-row">
+                <button class="btn-primary" id="download-invoice" type="button">
+                    Download invoice
+                </button>
+                <a class="btn-outline" href="{% url 'contributions:upload-proof-of-payment' payment_id=contribution.payment.id %}" id="instruction-details-link">
+                    Upload proof of payment
+                </a>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}

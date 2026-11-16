@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from utilities.choices import PaymentStatus
+from utilities.choices import SCOPE_CHOICES, PaymentStatus
 from .models import ContributionType, MemberContribution, Payment
 from django.contrib.auth import get_user_model
 
@@ -51,10 +51,10 @@ class ContributionTypeForm(forms.ModelForm):
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 3}),
-            'category': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'recurrence': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'scope': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'family': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'category': forms.Select(attrs={"class": "field", "id": "category", "name": "category", "required": True}),
+            'recurrence': forms.Select(attrs={"class": "field", "id": "recurrence", "name": "recurrence", "required": True}),
+            'scope': forms.Select(attrs={"class": "field", "id": "scope", "name": "scope", "required": True}),
+            'family': forms.Select(attrs={"class": "field", "id": "family", "name": "family"}),
         }
         
     def __init__(self, *args, **kwargs):
@@ -64,15 +64,31 @@ class ContributionTypeForm(forms.ModelForm):
             field.widget.attrs['autocomplete'] = 'off'
             if self.initial.get(field_name) is None:
                 self.initial[field_name] = ''
-
-
+                
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount is not None and amount <= 0:
+            raise ValidationError(_("Amount must be greater than zero."))
+        return amount
+    
+    def clean_due_date(self):
+        due_date = self.cleaned_data.get('due_date')
+        if due_date is not None and due_date < forms.fields.date.today():
+            raise ValidationError(_("Due date cannot be in the past."))
+        return due_date
+    
+    def clean_scope(self):
+        scope = self.cleaned_data.get('scope')
+        if scope == SCOPE_CHOICES.FAMILY and not self.cleaned_data.get('family'):
+            raise ValidationError(_("Family must be specified when scope is set to Family."))
+        return scope
 
 class PaymentCheckoutForm(forms.ModelForm):
     """Form for members to pay online (checkout)."""
 
     class Meta:
         model = Payment
-        fields = ('member_contribution', 'amount', 'payment_method')
+        fields = ('payment_method',)
 
         widgets = {
             
@@ -95,52 +111,25 @@ class PaymentCheckoutForm(forms.ModelForm):
         
         super().__init__(*args, **kwargs)
 
-        
+class PaymentVerificationForm(forms.ModelForm):
+    """Form for members to upload proof of payment for verification."""
 
-        if self.user:
-            # Use single PaymentStatus value (not list)
-            mc_qs = MemberContribution.objects.filter(
-                account=self.user,
-                is_paid='NOT_PAID'
-            ).select_related('contribution_type')
-            self.fields['member_contribution'].queryset = mc_qs
-        else:
-            self.fields['member_contribution'].queryset = MemberContribution.objects.none()
+    class Meta:
+        model = Payment
+        fields = ('proof_of_payment', 'receipt')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        member_contribution = cleaned_data.get("member_contribution")
-        
-        amount = cleaned_data.get("amount")
+        widgets = {
+            'proof_of_payment': forms.FileInput(attrs={
+                "class": "form-control",
+                "accept": ".pdf,.jpg,.jpeg,.png,.gif",
+                "required": True,
+                "help_text": "Upload bank statement, screenshot, or receipt (PDF, JPG, PNG)"
+            }),
+        }
 
-        if member_contribution:
-            # Match contribution type
-            
-
-            # Amount validation
-            try:
-                amt = Decimal(amount)
-            except (InvalidOperation, TypeError):
-                raise ValidationError(_("Enter a valid payment amount."))
-
-            if amt <= 0:
-                raise ValidationError(_("Payment amount must be greater than zero."))
-
-            outstanding = Decimal(member_contribution.amount_due)
-
-            # Exact match required
-            if amt != outstanding:
-                raise ValidationError(
-                    _("Payment amount must equal outstanding balance: R%(amount)s.") 
-                    % {"amount": f"{outstanding:.2f}"}
-                )
-
-            # Ensure user pays only their own contributions
-            if self.user and member_contribution.account != self.user:
-                raise ValidationError(_("You cannot pay for another member's contribution."))
-
-        return cleaned_data
-
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
 
 class LogPaymentForm(forms.ModelForm):
     """Form for treasurer to manually log/record a payment with proof."""
@@ -158,10 +147,7 @@ class LogPaymentForm(forms.ModelForm):
         )
 
         widgets = {
-            'member_contribution': forms.Select(attrs={
-                "class": "form-control rounded-lg form-select",
-                "placeholder": "Select Member Contribution",
-                "required": True
+            'member_contribution': forms.Select(attrs={"class": "field", "id": "member_contribution", "name": "member_contribution", "required": True
             }),
             
            
@@ -171,10 +157,7 @@ class LogPaymentForm(forms.ModelForm):
                 "step": "0.01",
                 "required": True
             }),
-            'payment_method': forms.Select(attrs={
-                "class": "form-control rounded-lg form-select",
-                "required": True
-            }),
+            'payment_method': forms.Select(attrs={"class": "field", "id": "payment_method", "name": "payment_method", "required": True}),
             'reference': forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "e.g. Bank ref, invoice #, transaction ID",

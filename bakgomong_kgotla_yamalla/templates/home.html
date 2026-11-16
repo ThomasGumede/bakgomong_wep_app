@@ -1,0 +1,302 @@
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    {% tailwind_preload_css %}
+    {% tailwind_css %}
+    {{form.media}}
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="#102d2c" name="theme-color"/>
+  <meta content="Bakgomong Kgotla ya Malla — family and contribution management portal" name="description"/>
+  <title>
+   Rooted in family · Bakgomong
+  </title>
+  <link href="{% static 'assets/img/bakgomong-emblem.png' %}" rel="icon"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="{% static 'assets/css/tailwind.generated.css' %}" rel="stylesheet"/>
+  <link href="{% static 'assets/css/styles.css' %}" rel="stylesheet"/>
+  <script defer="" src="{% static 'assets/js/config.js' %}">
+  </script>
+  <script defer="" src="{% static 'assets/js/demo-data.js' %}">
+  </script>
+  <script defer="" src="{% static 'assets/js/app.js' %}">
+  </script>
+ </head>
+ <body class="bg-canvas text-ink antialiased" data-page="index">
+  <header class="landing-nav">
+   <a class="landing-logo" href="{% url 'bakgomong_kgotla_yamalla:home' %}">
+    <img alt="Bakgomong clan logo" src="{% static 'assets/img/bakgomong-emblem.png' %}"/>
+    <span>
+     <strong>
+      BAKGOMONG
+     </strong>
+     <small>
+      KGOTLA YA MALLA
+     </small>
+    </span>
+   </a>
+   <nav aria-label="Public navigation">
+    <a href="#about">
+     About us
+    </a>
+    <a href="#purpose">
+     Our purpose
+    </a>
+    <a href="#platform">
+     What we do
+    </a>
+   </nav>
+   <a class="btn-primary" href="{% if request.user.is_authenticated %}{% url 'bakgomong_kgotla_yamalla:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}">
+    Member portal
+    <span>
+     ↗
+    </span>
+   </a>
+  </header>
+  <section class="landing-hero">
+   <div class="landing-grid">
+   </div>
+   <div class="landing-hero-inner">
+    <div class="hero-copy">
+     <p class="eyebrow-light">
+      ✧   A PLACE FOR OUR PEOPLE
+     </p>
+     <h1>
+      Our roots connect us.
+      <br/>
+      <em>
+       Our future unites us.
+      </em>
+     </h1>
+     <p>
+      Preserve the bonds that matter. Bring families together, celebrate our heritage and build a stronger community for generations to come.
+     </p>
+     <div class="hero-actions">
+      <a class="btn-gold" href="{% if request.user.is_authenticated %}{% url 'bakgomong_kgotla_yamalla:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}">
+       Explore member portal →
+      </a>
+      <a class="btn-hero-outline" href="#about">
+       Learn about Bakgomong
+      </a>
+     </div>
+     <small>
+      Private Kgotla portal · Members are registered by managers
+     </small>
+    </div>
+    <div aria-label="Bakgomong family connection illustration" class="hero-art">
+     <div class="orbit orbit-one">
+     </div>
+     <div class="orbit orbit-two">
+     </div>
+     <div class="orbit orbit-three">
+     </div>
+     <span class="orbit-member m1">
+      KM
+     </span>
+     <span class="orbit-member m2">
+      LM
+     </span>
+     <span class="orbit-member m3">
+      TM
+     </span>
+     <span class="orbit-member m4">
+      SM
+     </span>
+     <span class="orbit-member m5">
+      NM
+     </span>
+     <div class="hero-core">
+      <img alt="Bakgomong emblem" src="{% static 'assets/img/bakgomong-emblem.png' %}"/>
+      <strong>
+       One family
+      </strong>
+      <small>
+       Many branches
+      </small>
+     </div>
+    </div>
+   </div>
+  </section>
+  <section class="landing-about landing-container" id="about">
+   <div>
+    <p class="section-kicker">
+     WHY WE EXIST
+    </p>
+    <h2>
+     Belonging goes beyond
+     <br/>
+     a surname.
+    </h2>
+   </div>
+   <div>
+    <p>
+     Bakgomong creates a shared digital space for family branches to stay connected. From family records to community contributions and meetings, everything that brings people together belongs in one welcoming home.
+    </p>
+    <a href="#platform">
+     Discover our platform →
+    </a>
+   </div>
+  </section>
+  <section class="landing-purpose" id="purpose">
+   <div class="landing-container">
+    <p class="section-kicker">
+     WHAT WE BELIEVE IN
+    </p>
+    <h2>
+     Built around what matters.
+    </h2>
+    <div class="purpose-grid">
+     <article>
+      <span>
+       ♡
+      </span>
+      <h3>
+       Connection
+      </h3>
+      <p>
+       A community where family members can find, support and celebrate one another.
+      </p>
+     </article>
+     <article>
+      <span>
+       ▤
+      </span>
+      <h3>
+       Heritage
+      </h3>
+      <p>
+       Our shared stories, values and important records deserve to be preserved.
+      </p>
+     </article>
+     <article>
+      <span>
+       ♧
+      </span>
+      <h3>
+       Growth
+      </h3>
+      <p>
+       We support a future shaped by collaboration, transparency and opportunity.
+      </p>
+     </article>
+    </div>
+   </div>
+  </section>
+  <section class="landing-platform landing-container" id="platform">
+   <p class="section-kicker">
+    INSIDE THE PORTAL
+   </p>
+   <h2>
+    Everything together, in one place.
+   </h2>
+   <p>
+    A dedicated digital workspace for Kgotla leadership, families and members.
+   </p>
+   <div class="feature-grid">
+    <article>
+     <span>
+      ♙
+     </span>
+     <div>
+      <strong>
+       Member directory
+      </strong>
+      <p>
+       Keep accurate member details and leadership roles organised.
+      </p>
+     </div>
+    </article>
+    <article>
+     <span>
+      ♧
+     </span>
+     <div>
+      <strong>
+       Family branches
+      </strong>
+      <p>
+       Explore each family and its recognised leader.
+      </p>
+     </div>
+    </article>
+    <article>
+     <span>
+      ▱
+     </span>
+     <div>
+      <strong>
+       Contributions
+      </strong>
+      <p>
+       Track obligations, approvals, payments and receipts.
+      </p>
+     </div>
+    </article>
+    <article>
+     <span>
+      ▦
+     </span>
+     <div>
+      <strong>
+       Meetings &amp; gatherings
+      </strong>
+      <p>
+       Schedule Kgotla and family meetings.
+      </p>
+     </div>
+    </article>
+    <article>
+     <span>
+      ▤
+     </span>
+     <div>
+      <strong>
+       Shared documents
+      </strong>
+      <p>
+       Important records remain accessible to authorised members.
+      </p>
+     </div>
+    </article>
+    <article>
+     <span>
+      ◫
+     </span>
+     <div>
+      <strong>
+       Community insights
+      </strong>
+      <p>
+       View contributions, expenses and financial summaries.
+      </p>
+     </div>
+    </article>
+   </div>
+   <div class="landing-cta">
+    <div>
+     <h2>
+      Our story continues with you.
+     </h2>
+     <p>
+      Sign in to your Kgotla member account.
+     </p>
+    </div>
+    <a class="btn-gold" href="{% url 'accounts:login' %}">
+     Enter the portal ↗
+    </a>
+   </div>
+  </section>
+  <footer class="landing-footer">
+   <span>
+    © Bakgomong Kgotla ya Malla · Connected by heritage
+   </span>
+   <span>
+    Private membership portal
+   </span>
+  </footer>
+ </body>
+</html>

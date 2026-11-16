@@ -9,446 +9,375 @@ Add Family Member
 
 
 {% block content %}
+
+
 {% include 'includes/errors.html' %}
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <div class="col-span-12 lg:col-span-4">
-        <div
-            class="user-grid-card relative border border-neutral-200 dark:border-neutral-600 rounded-2xl overflow-hidden bg-white dark:bg-neutral-700 h-full">
-            <img src="{% static 'images/user-grid/user-grid-bg1.png' %}" alt="" class="w-full object-fit-cover">
-            <div class="pb-6 ms-6 mb-6 me-6 -mt-[100px]">
-                <div class="text-center border-b border-neutral-200 dark:border-neutral-600">
-                    <img src="{% if member.profile_image %}{{member.profile_image.url}}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
-                        alt="{{member.get_full_name}}"
-                        class="border br-white border-width-2-px w-200-px h-[200px] rounded-full object-fit-cover mx-auto">
-                    <h6 class="mb-0 mt-4">{{member.get_full_name}}</h6>
-                    <span class="text-secondary-light mb-4">{{member.email}}</span>
-                </div>
-                <div class="mt-6">
-                    <h6 class="text-xl mb-4">Member Info</h6>
-                    <ul>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">Full
-                                Name</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">:
-                                {{member.get_full_name}}</span>
-                        </li>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">
-                                Email</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">: {{member.email}}</span>
-                        </li>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200"> Phone
-                                Number</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">: {{member.phone}}</span>
-                        </li>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">
-                                Join Date</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">:
-                                {{member.created|date}}</span>
-                        </li>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">
-                                Last Login</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">:
-                                {{member.last_login|date}}</span>
-                        </li>
-                        <li class="flex items-center gap-1 mb-3">
-                            <span class="w-[30%] text-sm font-semibold text-neutral-600 dark:text-neutral-200">
-                                Role</span>
-                            <span class="w-[70%] text-secondary-light font-medium text-sm">: {{member.role}}</span>
-                        </li>
 
-
-                    </ul>
-                </div>
-            </div>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MANAGEMENT
+            </p>
+            <h1>
+                Add member
+            </h1>
+            <p class="heading-desc">
+                Register a Kgotla member using Account model fields.
+            </p>
         </div>
-    </div>
-    <div class="col-span-12 lg:col-span-8">
-        <div class="card h-full border-0">
-            <div class="card-body p-6">
-
-                <ul class="tab-style-gradient flex flex-wrap text-sm font-medium text-center mb-5" id="default-tab"
-                    data-tabs-toggle="#default-tab-content" role="tablist">
-                    <li class="" role="presentation">
-                        <button
-                            class="py-2.5 px-4 border-t-2 font-semibold text-base inline-flex items-center gap-3 text-neutral-600"
-                            id="edit-profile-tab" data-tabs-target="#edit-profile" type="button" role="tab"
-                            aria-controls="edit-profile" aria-selected="false">
-                            Add Member To {{family.name}}
-                        </button>
-                    </li>
-                    
-
-                </ul>
-
-                <div id="default-tab-content">
-                    <div class="hidden" id="edit-profile" role="tabpanel" aria-labelledby="edit-profile-tab">
-                        <h6 class="text-base text-neutral-600 dark:text-neutral-200 mb-4">Profile Image</h6>
-                        <!-- Upload Image Start -->
-                        <div class="mb-6 mt-4">
-                            <div class="avatar-upload">
-                                <div class="avatar-edit absolute bottom-0 end-0 me-6 mt-4 z-[1] cursor-pointer">
-
-                                    <label for="id_profile_imag" id="image_picker"
-                                        class="w-8 h-8 flex cursor-pointer justify-center items-center bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 border border-primary-600 hover:bg-primary-100 text-lg rounded-full">
-                                        <iconify-icon icon="solar:camera-outline" class="icon"></iconify-icon>
-                                    </label>
-                                </div>
-                                <div class="avatar-preview">
-                                    <div data-image="{% if form.profile_image %}{{form.profile_image.url}}{% endif %}"
-                                        id="imagePreview">
-                                    </div>
-                                </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="content-narrow">
+        <div class="soft-card form-panel">
+            <div class="form-panel-head">
+                <h2>
+                    Member details
+                </h2>
+                <p>
+                    A manager sets or updates account passwords in the Django backend.
+                </p>
+            </div>
+            <form class="form-grid" id="member-form1" method="post" action="{% url 'accounts:add-member' %}" enctype="multipart/form-data">
+                {% csrf_token %} 
+                <!-- Profile Image Upload -->
+                <div class="form-field form-wide">
+                    <label class="field-label" for="profile_image">
+                        Profile image
+                    </label>
+                
+                    <div class="flex flex-col sm:flex-row items-center gap-5
+                                rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+                
+                        <!-- Image Preview -->
+                        <div class="relative shrink-0">
+                            <div class="w-24 h-24 rounded-full overflow-hidden
+                                        border-2 border-amber-400
+                                        bg-emerald-900 flex items-center
+                                        justify-center shadow-sm">
+                
+                                <img id="profile-image-preview" src="" alt="Profile preview" class="hidden w-full h-full object-cover">
+                
+                                <span id="profile-initials-preview" class="text-2xl font-bold text-white">
+                                    ?
+                                </span>
                             </div>
                         </div>
-                        <!-- Upload Image End -->
-                        <form enctype="multipart/form-data" method="post">
-                            {% csrf_token %}
-                            <input type='file' id="id_profile_image" name="profile_image" accept=".png, .jpg, .jpeg"
-                                hidden>
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-x-6">
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_username"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Username
-                                            <span class="text-danger-600">*</span></label>
-                                        <input type="text" class="form-control rounded-lg" id="id_username"
-                                            placeholder="Enter Full Name" name="username"
-                                            value="{{form.username.value}}">
-
-                                        {% if form.username.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.username.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="depart"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Title
-                                            <span class="text-danger-600">*</span> </label>
-                                        {{form.title}}
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.title.help_text}}</span>
-                                        {% if form.title.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.title.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="name"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">First
-                                            Name <span class="text-danger-600">*</span></label>
-                                        <input type="text" class="form-control rounded-lg" id="id_first_name"
-                                            placeholder="Enter Full Name" name="first_name"
-                                            value="{{form.first_name.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.first_name.help_text}}</span>
-                                        {% if form.first_name.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.first_name.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="name"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Last
-                                            Name <span class="text-danger-600">*</span></label>
-                                        <input type="text" class="form-control rounded-lg" id="id_last_name"
-                                            placeholder="Enter Full Name" name="last_name"
-                                            value="{{form.last_name.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.last_name.help_text}}</span>
-                                        {% if form.last_name.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.last_name.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="name"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Maiden
-                                            Name </label>
-                                        <input type="text" class="form-control rounded-lg" id="id_maiden_name"
-                                            placeholder="Enter Full Name" name="maiden_name"
-                                            value="{{form.maiden_name.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.maiden_name.help_text}}</span>
-                                        {% if form.maiden_name.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.maiden_name.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_gender"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Gender
-                                            <span class="text-danger-600">*</span> </label>
-                                        {{form.gender}}
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.gender.help_text}}</span>
-                                        {% if form.gender.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.gender.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_gender"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Family
-                                            <span class="text-danger-600">*</span> </label>
-                                        {{form.family}}
-                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.family.help_text}}</span>
-                                        {% if form.family.errors %}
-                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.role.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_member_classification"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Member Classification
-                                            <span class="text-danger-600">*</span> </label>
-                                        {{form.member_classification}}
-                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.member_classification.help_text}}</span>
-                                        {% if form.member_classification.errors %}
-                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.member_classification.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_employment_status"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Employment Status
-                                            <span class="text-danger-600">*</span> </label>
-                                        {{form.employment_status}}
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.employment_status.help_text}}</span>
-                                        {% if form.employment_status.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.employment_status.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_address"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Address</label>
-                                        <input type="tel" class="form-control rounded-lg" id="id_address"
-                                            placeholder="Enter address seperated by comma" name="address"
-                                            value="{{form.address.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.address.help_text}}</span>
-                                        {% if form.address.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.address.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_birth_date"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Date of birth</label>
-                                        <input type="date" class="form-control rounded-lg" id="id_birth_date" placeholder="Enter your date of birth"
-                                            name="birth_date" value="{{form.birth_date.value}}">
-                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.birth_date.help_text}}</span>
-                                        {% if form.birth_date.errors %}
-                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.birth_date.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_id_number"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">ID Number</label>
-                                        <input type="text" class="form-control rounded-lg" id="id_id_number" placeholder="Enter your ID Number"
-                                            name="id_number" value="{{form.id_number.value}}">
-                                        <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.id_number.help_text}}</span>
-                                        {% if form.id_number.errors %}
-                                        <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.id_number.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12">
-                                    <div class="mb-5">
-                                        <label for="id_langueges_spoken"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Langueges
-                                            spoken</label>
-                                        <input type="text" class="form-control rounded-lg" id="id_langueges_spoken"
-                                            placeholder="Enter langueges spoken seperated by comma" name="langueges_spoken"
-                                            value="{{form.langueges_spoken.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.langueges_spoken.help_text}}</span>
-                                        {% if form.langueges_spoken.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.langueges_spoken.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_email"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Email
-                                            <span class="text-danger-600">*</span></label>
-                                        <input type="email" class="form-control rounded-lg" id="id_email"
-                                            placeholder="Enter email address" name="email" value="{{form.email.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.email.help_text}}</span>
-                                        {% if form.email.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.email.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-span-12 sm:col-span-6">
-                                    <div class="mb-5">
-                                        <label for="id_phone"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Phone</label>
-                                        <input type="tel" class="form-control rounded-lg" id="id_phone"
-                                            placeholder="Enter phone number" name="phone" value="{{form.phone.value}}">
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.phone.help_text}}</span>
-                                        {% if form.phone.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.phone.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <div class="col-span-12">
-                                    <div class="mb-5">
-                                        <label for="id_biography"
-                                            class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Description</label>
-                                        <textarea name="biography" class="form-control rounded-lg" id="id_biography"
-                                            placeholder="{{form.biography.help_text}}">{{form.biography.value}}</textarea>
-                                        <span
-                                            class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.biography.help_text}}</span>
-                                        {% if form.biography.errors %}
-                                        <span
-                                            class="text-[11px] text-red-500 block font-normal capitalize">{{form.biography.errors.as_text}}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-span-12 sm:col-span-6">
-                                <div class="mb-5">
-                                    <label for="id_password1"
-                                        class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Password
-                                        <span class="text-danger-600">*</span></label>
-                                    <input type="password" class="form-control rounded-lg" id="id_password1" placeholder="Enter password" name="password1"
-                                        value="{{user.password1}}">
-                                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.password1.help_text}}</span>
-                                    {% if form.password1.errors %}
-                                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.password1.errors.as_text}}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-span-12 sm:col-span-6">
-                                <div class="mb-5">
-                                    <label for="id_password2"
-                                        class="inline-block font-semibold text-neutral-600 dark:text-neutral-200 text-sm mb-2">Retype Password</label>
-                                    <input type="password" class="form-control rounded-lg" id="id_password2" placeholder="Retype password" name="password2"
-                                        value="{{form.password2.value}}">
-                                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.password2.help_text}}</span>
-                                    {% if form.password2.errors %}
-                                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.password2.errors.as_text}}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            
-                            <div class="flex items-center justify-center">
-                                <button type="submit" value="submit"
-                                    class="btn btn-primary border border-primary-600 text-base px-14 py-3 rounded-lg">
-                                    Add Member
-                                </button>
-                            </div>
-                            
-                        </form>
+                
+                        <!-- Upload Controls -->
+                        <div class="flex-1 w-full">
+                            <label for="profile_image" class="inline-flex items-center gap-2 px-4 py-2.5
+                                       rounded-lg bg-white border border-slate-200
+                                       text-sm font-semibold text-emerald-900
+                                       hover:bg-emerald-50 hover:border-emerald-300
+                                       cursor-pointer transition-colors">
+                
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M12 16V4m0 0-4 4m4-4 4 4
+                                             M4 16v3a1 1 0 0 0 1 1h14
+                                             a1 1 0 0 0 1-1v-3" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                
+                                Choose profile image
+                            </label>
+                
+                            <input type="file" id="profile_image" name="profile_image" accept="image/jpeg,image/png,image/webp"
+                                class="sr-only">
+                
+                            <p id="profile-image-name" class="mt-2 text-xs text-slate-500">
+                                No image selected
+                            </p>
+                
+                            <p class="mt-1 text-xs text-slate-400">
+                                JPG, PNG or WebP. Maximum size: 5 MB.
+                            </p>
+                
+                            <button type="button" id="remove-profile-image" class="hidden mt-2 text-xs font-semibold
+                                       text-red-600 hover:text-red-700">
+                                Remove selected image
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="form-field">
+                    <label class="field-label" for="username">
+                        Username *
+                    </label>
+                    <input class="field" id="username" name="username" placeholder="" required="" type="text">
+                    {% if form.username.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.username.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="email">
+                        Email address *
+                    </label>
+                    <input class="field" id="email" name="email" placeholder="" required="" type="email">
+                    {% if form.email.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.email.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="first_name">
+                        First name *
+                    </label>
+                    <input class="field" id="first_name" name="first_name" placeholder="" required="" type="text">
+                    {% if form.first_name.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.first_name.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="last_name">
+                        Last name *
+                    </label>
+                    <input class="field" id="last_name" name="last_name" placeholder="" required="" type="text">
+                    {% if form.last_name.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.last_name.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="title">
+                        Title
+                    </label>
+                    {{form.title}}
+                    
+                    {% if form.email.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.email.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="gender">
+                        Gender
+                    </label>
+                    {{form.gender}}
+                    
+                    {% if form.gender.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.gender.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="family">
+                        Family
+                    </label>
+                    {{form.family}}
+                    
+                    {% if form.family.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.family.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="role">
+                        Role
+                    </label>
+                    {{form.role}}
+                    {% if form.role.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.role.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="phone">
+                        Phone
+                    </label>
+                    <input class="field" id="phone" name="phone" placeholder="" type="tel">
+                    {% if form.phone.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.phone.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="member_classification">
+                        Classification
+                    </label>
+                    {{form.member_classification}}
+                    {% if form.member_classification.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.member_classification.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="birth_date">
+                        Date of birth
+                    </label>
+                    <input class="field" id="birth_date" name="birth_date" placeholder="" type="date">
+                    {% if form.birth_date.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.birth_date.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="employment_status">
+                        Employment status
+                    </label>
+                    {{form.employment_status}}
+                    {% if form.employment_status.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.employment_status.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="id_number">
+                        ID Number
+                    </label>
+                    <input class="field" id="id_number" name="id_number" placeholder="" type="text">
+                    {% if form.id_number.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.id_number.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="langueges_spoken">
+                        Languages Spoken
+                    </label>
+                    <input class="field" id="langueges_spoken" name="langueges_spoken" placeholder="" type="text">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.langueges_spoken.help_text}}</span>
+                    {% if form.langueges_spoken.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.langueges_spoken.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="password1">
+                        Password
+                    </label>
+                    <input class="field" id="password1" name="password1" placeholder="" type="password">
+                    <span
+                        class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.password1.help_text}}</span>
+                    {% if form.password1.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.password1.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="password2">
+                        Confirm Password
+                    </label>
+                    <input class="field" id="password2" name="password2" placeholder="" type="password">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.password2.help_text}}</span>
+                    {% if form.password2.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.password2.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="address">
+                        Address
+                    </label>
+                    <input class="field" id="address" name="address" placeholder="" type="text">
+                    {% if form.address.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.address.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="biography">
+                        Biography
+                    </label>
+                    <textarea class="field" id="biography" name="biography" placeholder="" rows="3"></textarea>
+                    {% if form.biography.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.biography.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-wide form-actions">
+                    <a class="btn-outline" href="{% url 'accounts:get-members' %}">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <path d="m5 12 5 5L20 7">
+                            </path>
+                        </svg>
+                        Save member
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
+</main>
+
 {% endblock content %}
 
 {% block scripts %}
 <script>
-    const imageDiv = document.getElementById("imagePreview");
-    const imageUrl = imageDiv.getAttribute("data-image");
-    const imagePicker = document.getElementById("image_picker")
-    const imageFile = document.getElementById("id_profile_image")
+    
+    document.addEventListener("DOMContentLoaded", () => {
+            const input = document.getElementById("profile_image");
+            const preview = document.getElementById("profile-image-preview");
+            const initials = document.getElementById("profile-initials-preview");
+            const fileName = document.getElementById("profile-image-name");
+            const removeButton = document.getElementById("remove-profile-image");
 
-    imagePicker.addEventListener("click", function (e) {
-        imageFile.click()
+            const firstName = document.getElementById("first_name");
+            const lastName = document.getElementById("last_name");
 
-    })
+            if (!input || !preview || !initials) return;
 
-    imageFile.addEventListener("change", function (e) {
-        let file = imageFile.files[0]
-        if (file) {
-            document.getElementById("imagePreview").style.backgroundImage = `url('${window.URL.createObjectURL(file)}')`;
-        } else {
-            alert("no file selected")
-            if (imageUrl) {
-                document.getElementById("imagePreview").style.backgroundImage = `url('${imageUrl}')`;
-            } else {
+            const maxSize = 5 * 1024 * 1024;
+            const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
-                document.getElementById("imagePreview").style.backgroundImage = "../images/user-grid/user-grid-img13.png";
+            let previewUrl = null;
+
+            function updateInitials() {
+                const first = firstName?.value.trim().charAt(0) || "";
+                const last = lastName?.value.trim().charAt(0) || "";
+
+                initials.textContent = (first + last).toUpperCase() || "?";
             }
-        }
-    })
 
-    if (imageUrl) {
-        document.getElementById("imagePreview").style.backgroundImage = `url('${imageUrl}')`;
-    } else {
+            function clearImage() {
+                input.value = "";
 
-        document.getElementById("imagePreview").style.backgroundImage = "../images/user-grid/user-grid-img13.png";
-    }
-</script>
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    previewUrl = null;
+                }
 
-<script>
-    // ======================== Upload Image Start =====================
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-                $('#imagePreview').hide();
-                $('#imagePreview').fadeIn(650);
+                preview.removeAttribute("src");
+                preview.classList.add("hidden");
+                initials.classList.remove("hidden");
+
+                fileName.textContent = "No image selected";
+                removeButton.classList.add("hidden");
+
+                updateInitials();
             }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#imageUpload").change(function () {
-        readURL(this);
-    });
-    // ======================== Upload Image End =====================
 
-    // ================== Password Show Hide Js Start ==========
-    function initializePasswordToggle(toggleSelector) {
-        $(toggleSelector).on('click', function () {
-            $(this).toggleClass("ri-eye-off-line");
-            var input = $($(this).attr("data-toggle"));
-            if (input.attr("type") === "password") {
-                input.attr("type", "text");
-            } else {
-                input.attr("type", "password");
-            }
+            input.addEventListener("change", () => {
+                const file = input.files[0];
+
+                if (!file) {
+                    clearImage();
+                    return;
+                }
+
+                if (!allowedTypes.includes(file.type)) {
+                    alert("Please select a JPG, PNG or WebP image.");
+                    clearImage();
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert("Profile image must not exceed 5 MB.");
+                    clearImage();
+                    return;
+                }
+
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                }
+
+                previewUrl = URL.createObjectURL(file);
+
+                preview.src = previewUrl;
+                preview.classList.remove("hidden");
+                initials.classList.add("hidden");
+
+                fileName.textContent = file.name;
+                removeButton.classList.remove("hidden");
+            });
+
+            removeButton.addEventListener("click", clearImage);
+
+            firstName?.addEventListener("input", updateInitials);
+            lastName?.addEventListener("input", updateInitials);
+
+            updateInitials();
         });
-    }
-    // Call the function
-    initializePasswordToggle('.toggle-password');
-    // ========================= Password Show Hide Js End ===========================
+
 </script>
+
 {% endblock scripts %}

@@ -4,194 +4,117 @@
 <html lang="en">
 
 <head>
-    {% tailwind_preload_css %}
-    {% tailwind_css %}
-    {{form.media}}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block seo %}
-    <!-- ================== SEO META TAGS ================== -->
-
-    <title>{% block title %}Bakgomong - Login{% endblock title %}</title>
-
-    <meta name="description"
-        content="{% block description %}Track, manage, and contribute to Bakgomong Clan projects and family funds — including events, burials, savings, and investments. Stay connected and build financial unity within the clan.{% endblock description %}">
-    <meta name="keywords"
-        content="Bakgomong Clan, clan contributions, family fund, stokvel, burial society, family savings, clan unity, community development, family leaders, South Africa">
-    <meta name="author" content="Bakgomong Clan Management">
-
-    <!-- ================== OPEN GRAPH / FACEBOOK ================== -->
-    <meta property="og:title" content="Bakgomong Clan - Login">
-    <meta property="og:description"
-        content="Join the Bakgomong Clan's digital - Login — manage family payments, events, and savings online.">
-    <meta property="og:image" content="{% static 'images/logo.png' %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Bakgomong Clan Portal">
-
-    <!-- ================== TWITTER CARD ================== -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Bakgomong Clan - Login">
-    <meta name="twitter:description"
-        content="A modern, transparent contribution platform for the Bakgomong Clan — uniting families through shared financial goals.">
-    <meta name="twitter:image" content="{% static 'images/logo.png' %}">
-
-    <!-- ================== FAVICON ================== -->
-
-    <!-- ================== CANONICAL LINK ================== -->
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
-
-
-    {% endblock seo %}
-    <!-- Fav Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Bakgomong Clan">
-    <!-- google fonts -->
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <meta content="#102d2c" name="theme-color" />
+    <meta content="Bakgomong Kgotla ya Malla — family and contribution management portal" name="description" />
+    <title>
+        Member sign in · Bakgomong
+    </title>
+    <link href="{% static 'assets/img/bakgomong-emblem.png' %}" rel="icon" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap"
         rel="stylesheet" />
-    <!-- remix icon font css  -->
-    <link rel="stylesheet" href="{% static 'css/remixicon.css' %}" />
-    <!-- main css -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link href="{% static 'assets/css/tailwind.generated.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/css/styles.css' %}" rel="stylesheet" />
+    <script defer="" src="{% static 'assets/js/config.js' %}">
+    </script>
+    <script defer="" src="{% static 'assets/js/demo-data.js' %}">
+    </script>
+    <script defer="" src="{% static 'assets/js/app.js' %}">
+    </script>
 </head>
 
-<body class="bg-neutral-100 dark:bg-neutral-800 dark:text-white">
-
-
-
-    <section class="bg-white dark:bg-dark-2 flex flex-wrap min-h-[100vh]">
-        <div class="lg:w-1/2 lg:block hidden">
-            <div class="flex items-center flex-col h-full justify-center">
-                <img src="{% static 'images/auth/auth-img.png' %}" alt="">
-            </div>
-        </div>
-        <div class="lg:w-1/2 py-8 px-6 flex flex-col justify-center">
-            {% include 'includes/messages.html' %}
-
-            <div class="lg:max-w-[464px] mx-auto w-full">
-                <div>
-                    <a href="" class="mb-2.5 max-w-[290px]">
-                        <img src="{% static 'images/logo 2.png' %}" alt="">
-                    </a>
-                    <h4 class="mb-3">Sign In to your Account</h4>
-                    <p class="mb-8 text-secondary-light text-lg">Welcome back! please enter your detail</p>
+<body class="bg-canvas text-ink antialiased" data-page="login">
+    <div class="login-page">
+        <section class="login-art">
+            <a class="login-brand" href="{% url 'bakgomong_kgotla_yamalla:home' %}">
+                <span class="emblem-frame">
+                    <img alt="Bakgomong emblem" src="{% static 'assets/img/bakgomong-emblem.png' %}" />
+                </span>
+                <span>
+                    BAKGOMONG
+                    <small>
+                        KGOTLA YA MALLA
+                    </small>
+                </span>
+            </a>
+            <div class="login-art-copy">
+                <span class="eyebrow-light">
+                    A HOME FOR OUR PEOPLE
+                </span>
+                <h1>
+                    Rooted in heritage.
+                    <br />
+                    <span>
+                        Connected as one.
+                    </span>
+                </h1>
+                <p>
+                    Your private space to manage membership, family records, payments and Kgotla activities.
+                </p>
+                <div class="login-orb">
+                    ✧
                 </div>
-                <form method="post">
-                    {% csrf_token %}
-                    {% if form.errors %}
-                    <div class="w-full mx-auto mb-10">
-                        <div class="bg-red-50 border-l-8 border-red-900">
-                            <div class="flex items-center">
-                                <div class="p-2">
-                                    <div class="flex items-center">
-                                        <div class="ml-2">
-                                            <svg class="h-8 w-8 text-red-900 mr-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <p class="px-6 py-4 text-red-900 font-semibold text-lg">Please fix the
-                                            following
-                                            errors.</p>
-                                    </div>
-                                    <div class="px-16 mb-4">
-                                        {% for field in form %}
-                                            {% if field.errors %}
-                                                <li class="text-md font-bold text-red-500 text-sm">{{field.label}}: {{field.errors.as_text}}</li>
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% if form.non_field_errors %}
-                    
-                                        <li class="text-md font-bold text-red-500 text-sm">Issues: {{form.non_field_errors.as_text}}
-                                        </li>
-                    
-                                        {% endif %}
-                                    </div>
-                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="mb-4 space-y-2">
-                        <div class="icon-field  relative">
-                            <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-                                <iconify-icon icon="mage:email"></iconify-icon>
-                            </span>
-                            <input type="text" name="username"
-                                class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
-                                placeholder="ID Number or Username or Email address" id="id_username" value="{{ form.username.value|default_if_none:'' }}">
-                            
-                            <span class="absolute end-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-                                <iconify-icon icon="ri:check-line"></iconify-icon> </span>
-                            
-                                
-                        </div>
-                        <span class="text-sm text-gray-500 italic font-sans dark:text-white">Enter your ID Number, Username, or Email address</span>
-                    </div>
-                    <div class="mb-5 space-y-2">
-                        <div class="relative">
-                            <div class="icon-field">
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl">
-                                    <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-                                </span>
-                                <input type="password" name="password"
-                                    class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 rounded-xl"
-                                    id="id_password" placeholder="Password">
-                            </div>
-                            <span
-                                class="toggle-password ri-eye-line cursor-pointer absolute end-0 top-1/2 -translate-y-1/2 me-4 text-secondary-light"
-                                data-toggle="#id_password"></span>
-                        </div>
-                        <span class="text-sm text-gray-500 italic font-sans dark:text-white">Enter your password</span>
-                    </div>
-
-                    <button type="submit"
-                        class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8"> Sign In</button>
-                    
-                    <p class="text-base text-gray-500 italic font-sans dark:text-white">Forgot your password? <a href="#" class="text-primary font-bold hover:underline">Reset it</a></p>
-
-                </form>
             </div>
-        </div>
-    </section>
-
-    <!-- jQuery library js -->
-    <script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
-    <!-- Apex Chart js -->
-    <!-- Iconify Font js -->
-    <script src="{% static 'js/lib/iconify-icon.min.js' %}"></script>
-    <!-- jQuery UI js -->
-    <script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
-    
-    <!-- Slick Slider js -->
-    <script src="{% static 'js/app.js' %}"></script>
-
-    <script>
-        // ================== Password Show Hide Js Start ==========
-        function initializePasswordToggle(toggleSelector) {
-            $(toggleSelector).on('click', function () {
-                $(this).toggleClass("ri-eye-off-line");
-                var input = $($(this).attr("data-toggle"));
-                if (input.attr("type") === "password") {
-                    input.attr("type", "text");
-                } else {
-                    input.attr("type", "password");
-                }
-            });
-        }
-        // Call the function
-        initializePasswordToggle('.toggle-password');
-        // ========================= Password Show Hide Js End ===========================
-    </script>
-
+            <div class="login-art-foot">
+                BAKGOMONG · KGOTLA YA MALLA
+            </div>
+        </section>
+        <section class="login-side">
+            <div class="login-card">
+                <div class="mobile-login-logo">
+                    <img alt="Bakgomong logo" src="{% static 'assets/img/bakgomong-logo.png' %}" />
+                </div>
+                <p class="section-kicker">
+                    MEMBERS ONLY
+                </p>
+                <h2>
+                    Welcome back
+                </h2>
+                <p class="login-subtitle">
+                    Sign in to your Kgotla account.
+                </p>
+                <form class="stacked-form" id="login-form2" method="post" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    <div>
+                        <label class="field-label" for="login-username">
+                            Username or email address or ID number
+                        </label>
+                        <input class="field" id="login-username" name="username" placeholder="Enter username"
+                            required="" value="" />
+                    </div>
+                    <div>
+                        <label class="field-label" for="login-password">
+                            Password
+                        </label>
+                        <input autocomplete="current-password" class="field" id="login-password" name="password"
+                            placeholder="Enter password" required="" type="password" />
+                    </div>
+                    
+                    <button class="btn-primary login-submit" type="submit">
+                        Sign in →
+                    </button>
+                </form>
+                <div class="password-help">
+                    <strong>
+                        Forgot your password?
+                    </strong>
+                    <p>
+                        Bakgomong is a closed membership system. Password resets are handled by the Kgotla managers.
+                        Please contact your family leader or the Kgotla Secretary / Administrator to have your password
+                        updated. Self-service password recovery is not available.
+                    </p>
+                </div>
+                
+                <a class="back-public" href="{% url 'bakgomong_kgotla_yamalla:home' %}">
+                    ← Back to the website
+                </a>
+            </div>
+        </section>
+    </div>
 </body>
 
 </html>

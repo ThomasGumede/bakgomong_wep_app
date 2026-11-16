@@ -5,176 +5,227 @@
 {% endblock dash_title %}
 
 {% block content %}
-<!-- Widgets start -->
-<div
-    class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
-    <div class="flex w-fit items-center space-x-4 mb-4">
-        {% if contribution.family %}
-        <div class="rounded-lg bg-amber-50 border border-amber-200 pl-3">
-        
-            <p class="text-xs uppercase text-amber-600 font-semibold">
-                Family Contribution
-            </p>
-        
-            <p class="font-medium text-amber-800">
-                {{ contribution.family.name }}
-            </p>
-        
-        </div>
-        {% else %}
-        <div class="rounded-lg bg-amber-50 border border-amber-200 p-3">
-        
-            <p class="text-xs uppercase text-amber-600 font-semibold">
-                Family Contribution
-            </p>
-        
-            <p class="font-medium text-amber-800">
-                All Families
-            </p>
-        
-        </div>
-        {% endif %}
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
         <div>
-            <h3 class="text-xl font-bold text-gray-700">{{contribution.name}}
-            </h3>
-            <p class="text-sm text-gray-600">Scope: <span
-                    class="font-semibold text-gray-800">{{contribution.get_scope_display}}</span>
+            <p class="section-kicker">
+                MEMBER PORTAL
             </p>
-            <p class="text-sm text-gray-600">Recurrence: <span class="font-semibold text-gray-800">{{contribution.get_recurrence_display}}</span>
+            <h1>
+                Contribution overview
+            </h1>
+            <p class="heading-desc">
+                Expected, collected and outstanding balances for this contribution.
             </p>
-            
         </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="contribution-banner">
+        <div>
+            <span class="eyebrow-light">
+                CONTRIBUTION TYPE
+            </span>
+            <h2 id="ct-name">{{contribution.name}}</h2>
+            <p id="ct-description">{{contribution.description}}</p>
+            <div class="badge-line" id="ct-badges"><span class="status status-green">{{contribution.get_category_display}}</span><span
+                    class="status status-blue">{{contribution.get_scope_display}}</span> {% if contribution.scope == 'family' %}<span class="status status-blue">{{contribution.family.name}}</span>{%else %} <span class="status status-blue">All members must participate</span>{% endif %}</div>
+        </div>
+        <strong class="contribution-value" id="ct-default-amount">R {{contribution.amount|floatformat:2}}</strong>
     </div>
-
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-        <div
-            class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Total Collected</p>
-            <p class="text-green-500 font-bold text-lg">R{{contribution.total_collected|floatformat:2}} / R{{contribution.total_expected|floatformat:2}}</p>
-        </div>
-        <div
-            class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Outstanding Balance</p>
-            <p class="text-red-500 font-bold text-lg">R{{contribution.total_unpaid|floatformat:2}}</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You've Paid Bakgomong:</p>
-            <p class="text-yellow-600 font-bold text-lg">R{{contribution.total_collected|floatformat:2}}</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You Owe Bakgomong:</p>
-            <p class="text-red-500 font-bold text-lg">R{{contribution.total_unpaid|floatformat:2}}</p>
-        </div>
-    </div>
-</div>
-
-<!-- Widgets end -->
-{% if payments.count > 0 %}
-<div class="grid grid-cols-12 mt-4">
-    <div class="col-span-12">
-        <div class="card border-0 p-2">
-            <div class="card-body">
-                <div class="table-responsive scroll-sm" role="region" aria-label="Contributions table">
-                    
-                    <table id="selection-table" class="table bordered-table mb-0" aria-describedby="contrib-desc">
-                        <caption id="contrib-desc" class="sr-only">List of member contributions and payment status
-                        </caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">Reference</th>
-                                <th scope="col">Member</th>
-                                <th scope="col">Issued</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for inv in payments %}
-                            <tr>
-                                <td><a href="{{ inv.get_absolute_url }}" class="text-primary-600"
-                                        aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
-                                <td>
-                                    <div class="flex items-center">
-                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
-                                            alt="{{ inv.account.get_full_name }} profile"
-                                            class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
-                                        <h6 class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</h6>
-                                    </div>
-                                </td>
-                                <td>{{ inv.created|date:"d M Y" }}</td>
-                                <td>R{{ inv.amount_due|floatformat:2 }}</td>
-                                <td>
-                                    {% if inv.is_paid == 'PAID' %}
-                                        <span class="badge badge-success" role="status" aria-label="Paid">Paid</span>
-                                    {% elif inv.is_paid == 'PENDING' %}
-                                        <span class="badge badge-warning" role="status" aria-label="Pending">Pending</span>
-                                    {% else %}
-                                        <span class="badge badge-danger" role="status" aria-label="Not paid">Not paid</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                    
-                                    {% if inv.is_paid == 'PAID' %}
-                                    <a href="{{ inv.get_absolute_url }}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ inv.reference }}">
-                                        View receipt
-                                    </a>
-
-                                    {% elif inv.is_paid == 'NOT_PAID' or inv.is_paid == 'PENDING' or inv.is_paid == 'AWAITING PAYMENT' %}
-
-                                        {% if request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
-                                            <a href="{% url 'contributions:checkout' inv.id %}"
-                                                class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                aria-label="Pay contribution {{ inv.reference }}">
-                                                Pay now
-                                            </a>
-                                            
-                                            {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
-                                                <a href="{% url 'contributions:log-payment' inv.id %}"
-                                                    class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                    aria-label="Log payment for {{ inv.reference }}">
-                                                    Log payment
-                                                </a>
-                                            {% else %}
-                                                <a href="{{ inv.get_absolute_url }}"
-                                                    class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                                    aria-label="Pay contribution {{ inv.reference }}">
-                                                    View receipt
-                                                </a>
-                                            {% endif %}
-
-                                    {% endif %}
-
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    
+    <section class="metrics-grid metrics-three">
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    Expected balance
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="ct-expected">R {{contribution.total_expected|floatformat:2}}</strong>
+            <p>
+                SUM(MemberContribution.amount_due)
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    Verified paid
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="ct-paid">R {{contribution.total_collected|floatformat:2}}</strong>
+            <p>
+                Members marked PAID
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    Outstanding balance
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="ct-outstanding">R {{contribution.total_unpaid|floatformat:2}}</strong>
+            <p>
+                Expected less verified paid
+            </p>
+        </article>
+    </section>
+    <div class="family-details-grid">
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Contribution details
+                </h2>
+            </div>
+            <dl class="definition-list" id="ct-facts">
+                <div>
+                    <dt>Name</dt>
+                    <dd>{{contribution.name}}</dd>
+                </div>
+                <div>
+                    <dt>Description</dt>
+                    <dd>{{contribution.description}}</dd>
+                </div>
+                <div>
+                    <dt>Category</dt>
+                    <dd>{{contribution.get_category_display}}</dd>
+                </div>
+                <div>
+                    <dt>Amount per member</dt>
+                    <dd>R {{contribution.amount|floatformat:2}}</dd>
+                </div>
+                <div>
+                    <dt>Scope</dt>
+                    <dd>{{contribution.get_scope_display}}</dd>
+                </div>
+                <div>
+                    <dt>Frequency</dt>
+                    <dd>{{contribution.get_recurrence_display}}</dd>
+                </div>
+                <div>
+                    <dt>Family</dt>
+                    <dd>{{contribution.family.name|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Default due date</dt>
+                    <dd>Not set</dd>
+                </div>
+                <div>
+                    <dt>Created by</dt>
+                    <dd>{{contribution.created_by.get_full_name|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Active</dt>
+                    <dd>{{contribution.is_active|yesno:"Yes,No"}}</dd>
+                </div>
+                <div>
+                    <dt>Created on</dt>
+                    <dd>{{contribution.created|date:"d M Y"}}</dd>
+                </div>
+            </dl>
+        </section>
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Collection progress
+                </h2>
+            </div>
+            <strong class="large-percent" id="ct-percent">63%</strong>
+            <div class="bar-track">
+                <div class="bar-fill" id="ct-progress-bar" style="width: 63%;">
                 </div>
             </div>
-        </div>
+            <p class="muted-text">
+                Based on recorded MemberContribution assignments.
+            </p>
+        </section>
     </div>
-</div>
-{% endif %}
+    <section class="soft-card mt-section">
+        <div class="card-heading">
+            <h2>
+                Assigned members
+            </h2>
+        </div>
+        <div class="filter-inner">
+            <div class="filter-toolbar">
+                <label class="search-field">
+                    <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                        width="18">
+                        <circle cx="11" cy="11" r="7">
+                        </circle>
+                        <path d="m20 20-4-4">
+                        </path>
+                    </svg>
+                    <input aria-label="Search member..." id="ct-members-search" placeholder="Search member..."
+                        type="search">
+                </label>
+            </div>
+        </div>
+        <div class="soft-card table-card">
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Member
+                            </th>
+                            <th>
+                                Family
+                            </th>
+                            <th>
+                                Due
+                            </th>
+                            <th>
+                                Amount due
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="ct-member-rows">
+                        {% for inv in payments %}
+                        <tr>
+                            <td><strong>{{inv.account.get_full_name}}</strong></td>
+                            <td>{{inv.account.family.name}}</td>
+                            <td>{{inv.due_date}}</td>
+                            <td>{{inv.amount_due}}</td>
+                            <td>{% if inv.is_paid == 'PAID' %}<span class="status status-green">Paid</span>{% else %}<span class="status status-red">{{inv.get_is_paid_display}}</span>{% endif %}</td>
+                            <td>
+                                <div class="row-actions">
+                                    {% if request.user == inv.account or request.user.role == 'TREASURER' %}
+                                    <a class="link-inline"
+                                        href="{% url 'contributions:member-contribution' id=inv.id %}">View</a>
+                                    
+                                    {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No payments found.</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
 <!-- Table End -->
 {% endblock content %}
 
 
 {% block scripts %}
-<script>
-    // keep DataTable initialization but guard against empty table
-    if (document.getElementById("selection-table") && typeof simpleDatatables !== 'undefined') {
-        let table = new simpleDatatables.DataTable("#selection-table", {
-            searchable: true,
-            perPage: 25,
-            columns: [{select: [0, 5], sortable: false}]
-        });
-    }
-</script>
 
 {% endblock scripts %}

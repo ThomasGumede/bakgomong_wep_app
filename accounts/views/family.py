@@ -21,9 +21,9 @@ logger = logging.getLogger("accounts")
 def get_families(request):
     user  = request.user
     if user.role == Role.MEMBER and not user.is_staff:
-        families = Family.objects.filter(is_approved=True, id=user.family.id)
+        families = Family.objects.filter(id=user.family.id)
     else:
-        families = Family.objects.filter(is_approved=True)
+        families = Family.objects.all()
     return render(request, 'family/families.html', {"families": families})
 
 
@@ -37,9 +37,9 @@ def get_family(request, family_slug=None):
     context = {}
     # Determine which families the user can view
     if user.role == Role.MEMBER and not user.is_staff:
-        families = Family.objects.filter(is_approved=True, id=user.family.id)
+        families = Family.objects.filter(id=user.family.id)
     else:
-        families = Family.objects.filter(is_approved=True)
+        families = Family.objects.all()
 
     family = get_object_or_404(families, slug=family_slug)
     family_contr = ContributionType.objects.filter(scope=SCOPE_CHOICES.FAMILY, family=family, is_active=True).order_by('-created')

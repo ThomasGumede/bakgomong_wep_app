@@ -4,50 +4,94 @@
 Clan Contributions
 {% endblock dash_title %}
 {% block content %}
-<div class="grid grid-cols-12">
-    <div class="col-span-12">
-        <div class="card h-full rounded-xl border-0 overflow-hidden p-2">
-            <div
-                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
 
-                {% if request.user.is_staff %}
-                <a href="{% url 'contributions:add-contribution' %}" class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
-                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                    Add Contribution
-                </a>
-                {% endif %}
-            </div>
-            <div class="grid gap-6 m-4 sm:grid-cols-2 ">
-                
-                {% for contribution in contributions %}
-                
-                {% include "includes/contribution_card.html" %}
-                
-                {% empty %}
-                <div class="col-span-full rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-16 text-center">
-                
-                    <svg class="mx-auto h-14 w-14 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M12 8c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7zm0-5v5" />
-                
-                    </svg>
-                
-                    <h3 class="mt-4 text-xl font-semibold">
-                        No Contributions Found
-                    </h3>
-                
-                    <p class="mt-2 text-gray-500">
-                        Start by creating your first contribution.
-                    </p>
-                
-                </div>
-                
-                {% endfor %}
-            </div>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Contributions
+            </h1>
+            <p class="heading-desc">
+                ContributionType definitions and overall collection progress.
+            </p>
         </div>
+        {% if request.user.is_staff %}
+        <div class="heading-actions">
+            <a class="btn-primary" href="{% url 'contributions:add-contribution' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                    <path d="M12 5v14M5 12h14">
+                    </path>
+                </svg>
+                Add contribution
+            </a>
+        </div>
+        {% endif %}
+    </section>
+    
+    <section class="metrics-grid metrics-three">
+        <article class="metric-card">
+            <div class="metric-top">
+                Expected (all MemberContributions)
+            </div>
+            <strong class="metric-value" id="contrib-expected">R {{ amount_expected|floatformat:2 }}</strong>
+            <p>
+                Total assigned amount due
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                Verified paid
+            </div>
+            <strong class="metric-value" id="contrib-paid">R {{ amount_collected|floatformat:2 }}</strong>
+            <p>
+                Contributions marked PAID
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                Outstanding
+            </div>
+            <strong class="metric-value" id="contrib-outstanding">R {{ amount_outstanding|floatformat:2 }}</strong>
+            <p>
+                Pending + not paid + partial
+            </p>
+        </article>
+    </section>
+    <div class="grid gap-6  sm:grid-cols-2 ">
+    
+        {% for contribution in contributions %}
+    
+        {% include "includes/contribution_card.html" %}
+    
+        {% empty %}
+        <div class="col-span-full rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-16 text-center">
+    
+            <svg class="mx-auto h-14 w-14 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M12 8c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7zm0-5v5" />
+    
+            </svg>
+    
+            <h3 class="mt-4 text-xl font-semibold">
+                No Contributions Found
+            </h3>
+    
+            <p class="mt-2 text-gray-500">
+                Start by creating your first contribution.
+            </p>
+    
+        </div>
+    
+        {% endfor %}
     </div>
-</div>
+    
+</main>
+
 {% for contribution in contributions %}
 <!-- Delete Modal contribution -->
 <div id="delete-popup-modal-{{contribution.slug}}" tabindex="-1"

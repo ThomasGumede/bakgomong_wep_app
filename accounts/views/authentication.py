@@ -22,7 +22,7 @@ User = get_user_model()
 def custom_login(request):
     next_page = request.GET.get("next", None)
     template_name = "accounts/login.html"
-    success_url = "accounts:dashboard"
+    success_url = "bakgomong_kgotla_yamalla:dashboard"
     if next_page:
         success_url = next_page
 

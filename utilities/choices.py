@@ -71,6 +71,7 @@ class SCOPE_CHOICES(models.TextChoices):
 class LogPaymentStatus(models.TextChoices):
         NOT_PAID = ("NOT PAID", "Not paid")
         PENDING = "PENDING", _("Pending Verification")
+        AWAITING_APPROVAL = "AWAITING APPROVAL", _("Awaiting Approval")
         APPROVED = "APPROVED", _("Approved")
         REJECTED = "REJECTED", _("Rejected")
         

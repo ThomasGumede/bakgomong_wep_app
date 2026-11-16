@@ -11,92 +11,193 @@ Home
 {% endblock css %}
     
 {% block content %}
-<div class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
-    <div class="flex w-fit items-center space-x-4 mb-4">
-        <span class="mb-0 w-20 h-20 bg-warning-600 flex-shrink-0 text-white flex justify-center items-center ">
-            <img class=" w-20 h-20"
-                src="{% static 'images/kgotla.jpg' %}"
-                alt="Bakgomong Kgotla Ya Malla">
-        </span>
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
         <div>
-            <h3 class="text-xl font-bold text-gray-700">Bakgomong Kgotla Ya Malla
-            </h3>
-            <p class="text-sm text-gray-600">Total Invoces: <span
-                    class="font-semibold text-gray-800">{{payments.count}}</span>
+            <p class="section-kicker">
+                MEMBER PORTAL
             </p>
-            <p class="text-sm text-gray-600">Total Members: <span
-                    class="font-semibold text-gray-800">{{members}}</span>
+            <h1>
+                Dashboard
+            </h1>
+            <p class="heading-desc">
+                An overview of your membership and upcoming obligations.
             </p>
-            
         </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-        <div class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Bakgomong Full Account Balance</p>
-            <p class="text-green-500 font-bold text-lg">R{{kgotla_balance.get_total_balance}}</p>
+        <div class="heading-actions">
         </div>
-        <div class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Bakgomong Full Outstanding Balance</p>
-            <p class="text-red-500 font-bold text-lg">R{{clan_total_unpaid}}</p>
+    </section>
+    <section class="welcome-band">
+        <div>
+            <p>
+                YOUR MEMBER SPACE
+            </p>
+            <h2>
+                Good day,
+                <span data-first-name="{{ request.user.first_name }}">
+                    {{request.user.get_full_name }}
+                </span>
+                <span class="wave">
+                    ✦
+                </span>
+            </h2>
+            <span>
+                Here is your Kgotla overview and what needs your attention.
+            </span>
         </div>
-        <div class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You've Paid Bakgomong:</p>
-            <p class="text-yellow-600 font-bold text-lg">R{{request.user.total_paid}}</p>
-        </div>
-        <div class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">You Owe Bakgomong:</p>
-            <p class="text-red-500 font-bold text-lg">R{{request.user.total_unpaid}}</p>
-        </div>
-    </div>
-</div>
-
-
-    <div
-        class="max-w-full  bg-gradient-to-r mx-auto mt-10 from-[#f2fdff] to-[#ffefdd] shadow-md dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg p-4 font-sans">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="font-bold text-lg mb-0">Upcoming Payment</h2>
-        </div>
-        {% for latest_unpaid in latest_unpaids %}
-        <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
-            <div class="flex items-center justify-between flex-wrap mb-4">
-                <div class="flex items-center space-x-4 justify-between mb-2">
-                    <span
-                        class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                        <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
+        <span class="welcome-emblem">
+            <img alt="Bakgomong emblem" src="{% static 'assets/img/bakgomong-emblem.png' %}" />
+        </span>
+    </section>
+    <section class="metrics-grid">
+        <article class="metric-card metric-dark">
+            <div class="metric-top">
+                <span>
+                    Bakgomong Kgotla balance
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="dash-paid">
+                R {{ clan_total_paid|floatformat:2 }}
+            </strong>
+            <p>
+                Verified member contributions
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    My outstanding balance
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="dash-outstanding">
+                R {{unpaid_amount|floatformat:2 }}
+            </strong>
+            <p>
+                Includes unpaid and pending
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    Upcoming payments
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="dash-upcoming">
+                {{ latest_unpaids.count }}
+            </strong>
+            <p>
+                My payments not yet due
+            </p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-top">
+                <span>
+                    Kgotla members
+                </span>
+                <span class="metric-dot">
+                </span>
+            </div>
+            <strong class="metric-value mono-num" id="dash-family-members">
+                {{members}}
+            </strong>
+            <p>
+                Members with active accounts
+            </p>
+        </article>
+    </section>
+    <div class="dashboard-columns">
+        <section class="soft-card">
+            <div class="card-heading">
+                <div>
+                    <p class="section-kicker">
+                        YOUR COMMITMENTS
+                    </p>
+                    <h2>
+                        Upcoming payments
+                    </h2>
+                    <span>
+                        From your automatically assigned Contribution Plans
                     </span>
-                    <div>
-                        <h3 class="text-base font-medium text-gray-700">{{latest_unpaid}}</h3>
-                        <p class="text-sm text-gray-500">Ref No. {{latest_unpaid.reference}}</p>
-                        <p class="text-sm text-gray-600">Amount to be paid: <span
-                                class="font-semibold text-gray-800">R{{latest_unpaid.amount_due}}</span>
-                        </p>
-                    </div>
-    
                 </div>
-    
-                <div class="mb-4">
-    
-                    <p class="text-sm text-gray-600">Due: <span
-                            class="font-semibold text-gray-800">{{latest_unpaid.due_date}}</span></p>
+                <a class="text-link" href="{% url 'contributions:my-contributions' %}">
+                    View all →
+                </a>
+            </div>
+            <div class="dash-payments" id="upcoming-payments">
+                <div class="dash-payments" id="upcoming-payments">
+                    {% for payment in latest_unpaids %}
+                    <div class="due-row">
+                        <div>
+                            <h3>{{ payment.contribution_type.name }}</h3>
+                            <p>Due {{ payment.due_date|date:"d M Y" }} · {{ payment.contribution_type.get_recurrence_display }}</p>
+                        </div>
+                        <div class="row-actions"><strong class="due-amount mono-num">R {{ payment.amount_due|floatformat:2 }}</strong><a class="btn-primary btn-sm"
+                                href="{% url 'contributions:checkout' payment.id %}">Pay now</a></div>
+                    </div>
+                    {% endfor %}
+                    
                 </div>
             </div>
-    
-    
-            <a href="{% url 'contributions:checkout' latest_unpaid.id %}"
-                class="w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-200">
-                Pay Now
-            </a>
-        </div>
-        {% empty %}
-        <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
-            <p>No Upcoming Payments</p>
-        </div>
-        {% endfor %}
+        </section>
+        <section class="soft-card">
+            <div class="card-heading">
+                <div>
+                    <p class="section-kicker">
+                        QUICK ACCESS
+                    </p>
+                    <h2>
+                        My family branch
+                    </h2>
+                </div>
+            </div>
+            <div id="dash-family-card">
+                <div class="dash-family-content">
+                    <div class="dash-family-head"><span class="family-icon">{{ request.user.family.name|slice:":2"|upper }}</span>
+                        <div><strong>{{request.user.family}}</strong>
+                            <p>Leader: {{request.user.family.leader}}</p>
+                        </div>
+                    </div><a class="family-link" href="{{ request.user.family.get_absolute_url }}">Explore my family →</a>
+                </div>
+            </div>
+            <div class="divider-line">
+            </div>
+            <div class="card-heading">
+                <div>
+                    <p class="section-kicker">
+                        WHAT'S NEXT
+                    </p>
+                    <h2>
+                        Upcoming meetings
+                    </h2>
+                </div>
+            </div>
+            <div class="dash-meetings" id="dash-meetings">
+                {% for meeting in upcoming_meetings %}
+                <div class="meeting-mini"><span class="date-box"><strong>{{ meeting.meeting_date|date:"d" }}</strong><span>{{ meeting.meeting_date|date:"M" }}</span></span>
+                    <div><strong>{{meeting.title}}</strong>
+                        <p>{{meeting.meeting_date|date:"d M Y"}}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="meeting-mini">
+                    <div>
+                        <p>No upcoming meetings.</p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </section>
     </div>
-
     
-
+</main>
 <!-- Table End -->
 {% endblock content %}
 

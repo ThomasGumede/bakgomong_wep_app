@@ -1,378 +1,569 @@
 {% load static %}
 {% load static tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% tailwind_preload_css %}
     {% tailwind_css %}
     {{form.media}}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block seo %}
-    <!-- ================== SEO META TAGS ================== -->
-    
-    <title>{% block title %}Bakgomong Kgotla Ya Malla{% endblock title %}</title>
-    
-    <meta name="description"
-        content="{% block description %}Track, manage, and contribute to Bakgomong Kgotla Ya Malla projects and family funds — including events, burials, savings, and investments. Stay connected and build financial unity within the clan.{% endblock description %}">
-    <meta name="keywords"
-        content="Bakgomong Kgotla Ya Malla, clan contributions, family fund, stokvel, burial society, family savings, clan unity, community development, family leaders, South Africa">
-    <meta name="author" content="Bakgomong Kgotla Ya Malla Management">
-    
-    <!-- ================== OPEN GRAPH / FACEBOOK ================== -->
-    <meta property="og:title" content="Bakgomong Kgotla Ya Malla">
-    <meta property="og:description"
-        content="Join the Bakgomong Kgotla Ya Malla’s digital contribution system — manage family payments, events, and savings online.">
-    <meta property="og:image" content="{% static 'images/kgotla.jpg' %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Bakgomong Kgotla Ya Malla Portal">
-    
-    <!-- ================== TWITTER CARD ================== -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Bakgomong Kgotla Ya Malla">
-    <meta name="twitter:description"
-        content="A modern, transparent contribution platform for the Bakgomong Kgotla Ya Malla — uniting families through shared financial goals.">
-    <meta name="twitter:image" content="{% static 'images/kgotla.jpg' %}">
-    
-    <!-- ================== FAVICON ================== -->
-    
-    <!-- ================== CANONICAL LINK ================== -->
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
-
-    
-    {% endblock seo %}
-    <!-- Fav Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Bakgomong Kgotla Ya Malla">
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <meta content="#102d2c" name="theme-color" />
+    <meta content="Bakgomong Kgotla ya Malla — family and contribution management portal" name="description" />
+    <title>
+        Dashboard · Bakgomong
+    </title>
+    <link href="{% static 'assets/img/bakgomong-emblem.png' %}" rel="icon" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap"
         rel="stylesheet" />
-    <!-- remix icon font css  -->
-    <link rel="stylesheet" href="{% static 'css/remixicon.css' %}" />
-    <!-- Data Table css -->
-    <link rel="stylesheet" href="{% static 'css/lib/dataTables.min.css' %}" />
-    <!-- Text Editor css -->
-    <link rel="stylesheet" href="{% static 'css/lib/editor-katex.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/lib/editor.atom-one-dark.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/lib/editor.quill.snow.css' %}" />
-    <!-- Date picker css -->
-    <link rel="stylesheet" href="{% static 'css/lib/flatpickr.min.css' %}" />
-    <!-- Vector Map css -->
-    <link rel="stylesheet" href="{% static 'css/lib/jquery-jvectormap-2.0.5.css' %}" />
-    <!-- Popup css -->
-    <link rel="stylesheet" href="{% static 'css/lib/magnific-popup.css' %}" />
-    <!-- Slick Slider css -->
-    <link rel="stylesheet" href="{% static 'css/lib/slick.css' %}" />
-    <!-- prism css -->
-    <link rel="stylesheet" href="{% static 'css/lib/prism.css' %}" />
-
-    <!-- main css -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    
-    {% block css %}
-        
-    {% endblock css %}
-        
+    <link href="{% static 'assets/css/tailwind.generated.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/css/styles.css' %}" rel="stylesheet" />
+    <script defer="" src="{% static 'assets/js/config.js' %}">
+    </script>
+    <!-- <script defer="" src="{% static 'assets/js/demo-data.js' %}"> -->
+    </script>
+    <script defer="" src="{% static 'assets/js/app.js' %}">
+    </script>
 </head>
 
-<body class="bg-neutral-100 overflow-x-hidden dark:bg-neutral-800 dark:text-white ">
-
-
-{% include 'includes/aside.html' %}
-
-<main class="dashboard-main overflow-hidden">
-    <div class="navbar-header border-b border-neutral-200 dark:border-neutral-600">
-        <div class="flex items-center justify-between">
-            <div class="col-auto">
-                <div class="flex flex-wrap items-center gap-[16px]">
-                    <button type="button" class="sidebar-toggle">
-                        <iconify-icon icon="heroicons:bars-3-solid" class="icon non-active"></iconify-icon>
-                        <iconify-icon icon="iconoir:arrow-right" class="icon active"></iconify-icon>
-                    </button>
-                    <button type="button" class="sidebar-mobile-toggle d-flex !leading-[0]">
-                        <iconify-icon icon="heroicons:bars-3-solid" class="icon !text-[30px]"></iconify-icon>
-                    </button>
-                    <form class="navbar-search">
-                        <input type="text" name="search" placeholder="Search" />
-                        <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-                    </form>
-                </div>
-            </div>
-            <div class="col-auto">
-                <div class="flex flex-wrap items-center gap-3">
-                    <button type="button" id="theme-toggle"
-                        class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:text-white">
-                        <span id="theme-toggle-dark-icon" class="hidden">
-                            <i class="ri-sun-line"></i>
-                        </span>
-                        <span id="theme-toggle-light-icon" class="hidden">
-                            <i class="ri-moon-line"></i>
-                        </span>
-                    </button>
-
-                    
-
-                    
-
-                    <!-- Notification Start  -->
-                    <button data-dropdown-toggle="dropdownNotification"
-                        class="has-indicator flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700"
-                        type="button">
-                        <iconify-icon icon="iconoir:bell"
-                            class="text-xl text-neutral-900 dark:text-white"></iconify-icon>
-                    </button>
-                    <div id="dropdownNotification"
-                        class="z-10 hidden w-full max-w-[394px] overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-neutral-700">
-                        <div
-                            class="m-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
-                            <h6 class="mb-0 text-lg font-semibold text-neutral-900">
-                                Notification
-                            </h6>
-                            <span
-                                class="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-primary-600 dark:bg-neutral-600 dark:text-white">{{request.user.get_oustandings.count}}</span>
-                        </div>
-                        <div class="scroll-sm !border-t-0">
-                            <div class="max-h-[400px] overflow-y-auto">
-                                
-                                {% for outsting in request.user.get_oustandings %}
-                                    <a href="{{outsting.get_payments_url}}" class="flex justify-between gap-1 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-success-200 text-success-600 dark:bg-success-600/25">
-                                                <iconify-icon icon="bitcoin-icons:verify-outline" class="text-2xl"></iconify-icon>
-                                            </div>
-                                            <div>
-                                                <h6 class="fw-semibold mb-1 text-sm">{{outsting.contribution_type.name}} ({{outsting.amount_due}})</h6>
-                                                <p class="mb-0 line-clamp-1 text-sm">
-                                                    Your payment is due on {{outsting.due_date}}.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="shrink-0">
-                                            <span class="text-sm text-neutral-500">23 Mins ago</span>
-                                        </div>
-                                    </a>
-                                {% endfor %}
-                                    
-                                
-                                
-                            </div>
-
-                            
-                            {% if request.user.get_oustandings.count > 0 %}
-                                <div class="px-4 py-3 text-center">
-                                    <a href="{% url 'contributions:my-contributions' %}"
-                                        class="text-center font-semibold text-primary-600 hover:underline dark:text-primary-600">See
-                                        All Outstanding
-                                    </a>
-                                </div>
-                            {% endif %}
-                                
-                            
-                        </div>
-                    </div>
-                    <!-- Notification End  -->
-
-                    <button data-dropdown-toggle="dropdownProfile" class="flex items-center justify-center rounded-full"
-                        type="button">
-                        <img src="{% if request.user.profile_image %}{{request.user.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}" alt="image" class="object-fit-cover h-10 w-10 rounded-full" />
-                    </button>
-                    <div id="dropdownProfile"
-                        class="dropdown-menu-sm z-10 hidden rounded-lg bg-white p-3 shadow-lg dark:bg-neutral-700">
-                        <div
-                            class="mb-4 flex items-center justify-between gap-2 rounded-lg bg-primary-50 px-4 py-3 dark:bg-primary-600/25">
-                            <div>
-                                <h6 class="mb-0 text-lg font-semibold text-neutral-900">
-                                    {{request.user.title}}. {{request.user.get_full_name}}
-                                </h6>
-                                <span class="text-neutral-500">{{request.user.role}}</span>
-                            </div>
-                            <button type="button" class="hover:text-danger-600">
-                                <iconify-icon icon="radix-icons:cross-1" class="icon text-xl"></iconify-icon>
-                            </button>
-                        </div>
-
-                        <div class="scroll-sm max-h-[400px] overflow-y-auto pe-2">
-                            <ul class="flex flex-col">
-                                <li>
-                                    <a class="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600"
-                                        href="{{request.user.get_update_url}}">
-                                        <iconify-icon icon="solar:user-linear" class="icon text-xl"></iconify-icon>
-                                        My Profile</a>
-                                </li>
-                                
-                                {% if request.user.is_staff %}
-                                    <li>
-                                        <a target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 px-0 py-2 text-black hover:text-primary-600" href="{% url 'admin:index' %}">
-                                            <iconify-icon icon="icon-park-outline:setting-two" class="icon text-xl"></iconify-icon>
-                                            Executives Login</a>
-                                    </li>
-                                {% endif %}
-                                    
-                                
-                                <li>
-                                    <a class="flex items-center gap-4 px-0 py-2 text-black hover:text-danger-600"
-                                        href="{% url 'accounts:logout' %}">
-                                        <iconify-icon icon="lucide:power" class="icon text-xl"></iconify-icon>
-                                        Log Out</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body class="bg-canvas text-ink antialiased" data-page="dashboard">
+    <div class="sidebar-overlay" hidden="" id="sidebar-overlay">
     </div>
-
-
-    <div class="dashboard-main-body">
-
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
-            <div class="grid gap-2">
-                <h6 class="font-semibold mb-0 dark:text-white">
-                    {% block dash_title2 %}
+    <aside aria-label="Main navigation" class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <a class="sidebar-brand" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">
+                <span class="emblem-frame">
+                    <img alt="Bakgomong emblem" src="{% static 'assets/img/bakgomong-emblem.png' %}" />
+                </span>
+                <span>
+                    <strong>
+                        BAKGOMONG
+                    </strong>
+                    <small>
+                        KGOTLA YA MALLA
+                    </small>
+                </span>
+            </a>
+            <button aria-label="Close menu" class="side-close" id="close-sidebar" type="button">
+                ×
+            </button>
+        </div>
+        <div class="side-label">
+            THE KGOTLA
+        </div>
+        <nav class="sidebar-menu">
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %} current {% endif %}" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <rect height="9" rx="1" width="7" x="3" y="3">
+                    </rect>
+                    <rect height="5" rx="1" width="7" x="14" y="3">
+                    </rect>
+                    <rect height="9" rx="1" width="7" x="14" y="12">
+                    </rect>
+                    <rect height="5" rx="1" width="7" x="3" y="16">
+                    </rect>
+                </svg>
+                <span>
                     Dashboard
-                    {% endblock dash_title2 %}</h6>
-                    
-                    {% block statement_title %}
-                        
-                    {% endblock statement_title %}
-            </div>
-             
-            
-                
-            <ul class="flex items-center gap-[6px]">
-                <li class="font-medium">
-                    <a href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}"
-                        class="flex items-center gap-2 text-neutral-600 hover:text-primary-600 dark:text-white dark:hover:text-primary-600">
-                        <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
-                        Dashboard
-                    </a>
-                </li>
-                <li class="text-neutral-600 dark:text-white">-</li>
-                <li class="text-neutral-600 font-medium dark:text-white">
-                    {% block dash_title %}
-                        
-                    {% endblock dash_title %}
-                </li>
-            </ul>
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'get-families' %} current {% endif %}" href="{% url 'accounts:get-families' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2">
+                    </path>
+                    <circle cx="9" cy="7" r="4">
+                    </circle>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75">
+                    </path>
+                </svg>
+                <span>
+                    Families
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'get-members' %} current {% endif %}" href="{% url 'accounts:get-members' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2">
+                    </path>
+                    <circle cx="9" cy="7" r="4">
+                    </circle>
+                    <path d="M20 8v6M23 11h-6">
+                    </path>
+                </svg>
+                <span>
+                    Members
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'get-contributions' %} current {% endif %}" href="{% url 'contributions:get-contributions' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="m12 2 8 5-8 5-8-5 8-5ZM4 12l8 5 8-5M4 17l8 5 8-5">
+                    </path>
+                </svg>
+                <span>
+                    Contributions
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'member-contributions-list' %} current {% endif %}" href="{% url 'contributions:member-contributions-list' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <rect height="14" rx="2" width="20" x="2" y="5">
+                    </rect>
+                    <path d="M2 10h20">
+                    </path>
+                </svg>
+                <span>
+                    Payments
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'clan-meetings' %} current {% endif %}" href="{% url 'bakgomong_kgotla_yamalla:clan-meetings' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <rect height="18" rx="2" width="18" x="3" y="4">
+                    </rect>
+                    <path d="M16 2v4M8 2v4M3 10h18">
+                    </path>
+                </svg>
+                <span>
+                    Meetings &amp; events
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'clan-documents' %} current {% endif %}" href="{% url 'bakgomong_kgotla_yamalla:clan-documents' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z">
+                    </path>
+                    <path d="M14 2v6h6M8 13h8M8 17h8">
+                    </path>
+                </svg>
+                <span>
+                    Documents
+                </span>
+            </a>
+            <a class="sidebar-link {% if request.resolver_match.url_name == 'clan-expenses' %} current {% endif %}" href="{% url 'bakgomong_kgotla_yamalla:clan-expenses' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="M4 21V9M9 21V4M14 21v-7M19 21V8">
+                    </path>
+                </svg>
+                <span>
+                    Reports
+                </span>
+            </a>
+        </nav>
+        <div class="side-label account-label">
+            PERSONAL SPACE
         </div>
+        <nav class="sidebar-menu">
+            <details class="sidebar-account" id="account-dropdown">
+                <summary class="sidebar-link">
+                    <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"
+                        width="18">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2">
+                        </path>
+                        <circle cx="9" cy="7" r="4">
+                        </circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75">
+                        </path>
+                    </svg>
+                    <span>
+                        Account
+                    </span>
+                    <svg aria-hidden="true" class="icon ml-auto" fill="none" height="18" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"
+                        width="18">
+                        <path d="m6 9 6 6 6-6">
+                        </path>
+                    </svg>
+                </summary>
+                <div class="sidebar-submenu">
+                    <a class="account-sub-link" href="{% url 'accounts:user-details' request.user.username %}">
+                        My account
+                    </a>
+                    <a class="account-sub-link" href="{% url 'accounts:profile-update' %}">
+                        Edit my details
+                    </a>
+                    <a class="account-sub-link" href="{% url 'accounts:password-update' %}">
+                        Change password
+                    </a>
+                    <a class="account-sub-link" href="{{request.user.family.get_absolute_url}}">
+                        My family
+                    </a>
+                    <a class="account-sub-link" href="{% url 'contributions:my-contributions' %}">
+                        My payments / contributions
+                    </a>
+                </div>
+            </details>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="user-mini">
+                <span class="user-avatar" data-avatar="{{request.user.get_full_name}}">
+                    NM
+                </span>
+                <div>
+                    <strong data-user-name="">
+                        {{request.user.first_name }} {{request.user.last_name }}
+                    </strong>
+                    <small data-user-role="">
+                        Member
+                    </small>
+                </div>
+            </div>
+            <a class="logout-link" href="{% url 'accounts:logout' %}" id="logout-link" title="Leave demo portal">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                    <path d="M10 17l5-5-5-5M15 12H3">
+                    </path>
+                    <path d="M12 3h6a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-6">
+                    </path>
+                </svg>
+                Log out
+            </a>
+        </div>
+    </aside>
+    <div class="app-frame">
         
-        {% if messages %}
-            {% include 'includes/messages.html' %}
-        {% endif %}
-            
         
+        <header class="app-topbar">
+        
+            <!-- Mobile navigation -->
+            <button aria-label="Open navigation" class="mobile-menu" id="open-sidebar" type="button">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                    <path d="M4 7h16M4 12h16M4 17h16"></path>
+                </svg>
+            </button>
+        
+            <!-- Breadcrumb -->
+            <div class="topbar-path">
+                <a href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">
+                    Kgotla portal
+                </a>
+                <span>/</span>
+                <span>Dashboard</span>
+            </div>
+        
+            <!-- Header right side -->
+            <div class="topbar-right">
+        
+                <!-- PROFILE DROPDOWN -->
+                <div id="profile-dropdown" class="relative">
+        
+                    <!-- Profile trigger -->
+                    <button id="profile-dropdown-button" type="button" aria-label="Open account menu" aria-haspopup="true"
+                        aria-expanded="false" aria-controls="profile-dropdown-menu" class="flex items-center gap-2.5
+                               rounded-xl p-1.5
+                               hover:bg-emerald-50
+                               transition-colors
+                               focus:outline-none
+                               focus:ring-2 focus:ring-emerald-700">
+        
+                        <!-- Avatar -->
+                        <div class="relative flex-shrink-0">
+        
+                            {% if request.user.profile_image %}
+                            <img id="profile-avatar-image" src="{{ request.user.profile_image.url }}" alt="Profile picture"
+                                class="h-10 w-10 rounded-full
+                                       object-cover border-2
+                                       border-amber-400">
+                            {% endif %}
+        
+                            <!-- Initials fallback -->
+                            <div id="profile-avatar-initials" class="{% if request.user.profile_image %}hidden {% endif %}h-10 w-10
+                                       rounded-full
+                                       bg-emerald-900
+                                       text-white
+                                       border-2 border-amber-400
+                                       flex items-center
+                                       justify-center
+                                       text-sm font-bold uppercase">
+        
+                                {{ request.user.first_name|default:request.user.username|first|upper }}{{request.user.last_name|first|upper }}
+        
+                            </div>
+        
+                        </div>
+        
+                        <!-- Name and role -->
+                        <div class="hidden sm:block text-left">
+                            <p class="text-sm font-semibold text-slate-800 leading-tight">
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </p>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                {{ request.user.get_role_display|default:"Member" }}
+                            </p>
+                        </div>
+        
+                        <!-- Dropdown arrow -->
+                        <svg id="profile-chevron" class="w-4 h-4 text-slate-500 transition-transform" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+        
+                    </button>
+        
+                    <!-- Dropdown menu -->
+                    <div id="profile-dropdown-menu" class="hidden absolute right-0 top-full mt-3
+                               w-64 max-w-[calc(100vw-2rem)]
+                               rounded-2xl bg-white
+                               border border-slate-100
+                               shadow-xl shadow-slate-900/10
+                               overflow-hidden z-50">
+        
+                        <!-- User information -->
+                        <div class="px-5 py-4 bg-emerald-50">
+        
+                            <p class="text-xs uppercase font-semibold
+                                      tracking-wider text-emerald-700">
+                                Signed in as
+                            </p>
+        
+                            <p class="mt-1 text-sm font-bold
+                                      text-slate-900 truncate">
+                                {{ request.user.get_full_name|default:request.user.username }}
+                            </p>
+        
+                            <p class="text-xs text-slate-500 truncate">
+                                {{ request.user.email }}
+                            </p>
+        
+                        </div>
+        
+                        <!-- Menu links -->
+                        <div class="py-2">
+        
+                            <!-- View Profile -->
+                            <a href="{% url 'accounts:user-details' username=request.user.username %}" class="flex items-center gap-3
+                                       px-5 py-3 text-sm
+                                       font-medium text-slate-700
+                                       hover:bg-emerald-50
+                                       hover:text-emerald-800
+                                       transition-colors">
+        
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="4" />
+                                    <path d="M4 21a8 8 0 0 1 16 0" />
+                                </svg>
+        
+                                View Profile
+                            </a>
+        
+                            <!-- Django Admin -->
+                            {% if request.user.is_staff or request.user.is_superuser %}
+                            <a href="{% url 'admin:index' %}" class="flex items-center gap-3
+                                       px-5 py-3 text-sm
+                                       font-medium text-slate-700
+                                       hover:bg-emerald-50
+                                       hover:text-emerald-800
+                                       transition-colors">
+        
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M12 2 4 6v5c0 5 3.4 8.5 8 11
+                                             4.6-2.5 8-6 8-11V6z" />
+                                    <path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+        
+                                Admin Login
+                            </a>
+                            {% endif %}
+        
+                        </div>
+        
+                        <!-- Logout -->
+                        <div class="border-t border-slate-100 p-2">
+        
+                            <a method="post" href="{% url 'accounts:logout' %}">
+                                
+        
+                                <button type="submit" class="w-full flex items-center
+                                           gap-3 px-3 py-2.5
+                                           rounded-lg text-sm
+                                           font-semibold text-red-600
+                                           hover:bg-red-50
+                                           transition-colors">
+        
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        viewBox="0 0 24 24">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5
+                                                 a2 2 0 0 1 2-2h4
+                                                 M16 17l5-5-5-5
+                                                 M21 12H9" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+        
+                                    Logout
+                                </button>
+                            </a>
+        
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </header>
+
         {% block content %}
-            
         {% endblock content %}
-            
-
-        
+        {% include "includes/messages.html" %}
+        <footer class="portal-footer">
+            <span>
+                © Bakgomong Kgotla ya Malla · 2026
+            </span>
+            <span>
+                All records are illustrative. No real money moves here.
+            </span>
+        </footer>
     </div>
-
-    {% include 'includes/footer.html' %}
-</main>
-
-<!-- jQuery library js -->
-<script src="{% static 'js/lib/jquery-3.7.1.min.js' %}"></script>
-<!-- Data Table js -->
-<script src="{% static 'js/lib/simple-datatables.min.js' %}"></script>
-<!-- Iconify Font js -->
-<script src="{% static 'js/lib/iconify-icon.min.js' %}"></script>
-<!-- jQuery UI js -->
-<script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
-<!-- Vector Map js -->
-<script src="{% static 'js/lib/jquery-jvectormap-2.0.5.min.js' %}"></script>
-<script src="{% static 'js/lib/jquery-jvectormap-world-mill-en.js' %}"></script>
-<!-- Popup js -->
-<script src="{% static 'js/lib/magnifc-popup.min.js' %}"></script>
-<!-- Slick Slider js -->
-<script src="{% static 'js/lib/slick.min.js' %}"></script>
-<!-- prism js -->
-<script src="{% static 'js/lib/prism.js' %}"></script>
-
-<script src="{% static 'js/flowbite.min.js' %}"></script>
-<!-- main js -->
-<script src="{% static 'js/app.js' %}"></script>
-
-
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function () {
-            navigator.serviceWorker.register("{% static 'js/serviceworker.js' %}")
-                .then(function (registration) {
-                    console.log('ServiceWorker registered with scope:', registration.scope);
-                })
-                .catch(function (error) {
-                    console.log('ServiceWorker registration failed:', error);
-                });
-        });
-    }
-</script>
-{% block scripts %}
-    
-{% endblock scripts %}
-    
-<div id="installPrompt" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center relative">
-        <button id="closeInstallPrompt"
-            class="absolute top-2 right-3 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-
-        <img src="{% static 'images/android-chrome-192x192.png' %}" alt="Bakgomong Logo"
-            class="mx-auto w-20 h-20 mb-4 rounded-full shadow-md">
-
-        <h2 class="text-xl font-bold text-gray-800 mb-1">Install Bakgomong App</h2>
-        <p class="text-gray-500 text-sm mb-5">Add Bakgomong Clan Portal to your home screen for easy access and offline
-            use.</p>
-
-        <button id="installButton" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
-            Install App
-        </button>
+    <div class="toast" hidden="" id="toast" role="status">
     </div>
-</div>
-<script>
-    let deferredPrompt;
-    const installPrompt = document.getElementById('installPrompt');
-    const installButton = document.getElementById('installButton');
-    const closePrompt = document.getElementById('closeInstallPrompt');
+    <dialog class="confirm-dialog" id="confirm-dialog">
+        <form method="dialog">
+            <h3 id="confirm-heading">
+                Confirm
+            </h3>
+            <p id="confirm-message">
+            </p>
+            <div class="button-row">
+                <button class="btn-outline" value="cancel">
+                    Cancel
+                </button>
+                <button class="btn-primary" value="confirm">
+                    Confirm
+                </button>
+            </div>
+        </form>
+    </dialog>
 
-    // Detect PWA install prompt
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome from showing default mini-infobar
-        e.preventDefault();
-        deferredPrompt = e;
-        // Show our custom prompt after slight delay
-        setTimeout(() => installPrompt.classList.remove('hidden'), 2000);
-    });
+    {% block scripts %}
+    {% endblock scripts %}
+    <script>
+        // Initialize the app
 
-    // Handle click on Install button
-    installButton.addEventListener('click', async () => {
-        installPrompt.classList.add('hidden');
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const {outcome} = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('User accepted install');
-            } else {
-                console.log('User dismissed install');
+        document.addEventListener("DOMContentLoaded", function () {
+            const wrapper = document.getElementById("profile-dropdown");
+            const button = document.getElementById("profile-dropdown-button");
+            const menu = document.getElementById("profile-dropdown-menu");
+            const chevron = document.getElementById("profile-chevron");
+
+            if (!wrapper || !button || !menu) return;
+
+            function toggleMenu(open) {
+                menu.classList.toggle("hidden", !open);
+                button.setAttribute("aria-expanded", String(open));
+                chevron?.classList.toggle("rotate-180", open);
             }
-            deferredPrompt = null;
-        }
+
+            // Open or close dropdown
+            button.addEventListener("click", function () {
+                const isHidden = menu.classList.contains("hidden");
+                toggleMenu(isHidden);
+            });
+
+            // Close when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!wrapper.contains(event.target)) {
+                    toggleMenu(false);
+                }
+            });
+
+            // Close with Escape
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && !menu.classList.contains("hidden")) {
+                    toggleMenu(false);
+                    button.focus();
+                }
+            });
+
+            // Profile image fallback
+            const image = document.getElementById("profile-avatar-image");
+            const initials = document.getElementById("profile-avatar-initials");
+
+            if (image && initials) {
+                function showInitials() {
+                    image.classList.add("hidden");
+                    initials.classList.remove("hidden");
+                }
+
+                image.addEventListener("error", showInitials);
+
+                if (image.complete && image.naturalWidth === 0) {
+                    showInitials();
+                }
+            }
+        });
+
+
+    </script>
+    <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const messages = document.querySelectorAll("[data-message]");
+
+        messages.forEach((message) => {
+
+            const closeButton = message.querySelector(
+                "[data-dismiss-message]"
+            );
+
+            let dismissed = false;
+
+            function dismissMessage() {
+                if (dismissed) return;
+                dismissed = true;
+
+                message.classList.add(
+                    "opacity-0",
+                    "translate-x-4",
+                    "scale-95"
+                );
+
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            }
+
+            // Manual dismissal
+            closeButton?.addEventListener(
+                "click",
+                dismissMessage
+            );
+
+            // Auto-dismiss success and info messages
+            if (message.dataset.autoDismiss === "true") {
+
+                let timeout = setTimeout(
+                    dismissMessage,
+                    6000
+                );
+
+                // Pause dismissal while hovering
+                message.addEventListener("mouseenter", () => {
+                    clearTimeout(timeout);
+                });
+
+                message.addEventListener("mouseleave", () => {
+                    if (!dismissed) {
+                        timeout = setTimeout(
+                            dismissMessage,
+                            3000
+                        );
+                    }
+                });
+            }
+
+        });
+
     });
 
-    // Close button
-    closePrompt.addEventListener('click', () => {
-        installPrompt.classList.add('hidden');
-    });
-</script>
-
+    </script>
 </body>
 
 </html>

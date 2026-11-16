@@ -5,13 +5,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
-from django.core import serializers
-from bakgomong_kgotla_yamalla.forms import MeetingForm
-from bakgomong_kgotla_yamalla.models import ClanDocument, Meeting
-from django.core.exceptions import PermissionDenied
-from contributions.models import ContributionType, MemberContribution
-from utilities.choices import PaymentStatus, Role
+from django.http import HttpResponse
+from bakgomong_kgotla_yamalla.forms import ClanDocumentForm
+from bakgomong_kgotla_yamalla.models import ClanDocument
+
 
 
 logger = logging.getLogger("documents")
@@ -21,6 +18,22 @@ def clan_documents(request):
     documents = ClanDocument.objects.all()
     docs = [doc for doc in documents if doc.user_has_access(request.user)]
     return render(request, 'documents/documents.html', {'docs': docs})
+
+@login_required
+def upload_document(request):
+    if request.method == 'POST':
+        form = ClanDocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            document = form.save(commit=False)
+            document.uploaded_by = request.user
+            document.save()
+            messages.success(request, "Document uploaded successfully.")
+            return redirect('bakgomong_kgotla_yamalla:clan-documents')
+        else:
+            messages.error(request, "There was an error uploading the document. Please check the form for errors.")
+    else:
+        form = ClanDocumentForm()
+    return render(request, 'documents/add-document.html', {'form': form})
 
 @login_required
 def download_file(request, file_id):

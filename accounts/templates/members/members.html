@@ -6,107 +6,126 @@
 
 
 {% block content %}
-<div class="grid grid-cols-12">
-    <div class="col-span-12">
-        <div class="card border-0 overflow-hidden p-2">
-            <div class="card-header">
-                <h6 class="card-title mb-0 text-lg">Members</h6>
-            </div>
-            <div
-                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
-            
-                
-                <a href="{% url 'accounts:add-member' request.user.family.slug %}"
-                    class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
-                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                    Add Member
-                </a>
-                
-            </div>
-            
-            <div class="card-body">
-                <table id="selection-table"
-                    class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
-                                    Member
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
-                                    Email
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
-                                    Role
-                                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                    </svg>
-                                </div>
-                            </th>
-                            
-                            
-
-                            
-                            
-                            
-
-                            <th scope="col" class="text-neutral-800 dark:text-white">
-                                <div class="flex items-center gap-2">
-                                    Status
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {% for member in members %}
-                        <tr>
-                            
-                            
-                            <td>
-                                <a href="{% url 'accounts:user-details' member.username %}" class="flex items-center">
-                                    <img src="{% if member.profile_image %}{{member.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
-                                        alt="{{member.get_full_name}}"
-                                        class="shrink-0 me-3 h-[46px] w-[46px] rounded-lg">
-                                    <h6 class="text-base mb-0 font-medium grow">{{member.get_full_name}}</h6>
-                                </a>
-                            </td>
-                            <td>{{member.email}}</td>
-                            <td>{{member.role}}</td>
-                            
-                            
-
-                            <td class="text-center">
-                                <span
-                                    class="bg-success-focus text-success-main dark:text-success-500 px-6 py-1 rounded-[50rem] font-medium text-sm">Active</span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-
-
-                    </tbody>
-                </table>
-            </div>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Members
+            </h1>
+            <p class="heading-desc">
+                Account records and membership approval across the Kgotla.
+            </p>
+        </div>
+        <div class="heading-actions">
+            <a class="btn-primary" href="{% url 'accounts:add-member' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                    <path d="M12 5v14M5 12h14">
+                    </path>
+                </svg>
+                Add member
+            </a>
+        </div>
+    </section>
+    <div class="filter-toolbar">
+        
+        <form class="search-field" method="get" action="{% url 'accounts:get-members' %}">
+            <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                <circle cx="11" cy="11" r="7">
+                </circle>
+                <path d="m20 20-4-4">
+                </path>
+            </svg>
+            <input aria-label="Search name, email, username or family..." id="search-input" name="search"
+                placeholder="Search name, email, username or family..." type="search">
+        </form>
+        <select aria-label="Filter roles" class="field select-filter" id="filter-main">
+            <option value="">
+                All roles
+            </option>
+            <option value="MEMBER">
+                Members
+            </option>
+            <option value="TREASURER">
+                Treasurers
+            </option>
+            <option value="SECRETARY">
+                Secretaries
+            </option>
+            <option value="KGOSANA">
+                Kgosana
+            </option>
+            <option value="CLAN_CHAIRPERSON">
+                Chairpersons
+            </option>
+        </select>
+        <select aria-label="Secondary filter" class="field select-filter" id="filter-secondary">
+            <option value="">
+                All statuses
+            </option>
+            <option value="approved">
+                Approved
+            </option>
+            <option value="pending">
+                Pending approval
+            </option>
+        </select>
+    </div>
+    <div class="soft-card table-card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>
+                            Member
+                        </th>
+                        <th>
+                            Family
+                        </th>
+                        <th>
+                            Title
+                        </th>
+                        <th>
+                            Kgotla role
+                        </th>
+                        <th>
+                            Approval
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="member-rows">
+                    {% for member in members %}
+                    <tr>
+                        <td>
+                            <div class="person-inline"><span class="avatar-initials">NM</span>
+                                <div><strong>{{ member.get_full_name }}</strong><span class="sub">{{ member.email }}</span></div>
+                            </div>
+                        </td>
+                        <td><a class="link-inline" href="{% url 'accounts:get-family' member.family.slug %}">{{ member.family.name }}</a></td>
+                        <td>{{ member.get_title_display }}</td>
+                        <td>{{ member.get_role_display }}</td>
+                        <td>{% if member.is_approved %}<span class="status status-green">Approved</span>{% else %}<span class="status status-yellow">Pending approval</span>{% endif %}</td>
+                        <td><a class="link-inline" href="{% url 'accounts:user-details' member.username %}">View</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No members found.</td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
+</main>
+
 {% endblock content %}
 
 

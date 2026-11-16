@@ -6,6 +6,137 @@ Add Contribution
 
 
 {% block content %}
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MANAGEMENT
+            </p>
+            <h1>
+                Add contribution
+            </h1>
+            <p class="heading-desc">
+                Define a ContributionType and assign MemberContribution records.
+            </p>
+        </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="content-narrow">
+        <div class="soft-card form-panel">
+            <div class="form-panel-head">
+                <h2>
+                    Contribution definition
+                </h2>
+                <p>
+                    This preview automatically creates member obligations for eligible accounts when saved.
+                </p>
+            </div>
+            {% include 'includes/errors.html' %}
+            <form class="form-grid" id="contribution-form1" method="post">
+                {% csrf_token %}    
+                <div class="form-field">
+                    <label class="field-label" for="name">
+                        Contribution name *
+                    </label>
+                    <input class="field" id="name" name="name" placeholder="" required="" type="text" value="{{form.name.value|default_if_none:''}}">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.name.help_text}}</span>
+                    {% if form.name.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.name.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="category">
+                        Category *
+                    </label>
+                    {{form.category}}
+                    {% if form.category.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.category.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="amount">
+                        Amount per member (ZAR) *
+                    </label>
+                    <input class="field" id="amount" name="amount" placeholder="" required="" type="number">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.amount.help_text}}</span>
+                    {% if form.amount.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.amount.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="recurrence">
+                        Frequency *
+                    </label>
+                    {{form.recurrence}}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.recurrence.help_text}}</span>
+                    {% if form.recurrence.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.recurrence.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="scope">
+                        Scope *
+                    </label>
+                    {{form.scope}}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.scope.help_text}}</span>
+                    {% if form.scope.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.scope.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="family">
+                        Specific family (family scope only)
+                    </label>
+                    {{form.family}}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.family.help_text}}</span>
+                    {% if form.family.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.family.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    <label class="field-label" for="due_date">
+                        Due date
+                    </label>
+                    <input class="field" id="due_date" name="due_date" placeholder="" type="date">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.due_date.help_text}}</span>
+                    {% if form.due_date.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.due_date.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="description">
+                        Description
+                    </label>
+                    <textarea class="field" id="description" name="description" placeholder="" rows="3"></textarea>
+                </div>
+                <div class="form-field">
+                    <label class="checkbox-label">
+                        <input checked="" id="is_active" name="is_active" type="checkbox">
+                        Active contribution
+                    </label>
+                </div>
+                <div class="form-wide form-actions">
+                    <a class="btn-outline" href="contributions.html">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <path d="m5 12 5 5L20 7">
+                            </path>
+                        </svg>
+                        Create contribution
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
 <div class="grid grid-cols-12 gap-5 ">
 
     <div class="col-span-12">

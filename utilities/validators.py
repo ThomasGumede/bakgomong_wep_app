@@ -3,6 +3,7 @@ from django.core.validators import URLValidator, RegexValidator, ValidationError
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
+
 def validate_fcbk_link(value):
     url_validator = URLValidator()
     facebook_regex = r'^https?://(www\.)?facebook\.com/.*$'

@@ -1,0 +1,123 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block seo %}
+<title>Kgotla Documents</title>
+{% endblock seo %}
+{% block dash_title %}
+Add Documents
+{% endblock dash_title %}
+{% block content %}
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MANAGEMENT
+            </p>
+            <h1>
+                Add document
+            </h1>
+            <p class="heading-desc">
+                Register a ClanDocument with visibility rules.
+            </p>
+        </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="content-narrow">
+        <div class="soft-card form-panel">
+            <div class="form-panel-head">
+                <h2>
+                    Document details
+                </h2>
+                <p>
+                    Uploads are frontend preview only; actual files require Django storage.
+                </p>
+            </div>
+            <form class="form-grid" id="document-form1" method="post" action="{% url 'bakgomong_kgotla_yamalla:upload-document' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label class="field-label" for="title">
+                        Document title *
+                    </label>
+                    <input class="field" id="title" name="title" placeholder="" required="" type="text">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.title.help_text}}</span>
+                    {% if form.title.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.title.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="category">
+                        Category *
+                    </label>
+                    {{ form.category }}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.category.help_text}}</span>
+                    {% if form.category.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.category.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="visibility">
+                        Visibility
+                    </label>
+                    {{ form.visibility }}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.visibility.help_text}}</span>
+                    {% if form.visibility.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.visibility.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="family">
+                        Family (when visibility is family)
+                    </label>
+                    {{ form.family }}
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.family.help_text}}</span>
+                    {% if form.family.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.family.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="file">
+                        File
+                    </label>
+                    <input class="field" id="file" name="file" placeholder="" type="file" required>
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.file.help_text}}</span>
+                    {% if form.file.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.file.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="description">
+                        Description
+                    </label>
+                    <textarea class="field" id="description" name="description" placeholder="" rows="3"></textarea>
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.description.help_text}}</span>
+                    {% if form.description.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.description.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-wide form-actions">
+                    <a class="btn-outline" href="{% url 'bakgomong_kgotla_yamalla:clan-documents' %}">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <path d="m5 12 5 5L20 7">
+                            </path>
+                        </svg>
+                        Save document
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}

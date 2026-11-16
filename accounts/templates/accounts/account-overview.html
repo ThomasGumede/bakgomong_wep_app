@@ -16,213 +16,220 @@ Account Overview
 
 {% block content %}
 
-<div
-    class="max-w-full mx-auto p-6  bg-gradient-to-r from-[#f2fdff] to-[#d4f7ff] border border-white dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-xl shadow-md">
-    
-    <div class="flex w-fit items-center space-x-4 mb-4">
-        <span
-            class="mb-0 w-[60px] h-[60px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-            <img src="{% if user.profile_image %}{{user.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}" alt="{{user.get_title_display}}. {{user.get_full_name}}">
-        </span>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
         <div>
-            <h3 class="text-base font-medium text-gray-700">{{user.get_title_display}}. {{user.get_full_name}} 
-            {% if user.maiden_name %}
-                {{ user.maiden_name }}
-            {% endif %}
-                </h3>
-            <p class="text-sm text-gray-600">Email: <span
-                    class="font-semibold text-gray-800">{{user.email}}</span>
+            <p class="section-kicker">
+                MEMBER PORTAL
             </p>
-            <p class="text-sm text-gray-600">Phone: <span
-                    class="font-semibold text-gray-800">{{user.phone}}</span>
-            </p>
-            <p class="text-sm text-gray-600">Family: <span class="font-semibold text-gray-800">{{user.family.name}}</span>
+            <h1>
+                {{user.get_full_name}}
+            </h1>
+            <p class="heading-desc">
+                Your Account profile, family association and payment history.
             </p>
         </div>
-    </div>
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="profile-header soft-card">
+        <div class="profile-icon" data-avatar="">{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}</div>
+        <div>
+            <p class="section-kicker">
+                REGISTERED MEMBER
+            </p>
+            <h2 id="account-full-name">{{user.get_title_display}} {{ user.get_full_name }}</h2>
+            <p id="account-handle">@{{ user.username }}</p>
+            <div id="account-roles">
+                <div class="badge-line">{% if user.is_approved %}<span class="status status-green">Approved</span>{% else %}<span class="status status-red">Pending</span>{% endif %}<span
+                        class="status status-blue">{{user.get_role_display}}</span></div>
+            </div>
+        </div>
         
-        <div
-            class="border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Total Paid Balance</p>
-            <p class="text-green-600 font-bold text-lg">R{{user.total_paid}}</p>
-        </div>
-        <div
-            class=" border border-gray-200 p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Total Outstanding Balance</p>
-            <p class="text-red-500 font-bold text-lg">R{{user.total_unpaid}}</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Pending Invoices:</p>
-            <p class="text-yellow-600 font-bold text-lg">R{{user.total_pending}} ({{pending_invoices.count}})</p>
-        </div>
-        <div
-            class="border border-gray-200  p-4 from-[#f2fdff] to-[#d4f7ff] dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg">
-            <p class="font-medium">Unpaid Invoices:</p>
-            <p class="text-red-500 font-bold text-lg">{{unpaid_invoices.count}}</p>
-        </div>
+        {% if request.user == user %}
+            <div class="profile-actions">
+                <a class="btn-primary" href="{% url 'accounts:profile-update' %}">
+                    Edit my details
+                </a>
+                <a class="btn-outline" href="{% url 'accounts:password-update' %}">
+                    Change password
+                </a>
+            </div>
+        {% endif %}
+            
+        
     </div>
-</div>
-
-{% if latest_unpaid %}
-<div
-    class="max-w-full  bg-gradient-to-r mx-auto mt-10 from-[#f2fdff] to-[#ffefdd] shadow-md dark:border-neutral-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg p-4 font-sans">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="font-bold text-lg mb-0">Upcoming Payment</h2>
-
-    </div>
-
-    <div class="border border-gray-200 dark:border-neutral-600 rounded-md p-4 mb-2">
-        <div class="flex items-center justify-between flex-wrap mb-4">
-            <div class="flex items-center space-x-4 justify-between mb-2">
-                <span
-                    class="mb-0 w-[48px] h-[48px] bg-warning-600 flex-shrink-0 text-white flex justify-center items-center rounded-full h6">
-                    <img src="{% static 'images/home-eleven/icons/home-eleven-icon2.svg' %}" alt="">
-                </span>
+    <div class="family-details-grid">
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Personal &amp; contact details
+                </h2>
+            </div>
+            <dl class="definition-list" id="account-facts">
                 <div>
-                    <h3 class="text-base font-medium text-gray-700">{{latest_unpaid}}</h3>
-                    <p class="text-sm text-gray-500">Ref No. {{latest_unpaid.reference}}</p>
-                    <p class="text-sm text-gray-600">Amount to be paid: <span
-                            class="font-semibold text-gray-800">R{{latest_unpaid.amount_due}}</span>
-                    </p>
+                    <dt>Username</dt>
+                    <dd>{{user.username}}</dd>
                 </div>
-
+                <div>
+                    <dt>Email</dt>
+                    <dd>{{user.email}}</dd>
+                </div>
+                <div>
+                    <dt>ID number</dt>
+                    <dd>{% if request.user == user %}{{user.id_number|default:"Not supplied"}}{% else %}Hidden{% endif %}</dd>
+                </div>
+                <div>
+                    <dt>Phone</dt>
+                    <dd>{{user.phone|default:"Not supplied"}}</dd>
+                </div>
+                <div>
+                    <dt>Title</dt>
+                    <dd>{{user.get_title_display}}</dd>
+                </div>
+                <div>
+                    <dt>Gender</dt>
+                    <dd>{{user.get_gender_display|default:"Not supplied"}}</dd>
+                </div>
+                <div>
+                    <dt>Maiden name</dt>
+                    <dd>{{user.maiden_name|default:"Not supplied"}}</dd>
+                </div>
+                <div>
+                    <dt>Date of birth</dt>
+                    <dd>{% if request.user == user %}{{user.birth_date|default:"Not supplied"}}{% else %}Hidden{% endif %}</dd>
+                </div>
+                <div>
+                    <dt>Address</dt>
+                    <dd>{% if request.user == user %}{{user.address|default:"Not supplied"}}{% else %}Hidden{% endif %}</dd>
+                </div>
+                <div>
+                    <dt>Languages</dt>
+                    <dd>Setswana, English</dd>
+                </div>
+                <div>
+                    <dt>Biography</dt>
+                    <dd>{{user.biography|default:"Member of Bakgomong Kgotla ya Malla."}}</dd>
+                </div>
+            </dl>
+        </section>
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Membership details
+                </h2>
             </div>
-
-            <div class="mb-4">
-
-                <p class="text-sm text-gray-600">Due: <span
-                        class="font-semibold text-gray-800">{{latest_unpaid.due_date}}</span></p>
-            </div>
-        </div>
-
-
-        <a href="{% url 'contributions:checkout' latest_unpaid.id %}"
-            class="w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-200">
-            Pay Now
-        </a>
+            <dl class="definition-list" id="account-membership">
+                <div>
+                    <dt>Family</dt>
+                    <dd>{{user.family.name|default:"Not assigned"}}</dd>
+                </div>
+                <div>
+                    <dt>Kgotla role</dt>
+                    <dd>{{user.get_role_display}}</dd>
+                </div>
+                <div>
+                    <dt>Classification</dt>
+                    <dd>{{user.get_member_classification_display}}</dd>
+                </div>
+                <div>
+                    <dt>Employment</dt>
+                    <dd>{{user.get_employment_status_display|default:"Not supplied"}}</dd>
+                </div>
+                <div>
+                    <dt>Family leader</dt>
+                    <dd>{{user.family.leader.get_full_name|default:"Not assigned"}}</dd>
+                </div>
+                <div>
+                    <dt>Approved</dt>
+                    <dd>Yes</dd>
+                </div>
+                <div>
+                    <dt>Joined</dt>
+                    <dd>{{user.created}}</dd>
+                </div>
+            </dl>
+            <a class="text-link" href="{{ user.family.get_absolute_url }}">
+                View my family →
+            </a>
+        </section>
     </div>
-</div>
-{% endif %}
-
-
-<div class="grid grid-cols-12 mt-6">
-    <div class="col-span-12">
-        <div class="card-header">
-            <div class="flex items-center flex-wrap gap-2 justify-between">
-                <h6 class="font-bold text-lg mb-0">Payments history</h6>
-        
+    <section class="soft-card mt-section">
+        <div class="card-heading">
+            <div>
+                <p class="section-kicker">
+                    FINANCIAL HISTORY
+                </p>
+                <h2>
+                    My payments and contributions
+                </h2>
             </div>
+            {% if request.user == user %}
+            <a class="text-link" href="{% url 'contributions:my-contributions' %}">
+                View all →
+            </a>
+            {% endif %}
         </div>
-        <div class="card border-0 p-2">
-            <div class="card-body">
-                <div class="table-responsive scroll-sm" role="region" aria-label="Contributions table">
-                    {% if contributions and contributions|length > 0 %}
-                    <table id="selection-table" class="table bordered-table mb-0" aria-describedby="contrib-desc">
-                        <caption id="contrib-desc" class="sr-only">List of member contributions and payment status
-                        </caption>
-                        <thead>
+        <div class="soft-card table-card">
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Contribution
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Due date
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="account-payment-rows">
+                        {% if request.user == user or request.user.role == 'TREASURER' or request.user == user.family.leader %}
+                            {% for payment in contributions %}
                             <tr>
-                                <th scope="col">Reference</th>
-                                <th scope="col">Member</th>
-                                <th scope="col">Issued</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Action</th>
+                                <td><strong>{{payment.contribution_type.name}}</strong><span class="sub">{{payment.reference}}</span></td>
+                                <td>R {{payment.amount_due|floatformat:2}}</td>
+                                <td>{{payment.due_date}}</td>
+                                <td>{% if payment.is_paid == 'PAID' %}<span class="status status-green">Paid</span>{% elif payment.is_paid == 'PENDING' %}<span class="status status-yellow">Pending</span>{% else %}<span class="status status-red">Not paid</span>{% endif %}</td>
+                                <td>
+                                    <div class="row-actions">
+                                        <a class="link-inline" href="payment-detail.html?id=mc1">View</a>
+                                        <button class="link-inline" data-download="invoice" data-id="mc1">Invoice</button>
+                                        {% if payment.is_paid == 'NOT_PAID' and request.user == payment.account %}
+                                        <a class="link-inline" href="payment-checkout.html?id=mc1">Pay now</a>
+                                        {% elif payment.is_paid == 'NOT_PAID' and request.user.role == 'TREASURER' %}
+                                        <a class="link-inline" href="payment-checkout.html?id=mc1">Log Payment</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for inv in contributions %}
+                            {% empty %}
                             <tr>
-                                <td><a href="{{ inv.get_absolute_url }}" class="text-primary-600"
-                                        aria-label="Open contribution {{ inv.reference }}">{{ inv.reference }}</a></td>
-                                <td>
-                                    <a href="{{inv.account.get_absolute_url}}" class="flex items-center">
-                                        <img src="{% if inv.account.profile_image %}{{ inv.account.profile_image.url }}{% else %}{% static 'images/user-grid/user-grid-img13.png' %}{% endif %}"
-                                            alt="{{ inv.account.get_full_name }} profile"
-                                            class="shrink-0 w-10 h-10 rounded-full me-2 overflow-hidden">
-                                        <span class="text-base mb-0 font-medium grow">{{ inv.account.get_full_name }}</span>
-                                    </a>
-                                </td>
-                                <td>{{ inv.created|date:"d M Y" }}</td>
-                                <td>R{{ inv.amount_due|floatformat:2 }}</td>
-                                <td>
-                                    <span class="
-                                            {% if inv.is_paid == 'PAID' %}
-                                                bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400
-                                            {% elif inv.is_paid == 'PENDING' %}
-                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
-                                            {% elif inv.is_paid == 'AWAITING APPROVAL' %}
-                                                bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400
-                                            {% else %}
-                                                bg-danger-600/25 bg-danger-100 text-danger-600 dark:bg-danger-600/25 dark:text-danger-400
-                                            {% endif %}
-                                            px-6 py-1.5 rounded-full font-medium text-sm
-                                        ">
-                                        {{ inv.get_is_paid_display }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    {% comment %} Pay now / Treasurer log actions {% endcomment %}
-                                    {% if inv.is_paid == 'PAID' %}
-                                    <a href="{{ inv.get_absolute_url }}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ inv.reference }}">
-                                        View receipt
-                                    </a>
-
-                                    {% elif inv.is_paid == 'NOT_PAID' or inv.is_paid == 'PENDING' or inv.is_paid == 'AWAITING PAYMENT' %}
-
-                                    {# Treasurer or staff, but not the invoice owner #}
-                                    {% if request.user == inv.account and inv.is_paid == 'NOT_PAID' %}
-
-                                    <a href="{% url 'contributions:checkout' inv.id %}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ inv.reference }}">
-                                        Pay now
-                                    </a>
-                                    {# Regular member paying their own NOT_PAID invoice #}
-                                    {% elif request.user.role == 'TREASURER' or request.user.is_staff and request.user != inv.account %}
-                                    <a href="{% url 'contributions:log-payment' inv.id %}"
-                                        class="bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Log payment for {{ inv.reference }}">
-                                        Log payment
-                                    </a>
-                                    {% else %}
-                                    <a href="{{ inv.get_absolute_url }}"
-                                        class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-6 py-1.5 rounded-full font-medium text-sm"
-                                        aria-label="Pay contribution {{ inv.reference }}">
-                                        View receipt
-                                    </a>
-                                    {% endif %}
-
-                                    {% endif %}
-
-                                </td>
+                                <td colspan="5">No contributions found.</td>
                             </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-
-                    <!-- Pagination -->
-
-
-                    {% else %}
-                    <div class="p-6 text-center">
-                        <h3 class="mb-2">No payments or invoices found</h3>
-                        <p class="text-muted mb-4">There are currently no payments or invoices to display.</p>
-                        {% if request.user.is_staff or request.user.role == 'TREASURER' %}
-                        <a href="{% url 'contributions:add-contribution' %}" class="btn btn-primary">Create
-                            Contribution</a>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">You do not have permission to view this user's contributions.</td>
+                        </tr>
                         {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
+                        
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-</div>
+    </section>
+</main>
+
 
 {% endblock content %}
 

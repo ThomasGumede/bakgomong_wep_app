@@ -9,119 +9,79 @@ Families
 
 
 {% block content %}
-    <div class="grid grid-cols-12">
-        <div class="col-span-12">
-            <div class="card border-0 overflow-hidden p-2">
-                <div class="card-header">
-                    <h6 class="card-title mb-0 text-lg">Families</h6>
-                </div>
-                <div class="card-header flex flex-wrap items-center justify-between gap-3">
-                    
-                    <div>
-                        <a href="{% url 'accounts:add-family' %}"
-                            class="btn btn-sm text-white bg-primary-600 hover:bg-primary-700 flex items-center gap-2"><i
-                                class="ri-add-line"></i> Create Family</a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table id="selection-table"
-                        class="border border-neutral-200 dark:border-neutral-600 rounded-lg border-separate	">
-                        <thead>
-                            <tr>
-                                
-                                <th scope="col" class="text-neutral-800 dark:text-white">
-                                    <div class="flex items-center gap-2">
-                                        Family
-                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                        </svg>
-                                    </div>
-                                </th>
-                                
-                                <th scope="col" class="text-neutral-800 dark:text-white">
-                                    <div class="flex items-center gap-2">
-                                        Leader
-                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                        </svg>
-                                    </div>
-                                </th>
-                                
-                                
-                                <th scope="col" class="text-neutral-800 dark:text-white">
-                                    <div class="flex items-center gap-2">
-                                        Members
-                                        <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
-                                        </svg>
-                                    </div>
-                                </th>
-                                
-                                <th scope="col" class="text-neutral-800 dark:text-white">
-                                    <div class="flex items-center gap-2">
-                                        Action
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            {% for family in families %}
-                                <tr>
-                                    
-                                    <td><a href="{% url 'accounts:get-family' family.slug %}" class="text-primary-600">{{family.name}}</a></td>
-                                    <td>
-                                        
-                                        {% if family.leader %}
-                                            <div class="flex items-center">
-                                                <img src="{% if family.leader.profile_image %}{{family.leader.profile_image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
-                                                    alt="{{family.leader.get_full_name}}" class="shrink-0 me-3 h-[46px] w-[46px] rounded-full">
-                                                <h6 class="text-base mb-0 font-medium grow">{{family.leader.get_full_name}}</h6>
-                                            </div>
-                                        {% else %}
-                                            <span class="text-neutral-500 italic">No leader assigned</span>
-                                        {% endif %}
-                                            
-                                        
-                                    </td>
-                                    
-                                    
-                                    <td>{{family.members.count}}</td>
-                                
-                                    <td class="flex items-center gap-3">
-                                        <a href="{% url 'accounts:get-family' family.slug %}"
-                                            class="w-8 h-8 bg-primary-50 dark:bg-primary-600/10 text-primary-600 dark:text-primary-400 rounded-full inline-flex items-center justify-center">
-                                            <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                                        </a>
-                                        
-                                        {% if request.user.is_staff %}
-                                            <a href="{% url 'accounts:update-family' family.slug %}"
-                                                class="w-8 h-8 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 rounded-full inline-flex items-center justify-center">
-                                                <iconify-icon icon="lucide:edit"></iconify-icon>
-                                            </a>
-                                            <span data-modal-target="delete-popup-modal-{{family.slug}}" data-modal-toggle="delete-popup-modal-{{family.slug}}" type="button"
-                                                class="w-8 h-8 bg-danger-100 cursor-pointer dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 rounded-full inline-flex items-center justify-center">
-                                                <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                                
-                            
-                            
-                        </tbody>
-                    </table>
+
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Family branches
+            </h1>
+            <p class="heading-desc">
+                Explore families, recognised leaders and membership.
+            </p>
+        </div>
+        <div class="heading-actions">
+            <a class="btn-primary" href="{% url 'accounts:add-family' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                    <path d="M12 5v14M5 12h14">
+                    </path>
+                </svg>
+                Add family
+            </a>
+        </div>
+    </section>
+    <div class="filter-toolbar">
+        <label class="search-field">
+            <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                <circle cx="11" cy="11" r="7">
+                </circle>
+                <path d="m20 20-4-4">
+                </path>
+            </svg>
+            <input aria-label="Search family name or leader..." id="search-input"
+                placeholder="Search family name or leader..." type="search">
+        </label>
+        <select aria-label="Filter approvals" class="field select-filter" id="filter-main">
+            <option value="">
+                All approvals
+            </option>
+            <option value="approved">
+                Approved
+            </option>
+            <option value="pending">
+                Pending approval
+            </option>
+        </select>
+    </div>
+    <div class="family-list-grid w-full" id="families-list">
+        {% for family in families %}
+        <article class="family-list-item">
+            <div class="family-card-top"><span class="family-icon">{{ family.slug|slice:":2"|upper }}</span>{% if family.is_approved %}<span
+                    class="status status-green">Approved</span>{% else %}<span class="status status-yellow">Pending verification</span>{% endif %}</div>
+            <div class="family-card-content">
+                <h3>{{ family.name }}</h3>
+                <p>Registered {{ family.created|date:"d M Y" }}</p>
+                <div class="family-card-stats"><span>Family leader<strong>{{ family.leader.get_full_name }}</strong></span><span>Members<strong>{{ family.members.count }}</strong></span></div>
+                <div class="family-card-footer">
+                    {% if family == request.user.family or request.user.is_staff %}
+                        <a href="{{ family.get_absolute_url }}" class="text-link">View family
+                            →</a>
+                    {% endif %}
+                    <span style="font-size:10px;color:#98a99c">{{ family.slug }}</span>
                 </div>
             </div>
-        </div>
+        </article>
+        {% empty %}
+        <p class="text-center text-muted">No families found.</p>
+        {% endfor %}
+        
     </div>
+</main>
 
 {% for family in families %}
 <!-- Delete Modal contribution -->

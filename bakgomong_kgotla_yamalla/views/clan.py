@@ -1,24 +1,39 @@
 import logging
 import mimetypes
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Sum
+import decimal
 from django.contrib import messages
-from django.contrib import messages
-from bakgomong_kgotla_yamalla.models import KgotlaBalance, KgotlaExpense
+from bakgomong_kgotla_yamalla.models import KgotlaBalance, KgotlaExpense, Meeting
 from django.core.exceptions import PermissionDenied
 from contributions.models import ContributionType, MemberContribution
 from utilities.choices import PaymentStatus, Role
 from accounts.models import Account
 
-
 logger = logging.getLogger("bakgomong_kgotla_yamalla")
+
+def home(request):
+    return render(request, "home.html", {})
 
 @login_required    
 def clan_expenses(request):
     user = request.user
     context = {}
-    context["members"] = Account.objects.filter(is_active=True).count()
+    
+    total_contributions = MemberContribution.objects.aggregate(total=Sum("amount_due"))["total"] or 0
+    total_contributions_paid = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
+    total_contributions_unpaid = MemberContribution.objects.filter(is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PARTIALLY_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]).aggregate(total=Sum("amount_due"))["total"] or 0
+
+    percentage_paid = (decimal.Decimal(total_contributions_paid) / decimal.Decimal(total_contributions) * 100) if total_contributions else 0
+    outstanding_percentage = (decimal.Decimal(total_contributions_unpaid) / decimal.Decimal(total_contributions) * 100) if total_contributions else 0
+    context["members"] = Account.objects.count()
+    context['families'] = Account.objects.values_list('family', flat=True).distinct().count()
+    context["total_contributions"] = total_contributions
+    context["total_contributions_paid"] = total_contributions_paid
+    context["total_contributions_unpaid"] = total_contributions_unpaid
+    context["outstanding_percentage"] = outstanding_percentage or 0
     context["total_expenses_balance"] = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
     context['expenses'] = KgotlaExpense.objects.all().order_by("-incurred_date")
     context["kgotla_balance"] = KgotlaBalance.objects.first()
@@ -36,23 +51,14 @@ def dashboard(request):
         is_paid=PaymentStatus.PAID
     ).aggregate(total_paid=Sum("amount_due"))["total_paid"] or 0
     
-
-    # Last 5 unpaid/pending payments for user
-    unpaid_statuses = [PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]
-    context["latest_unpaids"] = member_contribs_qs.filter(account=user, is_paid=PaymentStatus.NOT_PAID).order_by('-due_date')
-    context["members"] = Account.objects.filter(is_active=True).count()
-    context["kgotla_balance"] = KgotlaBalance.objects.first()
-    context["total_expenses_balance"] = KgotlaExpense.objects.aggregate(total=Sum("amount"))["total"] or 0
-   
+    user_unpaids = member_contribs_qs.filter(account=user, is_paid=PaymentStatus.NOT_PAID).order_by('-due_date')
     
-
-    if user.is_staff:
-        clan_unpaid_qs = member_contribs_qs.filter(is_paid__in=unpaid_statuses)
-        context["clan_total_unpaid"] = clan_unpaid_qs.aggregate(
-            total_unpaid=Sum("amount_due")
-        )["total_unpaid"] or 0
-        context["clan_total_unpaid_count"] = clan_unpaid_qs.count()
-        context["payments"] = member_contribs_qs.select_related("account")[:5]
+    # Last 5 unpaid/pending payments for user
+    context["latest_unpaids"] = user_unpaids
+    context["unpaid_amount"] = user_unpaids.aggregate(total=Sum("amount_due"))["total"] or 0
+    context["members"] = Account.objects.filter(is_active=True).count()
+    context["upcoming_meetings"] = Meeting.objects.filter(meeting_date__gt=timezone.now()).order_by("meeting_date")[:5]
+    
 
     return render(request, 'dashboard.html', context)
 

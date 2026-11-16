@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django_q.tasks import async_task
 from django.template.loader import get_template, render_to_string
 from accounts.models import Family
-from utilities.choices import Role, PaymentStatus
+from utilities.choices import LogPaymentStatus, PaymentMethod, Role, PaymentStatus
 from ..models import MemberContribution
 from ..forms import MemberContributionForm
 from django.db.models import Sum, Q
@@ -107,9 +107,17 @@ def member_contribution(request, id):
     qs = MemberContribution.objects.select_related("account", "contribution_type")
     contribution = get_object_or_404(qs, id=id)
     # ensure non-admins may only view their own records
+    # A missing reverse one-to-one relation raises RelatedObjectDoesNotExist
+    # when accessed directly, so use getattr to handle contributions without a payment.
+    payment = getattr(contribution, "payment", None)
+    if payment is not None:
+        if payment.payment_method_type in [PaymentMethod.CASH, PaymentMethod.BANK] and payment.is_approved == LogPaymentStatus.PENDING:
+            return redirect("contributions:bank-payment-instructions", payment_id=payment.id)
+        
     if not request.user.is_staff and contribution.account != request.user and not is_treasurer_or_admin(request.user):
         messages.error(request, "You do not have permission to view this contribution.")
         return redirect("contributions:member-contributions-list")
+    
     return render(request, "member_inv/invoice.html", {"contribution": contribution})
 
 

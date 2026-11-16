@@ -18,8 +18,120 @@ Log Payment
 {% endblock statement_title %}
 {% block content %}
 
-<div class="grid grid-cols-12 gap-5">
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                TREASURER
+            </p>
+            <h1>
+                Log payment
+            </h1>
+            <p class="heading-desc">
+                Treasurer preview: record a payment as pending verification.
+            </p>
+        </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="content-narrow">
+        <div class="soft-card form-panel">
+            <div class="form-panel-head">
+                <h2>
+                    Record received payment
+                </h2>
+                <p>
+                    This will create a pending-approval demo payment, not a verified transaction.
+                </p>
+            </div>
+            {% include 'includes/errors.html' %}
+            <form class="form-grid" id="log-payment-formq" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label class="field-label" for="member_contribution">
+                        Member contribution *
+                    </label>
+                    {{form.member_contribution}}
+                    <span
+                        class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.member_contribution.help_text}}</span>
+                    {% if form.member_contribution.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.member_contribution.errors.as_text}}</span>
+                    {% endif %}
+                    
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="amount">
+                        Amount received *
+                    </label>
+                    <input class="field" id="amount" name="amount" placeholder="" required="" type="number" value="{{ form.amount.value|default_if_none:'' }}">
+                    <span
+                        class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.amount.help_text}}</span>
+                    {% if form.amount.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.amount.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="payment_method">
+                        Method *
+                    </label>
+                    {{form.payment_method}}
+                    <span
+                        class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.payment_method.help_text}}</span>
+                    {% if form.payment_method.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.payment_method.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="reference">
+                        Reference *
+                    </label>
+                    <input class="field" id="reference" name="reference" placeholder="" required="" type="text" value="{{ form.reference.value|default_if_none:'' }}">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.reference.help_text}}</span>
+                    {% if form.reference.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.reference.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="receipt">
+                        Receipt number
+                    </label>
+                    <input class="field" id="receipt" name="receipt" placeholder="" type="text" value="{{ form.receipt.value|default_if_none:'' }}">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.receipt.help_text}}</span>
+                    {% if form.receipt.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.receipt.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="proof_of_payment">
+                        Proof of payment file (required for Treasurer)
+                    </label>
+                    <input accept="image/*,.pdf" class="field" id="proof_of_payment" name="proof_of_payment"
+                        type="file">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">{{form.proof_of_payment.help_text}}</span>
+                    {% if form.proof_of_payment.errors %}
+                    <span class="text-[11px] text-red-500 block font-normal capitalize">{{form.proof_of_payment.errors.as_text}}</span>
+                    {% endif %}
+                </div>
+                <div class="form-wide form-actions">
+                    <a class="btn-outline" href="{% url 'contributions:member-contributions-list' %}">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <path d="m5 12 5 5L20 7">
+                            </path>
+                        </svg>
+                        Log pending payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
 
+<div class="grid grid-cols-12 gap-5">
     <div class="col-span-12">
         <div class="card border-0 p-2">
             <div class="card-header">

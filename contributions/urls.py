@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.checkout import checkout, log_payment, log_paymens
+from .views.checkout import checkout, log_payment, log_paymens, bank_payment_instructions, upload_proof_of_payment
 from .views.payment import yoco_checkout, payment_success, payment_cancelled, payment_failed
 from contributions.views.member_contr import add_member_contribution, my_member_contributions_list, download_invoice_pdf, member_contribution, delete_member_contribution, member_contributions_list, update_member_contribution
 from .views.contributions import get_contribution, get_contributions, add_contribution, update_contribution, delete_contribution
@@ -23,6 +23,8 @@ urlpatterns = [
     
     path('payment/checkout/<uuid:id>', checkout, name='checkout'),
     path('payment/yoco-checkout/<uuid:payment_id>', yoco_checkout, name='yoco-checkout'),
+    path('payment/bank-payment-instructions/<uuid:payment_id>', bank_payment_instructions, name='bank-payment-instructions'),
+    path('payment/upload-proof/<uuid:payment_id>', upload_proof_of_payment, name='upload-proof-of-payment'),
     path('payment/log-paymens', log_paymens, name='log-paymens'),
     path('payment/log-payment/<uuid:id>', log_payment, name='log-payment'),
     path('payment/success/<uuid:payment_id>', payment_success, name='payment-success'),

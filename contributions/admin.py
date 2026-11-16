@@ -272,7 +272,6 @@ class PaymentAdmin(admin.ModelAdmin):
                 request.user.username
             )
 
-
 @admin.register(SMSLog)
 class SMSLogAdmin(admin.ModelAdmin):
     list_display = (

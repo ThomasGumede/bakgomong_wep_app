@@ -6,7 +6,7 @@ from django.db import transaction
 from django.urls import reverse
 from django_q.tasks import async_task
 from django.conf import settings
-from contributions.forms import LogPaymentForm, PaymentCheckoutForm
+from contributions.forms import LogPaymentForm, PaymentCheckoutForm, PaymentVerificationForm
 from contributions.utils.yoco_funcs import decimal_to_str, headers
 from utilities.choices import LogPaymentStatus, PaymentMethod, PaymentStatus, Role
 from ..models import ContributionType, MemberContribution, Payment
@@ -37,7 +37,8 @@ def checkout(request, id):
         messages.info(request, "A payment record already exists for this contribution. Please proceed to payment.")
         if payment.payment_method_type == PaymentMethod.MOBILE:
             return redirect("contributions:yoco-checkout", payment_id=member_contribution.payment.id)
-        return redirect("contributions:member-contribution", id=member_contribution.id)
+        return redirect("contributions:bank-payment-instructions", payment_id=payment.id)
+    
     # If staff is paying on behalf of member, use the member account
     if request.user.is_staff and member_contribution.account != request.user:
         user = member_contribution.account
@@ -56,6 +57,8 @@ def checkout(request, id):
                     payment.payment_method_type = payment_method
                     payment.is_approved = LogPaymentStatus.PENDING
                     payment.reference = member_contribution.reference
+                    payment.amount = member_contribution.amount_due
+                    payment.member_contribution = member_contribution
                     payment.save()
                     # update member contribution status (also atomic via Payment.save)
                     
@@ -81,7 +84,7 @@ def checkout(request, id):
                         request,
                         f"You chose {payment_method.replace('_', ' ').title()} as your payment method. We have emailed you banking details. Please upload proof of payment once completed."
                     )
-                    return redirect("contributions:member-contribution", id=member_contribution.id)
+                    return redirect("contributions:bank-payment-instructions", payment_id=member_contribution.payment.id)
 
                 elif payment_method == PaymentMethod.MOBILE:
                     # Redirect to Yoco checkout
@@ -95,6 +98,7 @@ def checkout(request, id):
                     return redirect("contributions:checkout", id=member_contribution.id)
             
             except Exception as e:
+                print(f"Error creating payment: {e}")
                 logger.exception("Failed to create payment for contribution %s", id)
                 messages.error(request, "An error occurred while recording your payment. Please try again.")
         else:
@@ -116,6 +120,65 @@ def checkout(request, id):
     }
     return render(request, "payments/checkout.html", context)
 
+@login_required
+def bank_payment_instructions(request, payment_id):
+    """
+    Display bank payment instructions for a specific payment.
+    """
+    payment = get_object_or_404(Payment, id=payment_id)
+    member_contribution = payment.member_contribution
+    contribution_type = member_contribution.contribution_type
+
+    context = {
+        "payment": payment,
+        "contribution": member_contribution,
+        "contribution_type": contribution_type,
+    }
+    return render(request, "payments/bank-payment-instructions.html", context)
+
+@login_required
+def upload_proof_of_payment(request, payment_id):
+    """
+    Display a form for the user to upload proof of payment for a specific payment.
+    """
+    payment = get_object_or_404(Payment, id=payment_id)
+    member_contribution = payment.member_contribution
+    contribution_type = member_contribution.contribution_type
+
+    if request.method == "POST":
+        form = PaymentVerificationForm(request.POST, request.FILES, user=request.user, instance=payment)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    proof_payment = form.save(commit=False)
+                    proof_payment.account = member_contribution.account
+                    proof_payment.recorded_by = request.user
+                    proof_payment.member_contribution = member_contribution
+                    proof_payment.reference = member_contribution.reference
+                    proof_payment.amount = member_contribution.amount_due
+                    proof_payment.is_approved = LogPaymentStatus.AWAITING_APPROVAL
+                    proof_payment.save()
+                    proof_payment.update_member_contribution_status(PaymentStatus.AWAITING_APPROVAL)
+
+                messages.success(request, "Proof of payment uploaded successfully. Awaiting approval.")
+                return redirect("contributions:member-contribution", id=member_contribution.id)
+
+            except Exception as e:
+                print(f"Error uploading proof of payment: {e}")
+                logger.exception("Failed to upload proof of payment for contribution %s", payment_id)
+                messages.error(request, "An error occurred while uploading your proof of payment. Please try again.")
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = PaymentVerificationForm(user=request.user, instance=payment)
+
+    context = {
+        "contribution_type": contribution_type,
+        "contribution": member_contribution,
+        "form": form,
+        "payment": payment,
+    }
+    return render(request, "payments/upload-pop.html", context)
 
 @login_required
 def log_paymens(request):
@@ -156,9 +219,9 @@ def log_payment(request, id):
                     payment.recorded_by = request.user  # treasurer who logged it
                     payment.member_contribution = member_contribution
                     payment.reference = member_contribution.reference
-                    payment.is_approved = LogPaymentStatus.PENDING  # Require approval
+                    payment.is_approved = LogPaymentStatus.AWAITING_APPROVAL  # Require approval
                     payment.save()
-                    payment.update_member_contribution_status(PaymentStatus.PENDING)
+                    payment.update_member_contribution_status(PaymentStatus.AWAITING_APPROVAL)
 
                     logger.info(
                         "Payment logged by treasurer %s for %s: R%.2f (%s)",

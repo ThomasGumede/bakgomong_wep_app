@@ -1,6 +1,34 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Meeting
+from .models import Meeting, ClanDocument
+
+class ClanDocumentForm(forms.ModelForm):
+    class Meta:
+        model = ClanDocument
+        fields = [
+            "title",
+            "description",
+            "visibility",
+            "file",
+            "family",
+            'category'
+        ]
+
+        widgets = {
+            'family': forms.Select(attrs={"class": "field", "id": "family", "name": "family"}),
+            'visibility': forms.Select(attrs={"class": "field", "id": "visibility", "name": "visibility", "required": True}),
+            'category': forms.Select(attrs={"class": "field", "id": "category", "name": "category", "required": True}),
+        }
+        
+        def clean(self):
+            cleaned_data = super().clean()
+            visibility = cleaned_data.get("visibility")
+            family = cleaned_data.get("family")
+
+            if visibility == ClanDocument.Visibility.FAMILY and not family:
+                self.add_error("family", _("Family is required when visibility is set to 'Family'."))
+
+            return cleaned_data
 
 class MeetingForm(forms.ModelForm):
     class Meta:

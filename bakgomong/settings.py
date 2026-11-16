@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET', 'django-insecure-^9#-e&z484&v&)(iime^im_3(q#%tzpaojm#87lk$1-_tq)8(0')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True #config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -75,16 +75,7 @@ WSGI_APPLICATION = 'bakgomong.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'bakgomongdb',
-            'USER': config("DB_USER"),
-            'PASSWORD': config("DB_PASSWORD"),
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+
 
 
 # Password validation
@@ -129,6 +120,12 @@ if DEBUG:
     ]
     STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
     YOCO_SECRET_KEY = config('YOCO_TEST_API_KEY')
+    DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': BASE_DIR / 'db.sqlite3',
+                }
+        }
 else:
     ALLOWED_HOSTS = ['bakgomong.co.za', 'www.bakgomong.co.za', 'localhost']
     CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1', 'https://localhost', 'https://bakgomong.co.za', 'https://www.bakgomong.co.za']
@@ -153,6 +150,17 @@ else:
     ("Wandile Gumede", "bakgomongs@gmail.com"),
     ]
     MANAGERS = [('admin@bakgomong.co.za', 'bakgomongs@gmail.com'), ('support@bakgomong.co.za',)]
+    
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'bakgomongdb',
+            'USER': config("DB_USER"),
+            'PASSWORD': config("DB_PASSWORD"),
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

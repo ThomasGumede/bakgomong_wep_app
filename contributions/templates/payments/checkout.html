@@ -18,60 +18,107 @@ Checkout
 {% endblock statement_title %}
 {% block content %}
 
-<div class="grid grid-cols-12 gap-5">
-
-    <div class="col-span-12">
-        <div class="card border-0 p-2">
-            <div class="card-header">
-                <h5 class="text-lg font-semibold mb-0">Complete Checkout</h5>
-            </div>
-            <div class="card-body grid gap-3">
-                {% include 'includes/errors.html' %}
-                <form method="post" class="grid grid-cols-12 gap-4">
-
-                    {% csrf_token %}
-                    
-                    
-                    <div class="col-span-12">
-                        <label class="form-label">Selet Member Contribution</label>
-                        <div class="icon-field has-validation">
-                            <span class="icon">
-                                <iconify-icon icon="f7:person"></iconify-icon>
-                            </span>
-                            {{form.member_contribution}}
-                        </div>
-                    </div>
-                    <div class="md:col-span-6 col-span-12">
-                        <label class="form-label">Payment Method</label>
-                        <div class="icon-field has-validation">
-                            <span class="icon">
-                                <iconify-icon icon="f7:person"></iconify-icon>
-                            </span>
-                            {{form.payment_method}}
-                        </div>
-                    </div>
-                    <div class="md:col-span-6 col-span-12">
-                        <label class="form-label">Contribution Amount</label>
-                        <div class="icon-field has-validation">
-                            <span class="icon">
-                                <iconify-icon icon="f7:person"></iconify-icon>
-                            </span>
-                            {{form.amount}}
-                            
-                        </div>
-                    </div>
-                    
-                    
-                    
-
-                    <div class="col-span-12">
-                        <button class="btn btn-primary-600" type="submit">Proceed to payment</button>
-                    </div>
-                </form>
-            </div>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Pay contribution
+            </h1>
+            <p class="heading-desc">
+                Confirm the contribution and select your payment channel.
+            </p>
         </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="payment-flow">
+        <div class="flow-head">
+            <span class="step active">
+                1 · Payment method
+            </span>
+            <span class="step">
+                2 · Instructions / checkout
+            </span>
+            <span class="step">
+                3 · Verification
+            </span>
+        </div>
+        <section class="soft-card checkout-card">
+            <p class="section-kicker">
+                MEMBER CONTRIBUTION
+            </p>
+            <h2 id="checkout-title">{{ member_contribution.contribution_type.name }}</h2>
+            <div class="checkout-overview" id="checkout-summary">
+                <div><span>Contribution</span><strong>{{ member_contribution.contribution_type.name }}</strong></div>
+                <div><span>Scope · Frequency</span><strong>{{ member_contribution.contribution_type.get_scope_display }} · {{ member_contribution.contribution_type.get_recurrence_display }}</strong></div>
+                <div><span>Amount due</span><strong>R {{ member_contribution.amount_due|floatformat:2 }}</strong></div>
+            </div>
+            {% include 'includes/errors.html' %}
+            <form id="checkout-form1" method="post" action="{% url 'contributions:checkout' member_contribution.id %}">
+                {% csrf_token %}
+                <h3>
+                    How would you like to pay?
+                </h3>
+                
+                <div class="method-options">
+                    <label class="method-option">
+                        <input checked="" name="payment_method" type="radio" value="bank">
+                        <span>
+                            <strong>
+                                EFT / bank transfer
+                            </strong>
+                            <small>
+                                Get bank details and an invoice. Send your proof of payment to the Kgotla.
+                            </small>
+                        </span>
+                        <b>
+                            ›
+                        </b>
+                    </label>
+                    <label class="method-option">
+                        <input name="payment_method" type="radio" value="cash">
+                        <span>
+                            <strong>
+                                Cash payment
+                            </strong>
+                            <small>
+                                Pay in cash at the Kgotla.
+                            </small>
+                        </span>
+                        <b>
+                            ›
+                        </b>
+                    </label>
+                    <label class="method-option">
+                        <input name="payment_method" type="radio" value="mobile">
+                        <span>
+                            <strong>
+                                Yoco online payment
+                            </strong>
+                            <small>
+                                Continue to a hosted Yoco checkout when connected to Django.
+                            </small>
+                        </span>
+                        <b>
+                            ›
+                        </b>
+                    </label>
+                </div>
+                <div class="checkout-footer">
+                    <a class="btn-outline" href="{% url 'contributions:my-contributions' %}">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        Continue →
+                    </button>
+                </div>
+            </form>
+        </section>
     </div>
-</div>
+</main>
 
 {% endblock content %}
 

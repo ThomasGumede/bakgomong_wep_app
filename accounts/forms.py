@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (AuthenticationForm,  UserCreationForm)
 from django.utils.translation import gettext_lazy as _
 from accounts.models import Family
-from utilities.choices import Role
+from utilities.choices import Role, Title, Gender
 # from .models import Meeting
 
 # class MeetingForm(forms.ModelForm):
@@ -118,7 +118,7 @@ class RegistrationForm(UserCreationForm):
 class MemberForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ("username", "title", "family", "profile_image", "first_name", "last_name", 'maiden_name', "biography", "gender", "email", "phone", "address", 'password1', 'password2', 'birth_date', 'langueges_spoken', "employment_status", "member_classification", 'id_number')
+        fields = ("username", "title", "family", "profile_image", "first_name", "last_name", 'maiden_name', "biography", "gender", "email", "phone", "address", 'password1', 'password2', 'birth_date', 'langueges_spoken', "employment_status", "member_classification", 'id_number', 'role')
 
         widgets = {
             'email': forms.EmailInput(attrs={
@@ -141,12 +141,13 @@ class MemberForm(UserCreationForm):
                 "class": "w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white",
                 "placeholder": _("Confirm password"),
             }),
-            'gender': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'title': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'family': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'gender': forms.Select(attrs={"class": "field", "id": "gender", "name": "gender", "required": True}),
+            'title': forms.Select(attrs={"class": "field", "id": "title", "name": "title", "required": True}),
+            'family': forms.Select(attrs={"class": "field", "id": "family", "name": "family", "required": True}),
             'birth_date': forms.DateInput(attrs={"type": "date", "class": "form-control rounded-lg bg-white dark:bg-neutral-700"}),
-            'employment_status': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
-            'member_classification': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'employment_status': forms.Select(attrs={"class": "field", "id": "employment_status", "name": "employment_status", "required": True}),
+            'member_classification': forms.Select(attrs={"class": "field", "id": "member_classification", "name": "member_classification", "required": True}),
+            'role': forms.Select(attrs={"class": "field", "id": "role", "name": "role", "required": True}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -198,16 +199,17 @@ class AccountUpdateForm(forms.ModelForm):
     
     class Meta:
         model = get_user_model()
-        fields = ["username", "title", "profile_image", "first_name", "last_name", 'maiden_name', "id_number", "biography", "gender", "email", "phone", "address", "birth_date", "langueges_spoken"]
+        fields = ["title", "profile_image", "first_name", "last_name", 'maiden_name', "biography", "gender", "email", "phone", "address", "birth_date", "langueges_spoken", "employment_status", "username", "id_number"]
 
         widgets = {
-            'username': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
-            'title': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'title': forms.Select(attrs={"class": "field", "id": "title", "name": "title"}),
             'first_name': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
             'maiden_name': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
             'last_name': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
             #'hobbies': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
-            'gender': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'gender': forms.Select(attrs={"class": "field", "id": "gender", "name": "gender"}),
+            'employment_status': forms.Select(attrs={"class": "field", "id": "employment_status", "name": "employment_status"}),
+            
         }
 
     def __init__(self, *args, **kwargs):
@@ -215,6 +217,45 @@ class AccountUpdateForm(forms.ModelForm):
         for field_name, field_value in self.initial.items():
             if field_value is None:
                 self.initial[field_name] = ''
+    
+    def clean_email(self):
+        """Ensure email uniqueness across users."""
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        User = get_user_model()
+        if User.objects.exclude(pk=getattr(self.instance, "pk", None)).filter(email=email).exists():
+            raise forms.ValidationError(
+                _(f"This email ({email}) is already registered.")
+            )
+        return email
+    
+    def clean_username(self):
+        username = (self.cleaned_data.get("username") or "").strip()
+        User = get_user_model()
+        if User.objects.exclude(pk=getattr(self.instance, "pk", None)).filter(username=username).exists():
+            raise forms.ValidationError(_(f"This username ({username}) is already in use."))
+        return username
+    
+    def clean_id_number(self):
+        id_number = (self.cleaned_data.get("id_number") or "").strip()
+        User = get_user_model()
+        if User.objects.exclude(pk=getattr(self.instance, "pk", None)).filter(id_number=id_number).exists():
+            raise forms.ValidationError(_(f"This ID number ({id_number}) is already in use."))
+        return id_number
+    
+    def clean_title(self):
+        title = self.cleaned_data.get("title")
+        
+        
+        if title == Title.MR and self.cleaned_data.get("gender") == Gender.FEMALE:
+            raise forms.ValidationError(_("Title 'Mr' is not valid for female gender."))
+        
+        if title in [Title.MRS, Title.MS] and self.cleaned_data.get("gender") == Gender.MALE:
+            raise forms.ValidationError(_("Title 'Mrs' is not valid for male gender."))
+        
+        if title == Title.MRS and not self.cleaned_data.get("maiden_name"):
+            raise forms.ValidationError(_("Title 'Mrs' requires a maiden name."))
+        
+        return title
      
 class FamilyForm(forms.ModelForm):
     class Meta:
@@ -223,7 +264,7 @@ class FamilyForm(forms.ModelForm):
         
         widgets = {
             'name': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
-            'leader': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'leader': forms.Select(attrs={"class": "field", "id": "leader", "name": "leader", "required": True}),
             
         }
     
@@ -259,7 +300,7 @@ class AddFamilyForm(forms.ModelForm):
         
         widgets = {
             'name': forms.TextInput(attrs={"class": "text-custom-text pl-5 pr-[50px] outline-none border-2 border-[#e4ecf2] focus:border focus:border-custom-primary h-[65px] block w-full rounded-none focus:ring-0 focus:outline-none placeholder:text-custom-text placeholder:text-sm"}),
-            'leader': forms.Select(attrs={"class": "form-control rounded-lg form-select"}),
+            'leader': forms.Select(attrs={"class": "field", "id": "leader", "name": "leader", "required": True}),
             
         }
     

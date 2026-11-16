@@ -1,4 +1,5 @@
 import logging
+from django.db.models.aggregates import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -21,7 +22,10 @@ def is_treasurer_or_admin(user):
 def get_contributions(request):
     """List all active contributions."""
     contributions = ContributionType.objects.all().order_by("-created")
-    return render(request, 'contributions/index.html', {'contributions': contributions})
+    amount_expected = contributions.aggregate(total=Sum("amount"))["total"] or 0
+    amount_collected = MemberContribution.objects.filter(is_paid=PaymentStatus.PAID).aggregate(total=Sum("amount_due"))["total"] or 0
+    amount_outstanding = MemberContribution.objects.filter(is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PENDING, PaymentStatus.AWAITING_APPROVAL]).aggregate(total=Sum("amount_due"))["total"] or 0
+    return render(request, 'contributions/index.html', {'contributions': contributions, 'amount_expected': amount_expected, 'amount_collected': amount_collected, 'amount_outstanding': amount_outstanding})
 
 
 @login_required

@@ -30,8 +30,9 @@ urlpatterns = [
     path('dashboard/update-family/<family_slug>', update_family, name="update-family"),
     path('dashboard/delete-family/<family_slug>', delete_family, name="delete-family"),
     
-    path('dashboard/<family_slug>/members', get_members, name="get-members"),
-    path('dashboard/<family_slug>/add-member', add_member, name="add-member"),
+    path('dashboard/members', get_members, name="get-members"),
+    path('dashboard/members/<family_slug>', get_members, name="get-members-by-family"),
+    path('dashboard/add-member', add_member, name="add-member"),
     # # member management
     path('dashboard/<str:family_slug>/members/<str:username>/edit', update_member, name="update-member"),
     path('dashboard/<str:family_slug>/members/<str:username>/delete', delete_member, name="delete-member"),

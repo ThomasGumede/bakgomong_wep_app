@@ -226,210 +226,158 @@ Invoice
 {% endblock dash_title %}
 {% block content %}
 
-{% if alert %}
-    <div class="alert alert-success bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 border-success-100 px-6 py-[11px] mb-0 font-semibold text-lg rounded-lg"
-        role="alert">
-        <div class="flex items-center justify-between text-lg">
-            {{alert.title}}
-            <button class="remove-button text-success-600 text-2xl line-height-1"> <iconify-icon
-                    icon="iconamoon:sign-times-light" class="icon"></iconify-icon></button>
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Payment details
+            </h1>
+            <p class="heading-desc">
+                View payment status, references and invoice / receipt.
+            </p>
         </div>
-        <p class="font-medium text-success-600 text-sm mt-2">{{alert.message}}</p>
-    </div>
-{% endif %}
-    
-<div class="card border-0">
-    <div class="card-header">
-        <div class="flex flex-wrap items-center justify-end gap-2">
-            <a href="javascript:void(0)"
-                class="btn btn-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg inline-flex items-center gap-1">
-                <iconify-icon icon="pepicons-pencil:paper-plane" class="text-xl"></iconify-icon>
-                Send Invoice
-            </a>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="soft-card detail-hero" id="payment-summary">
+        <div class="detail-hero-left">
+            <p class="section-kicker">
+                MEMBER CONTRIBUTION
+            </p>
+            <h2 id="pd-name">{{contribution.contribution_type.name}}</h2>
+            <p id="pd-member">{{contribution.account.get_full_name}}</p>
+            {% if contribution.is_paid == 'PAID' %}
+                <span id="pd-status" class="status status-green">Paid</span>
             
-            {% if contribution.is_paid == 'NOT PAID' %}
-            <a href="{% url 'contributions:checkout' contribution.id %}"
-                class="btn btn-sm bg-warning-600 hover:bg-warning-700 text-white rounded-lg inline-flex items-center gap-1">
-                <iconify-icon icon="hugeicons:invoice-03" class="text-xl"></iconify-icon>
-                Pay Now
-            </a>
+            {% elif contribution.is_paid == 'NOT_PAID' %}
+                <span id="pd-status" class="status status-red">Not Paid</span>
             
+            {% elif contribution.is_paid == 'PENDING' %}
+                <span id="pd-status" class="status status-yellow">Pending</span>
+
+            {% else %}
+                <span id="pd-status" class="status status-gray">{{contribution.get_is_paid_display}}</span>
             {% endif %}
-            {% if contribution.is_paid == 'NOT PAID' or contribution.is_paid == 'PENDING' %}
-            <a href="javascript:void(0)"
-                class="btn btn-sm bg-success-600 hover:bg-success-700 text-white rounded-lg inline-flex items-center gap-1">
-                <iconify-icon icon="uil:edit" class="text-xl"></iconify-icon>
-                Mark Paid
-            </a>
-            {% endif %}
-            
-            <a href="{% url 'contributions:download-member-invoice' contribution.id %}"
-                class="btn btn-sm bg-danger-600 hover:bg-danger-700 text-white rounded-lg inline-flex items-center gap-1"
-                >
-                <iconify-icon icon="basil:printer-outline" class="text-xl"></iconify-icon>
-                Print
-            </a>
+        </div>
+        <div class="detail-hero-value">
+            <span>
+                Amount due
+            </span>
+            <strong id="pd-amount">R {{contribution.amount_due|floatformat:2}}</strong>
         </div>
     </div>
-    <div class="card-body md:py-[60px]">
-        <div class="grid grid-cols-1" id="invoice">
-            <div class="max-w-[1174px] mx-auto w-full">
-                <div class="shadow-4 border border-neutral-200 dark:border-neutral-600 rounded-lg">
-                    <div
-                        class="p-5 flex flex-wrap justify-between gap-3 border-b border-neutral-200 dark:border-neutral-600">
-                        <div>
-                            <h3 class="text-xl">Invoice: {{contribution.reference}}</h3>
-                            <p class="mb-1 text-sm">Date Issued: {{contribution.created|date}}</p>
-                            <p class="mb-0 text-sm">Date Due: {{contribution.due_date}}</p>
-                        </div>
-                        <div class="brand">
-                            <div class="logo">BM</div>
-                            <div class="company">
-                                <h1>BAKGOMONG KGOTLA YA MALLA</h1>
-                                <p>stand 23 Malla Section, Phokeng, 0335</p>
-                                <p>info@bakgomong.co.za • +27 76 026 3232</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="py-7 px-5">
-                        <div class="flex flex-wrap justify-between align-items-end gap-3">
-                            <div>
-                                <h6 class="text-base">Issus For:</h6>
-                                <table class="text-sm text-secondary-light">
-                                    <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td class="ps-2">: {{contribution.account.get_full_name}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Address</td>
-                                            <td class="ps-2">: {{contribution.account.address}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Email</td>
-                                            <td class="ps-2">: {{contribution.account.email}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Phone number</td>
-                                            <td class="ps-2">: {{contribution.account.phone}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div>
-                                <table class="text-sm text-secondary-light">
-                                    <tbody>
-                                        <tr>
-                                            <td>Issus Date</td>
-                                            <td class="ps-2">: {{contribution.created|date}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Order ID</td>
-                                            <td class="ps-2">: {{contribution.reference}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status</td>
-                                            <td class="ps-2">: {{contribution.get_is_paid_display}}</td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            <div class="table-responsive scroll-sm">
-                                <table class="table bordered-table text-sm">
-                                    <thead>
-                                        <tr>
-                                            
-                                            <th scope="col" class="text-sm">Items</th>
-                                            
-                                            <th scope="col" class="text-sm">Category</th>
-                                            
-                                            <th scope="col" class="text-end text-sm">Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            
-                                            <td>{{contribution.contribution_type.name}}</td>
-                                            
-                                            <td>{{contribution.contribution_type.category}}</td>
-                                            
-                                            <td class="text-end">R{{contribution.amount_due}}</td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="flex flex-wrap justify-between gap-3">
-                                <div>
-                                    <p class="text-sm mb-0"><span
-                                            class="text-neutral-600 dark:text-neutral-200 font-semibold">Group
-                                            By:</span> {{contribution.contribution_type.created_by}}</p>
-                                    <p class="text-sm mb-0">Thanks for your contribution</p>
-                                </div>
-                                <div>
-                                    <table class="text-sm">
-                                        <tbody>
-                                            <tr>
-                                                <td class="pe-[64px]">Subtotal:</td>
-                                                <td class="ps-6">
-                                                    <span
-                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R{{contribution.amount_due}}</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="pe-[64px]">Discount:</td>
-                                                <td class="ps-6">
-                                                    <span
-                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R0.00</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td
-                                                    class="pe-[64px] border-b border-neutral-200 dark:border-neutral-600 pb-4">
-                                                    Tax:</td>
-                                                <td
-                                                    class="ps-6 border-b border-neutral-200 dark:border-neutral-600 pb-4">
-                                                    <span
-                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">0.00</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="pe-[64px] pt-4">
-                                                    <span
-                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">Total:</span>
-                                                </td>
-                                                <td class="ps-6 pt-4">
-                                                    <span
-                                                        class="text-neutral-600 dark:text-neutral-200 font-semibold">R{{contribution.amount_due}}</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-16">
-                            <p class="text-center text-secondary-light text-sm font-semibold">Thank you for your
-                                contribution!</p>
-                        </div>
-
-                        <div class="flex flex-wrap justify-between align-items-end mt-16">
-                            <div class="text-sm border-t border-neutral-200 dark:border-neutral-600 inline-block px-3">
-                                Signature of Customer</div>
-                            <div class="text-sm border-t border-neutral-200 dark:border-neutral-600 inline-block px-3">
-                                Signature of Authorized</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="family-details-grid">
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Payment details
+                </h2>
             </div>
-        </div>
+            <dl class="definition-list" id="payment-facts">
+                <div>
+                    <dt>Member</dt>
+                    <dd>{{contribution.account.get_full_name}}</dd>
+                </div>
+                <div>
+                    <dt>Payment reference</dt>
+                    <dd>{{contribution.reference}}</dd>
+                </div>
+                <div>
+                    <dt>Due date</dt>
+                    <dd>{{contribution.due_date}}</dd>
+                </div>
+                <div>
+                    <dt>Amount due</dt>
+                    <dd>R {{contribution.amount_due|floatformat:2}}</dd>
+                </div>
+                <div>
+                    <dt>Payment status</dt>
+                    <dd>{{contribution.get_is_paid_display}}</dd>
+                </div>
+                <div>
+                    <dt>Payment channel</dt>
+                    <dd>{{contribution.payment.get_payment_method_display|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Payment date</dt>
+                    <dd>{{contribution.payment.payment_date|date:"d M Y"|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Payment reference (bank)</dt>
+                    <dd>{{contribution.payment.checkout_id|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Receipt number</dt>
+                    <dd>{{contribution.payment.reference|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Verification</dt>
+                    <dd>{{contribution.payment.get_is_approved_display|default:"Not specified"}}</dd>
+                </div>
+                <div>
+                    <dt>Recorded by</dt>
+                    <dd>{{contribution.payment.recorded_by.get_full_name|default:"Not specified"}}</dd>
+                </div>
+            </dl>
+            <div class="button-row" id="payment-actions"><button type="button" class="btn-primary"
+                    data-download="receipt" data-id="mc4">Download receipt</button> 
+                    {% if contribution.is_paid == 'NOT_PAID' %}
+                        {% if request.user == contribution.account %}
+                            <a href="{% url 'contributions:checkout' id=contribution.id %}" class="btn-primary" data-download="receipt" data-id="mc4">Pay now</a>
+                        {% elif request.user.role == 'TREASURER' %}
+                            <a href="{% url 'contributions:log-payment' id=contribution.id %}" class="btn-primary" data-download="receipt" data-id="mc4">Log payment</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+        </section>
+        <section class="soft-card details-panel">
+            <div class="card-heading">
+                <h2>
+                    Related contribution
+                </h2>
+            </div>
+            <dl class="definition-list" id="payment-contribution-facts">
+                <div>
+                    <dt>Title</dt>
+                    <dd>{{contribution.contribution_type.name}}</dd>
+                </div>
+                <div>
+                    <dt>Category</dt>
+                    <dd>{{contribution.contribution_type.get_category_display}}</dd>
+                </div>
+                <div>
+                    <dt>Scope</dt>
+                    <dd>{{contribution.contribution_type.get_scope_display}}</dd>
+                </div>
+                <div>
+                    <dt>Frequency</dt>
+                    <dd>{{contribution.contribution_type.get_recurrence_display}}</dd>
+                </div>
+                <div>
+                    <dt>Default amount</dt>
+                    <dd>R {{contribution.contribution_type.amount|floatformat:2}}</dd>
+                </div>
+                <div>
+                    <dt>Description</dt>
+                    <dd>{{contribution.contribution_type.description|default:"No description provided."}}</dd>
+                </div>
+            </dl>
+            <div class="info-note" id="payment-approval-note">
+                <strong>
+                    Important
+                </strong>
+                <p>
+                    A bank transfer or Yoco redirect does not mean the payment is verified. Only a verified backend
+                    payment can be marked as paid.
+                </p>
+            </div>
+        </section>
     </div>
-</div>
+</main>
+
 
 {% endblock content %}
 

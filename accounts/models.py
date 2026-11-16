@@ -15,6 +15,7 @@ from utilities.choices import Gender, PaymentStatus, Role, Title, EmploymentStat
 
 
 class Family(AbstractCreate):
+    # family_potrait = models.ImageField(null=True, blank=True, upload_to='family/potraits/')
     name = models.CharField(max_length=300, help_text=_('Enter family name e.g Dladla Family'), unique=True)
     slug = models.SlugField(max_length=400, unique=True, db_index=True)
     leader = models.OneToOneField('Account', related_name='family_leader', on_delete=models.SET_NULL, null=True, blank=True)
@@ -68,18 +69,15 @@ class Family(AbstractCreate):
     def get_delete_url(self):
         return reverse("accounts:delete-family", kwargs={"family_slug": self.slug})
     
-    # def clean(self):
-    #     from django.core.exceptions import ValidationError
-
-        
-    #     if self.pk and self.leader:
-    #         if getattr(self.leader, "family_id", None) != self.pk:
-    #             raise ValidationError({"leader": _("Leader must belong to this family.")})
+    @property
+    def get_total_memebrs(self):
+        members = Account.objects.filter(family=self)
+        return members.count()
         
     @property
     def total_unpaid(self):
         from contributions.models import MemberContribution
-        result = MemberContribution.objects.filter(account__family=self, is_paid=PaymentStatus.NOT_PAID).aggregate(total=Sum("amount_due"))
+        result = MemberContribution.objects.filter(account__family=self, is_paid__in=[PaymentStatus.NOT_PAID, PaymentStatus.PENDING]).aggregate(total=Sum("amount_due"))
         return result["total"] or 0
     
     @property
@@ -124,13 +122,6 @@ class Account(AbstractUser, AbstractProfile):
         ]
         
     def save(self, *args, **kwargs):
-        
-        # Make sure executives are staff members
-        if self.role in [Role.CLAN_CHAIRPERSON, Role.MMAKGOSANA, Role.SECRETARY, Role.DEP_SECRETARY, Role.TREASURER, Role.DEP_CHAIRPERSON, Role.SPONSOR]:
-            self.is_staff = True
-        else:
-            self.is_staff = False  
-        
         super(Account, self).save(*args, **kwargs)
         
     def clean(self):

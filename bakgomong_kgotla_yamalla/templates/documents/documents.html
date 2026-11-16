@@ -7,72 +7,106 @@
 Kgotla Documents
 {% endblock dash_title %}
 {% block content %}
-<div class="grid grid-cols-12">
-    <div class="col-span-12">
-        <div class="card h-full p-0 rounded-xl border-0 overflow-hidden">
-            <div
-                class="card-header border-b border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-700 py-4 px-6 flex items-center flex-wrap gap-3 justify-between">
 
-                {% if request.user.is_staff %}
-                <a href="{% url 'admin:index' %}" class="btn btn-primary text-sm btn-sm px-3 py-3 rounded-lg flex items-center gap-2">
-                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                    Add File
-                </a>
-                {% endif %}
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                MEMBER PORTAL
+            </p>
+            <h1>
+                Documents
+            </h1>
+            <p class="heading-desc">
+                Kgotla documents with category and visibility permissions.
+            </p>
+        </div>
+        {% if request.user.is_staff %}
+        <div class="heading-actions">
+            <a class="btn-primary" href="{% url 'bakgomong_kgotla_yamalla:upload-document' %}">
+                <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                    <path d="M12 5v14M5 12h14">
+                    </path>
+                </svg>
+                Add document
+            </a>
+        </div>
+        {% endif %}
+    </section>
+    <div class="filter-toolbar">
+        <label class="search-field">
+            <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="18">
+                <circle cx="11" cy="11" r="7">
+                </circle>
+                <path d="m20 20-4-4">
+                </path>
+            </svg>
+            <input aria-label="Search documents..." id="search-input" placeholder="Search documents..." type="search">
+        </label>
+        <select aria-label="Filter categories" class="field select-filter" id="filter-main">
+            <option value="">
+                All categories
+            </option>
+            <option value="minutes">
+                Meeting minutes
+            </option>
+            <option value="report">
+                Financial report
+            </option>
+            <option value="event">
+                Events
+            </option>
+            <option value="policy">
+                Policy / constitution
+            </option>
+            <option value="other">
+                Other
+            </option>
+        </select>
+        <select aria-label="Secondary filter" class="field select-filter" id="filter-secondary">
+            <option value="">
+                All statuses
+            </option>
+            <option value="clan">
+                Entire clan
+            </option>
+            <option value="family">
+                Specific family
+            </option>
+            <option value="private">
+                Admin only
+            </option>
+        </select>
+    </div>
+    <div class="document-grid" id="documents-list">
+        {% for document in docs %}
+        <article class="document-item"><span class="document-icon">PDF</span>
+            <div>
+                <h3>{{ document.title }}</h3>
+                <p>{{ document.description }}</p>
             </div>
-            <div class="card-body p-6">
-                <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                
-                                <th scope="col">Uploaded Date</th>
-                                <th scope="col">Uploaded By</th>
-                                <th scope="col">Title</th>
-                                
-                                <th scope="col" class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for document in docs %}
-                            
-                            <tr>
-                                
-                                <td>{{document.created|date:"d M Y"}}</td>
-                                <td>
-                                    <div class="flex items-center">
-                                        <img src="{% if document.uploaded_by.profile_image %}{{document.uploaded_by.profile_image.url}}{% else %}{% static 'dashboard/images/user-grid/user-grid-img13.png' %}{% endif %}"
-                                            alt="{{document.uploaded_by.get_full_name}}" class="w-10 h-10 rounded-full shrink-0 overflow-hidden">
-                                        <div class="grow">
-                                            <span
-                                                class="text-base mb-0 font-normal text-secondary-light">{{document.uploaded_by.get_full_name|truncatechars:20}}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{document.title|truncatechars:30}}</td>
-    
-                                
-
-                                <td class="text-center">
-                                    <div class="flex items-center gap-3 justify-center">
-                                        <a href="{% url 'bakgomong_kgotla_yamalla:download-file' document.id %}"
-                                            class="bg-info-100 dark:bg-info-600/25 hover:bg-info-200 text-info-600 dark:text-info-400 font-medium w-10 h-10 flex justify-center items-center rounded-full">
-                                            <iconify-icon icon="lucide:download" class="icon text-xl"></iconify-icon>
-
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            
-                        </tbody>
-                    </table>
-                </div>
-                
+            <div class="document-tags"><span class="status status-blue">{{ document.get_category_display }}</span><span
+                    class="status status-gray">{{ document.get_visibility_display }}</span></div>
+            <div class="document-bottom"><small>{{ document.upload_date|date:"d M Y" }}</small><a class="link-inline" href="{% url 'bakgomong_kgotla_yamalla:download-file' document.id %}">View
+                    details</a></div>
+        </article>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="rounded-3xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 p-16 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-5 text-xl font-semibold text-gray-900 dark:text-white">No documents found</h3>
+                <p class="mt-2 text-gray-500 dark:text-gray-400">Once a document is created, it will appear here.</p>
             </div>
         </div>
+        {% endfor %}
+        
     </div>
-</div>
+</main>
+
 
 {% endblock content %}
 
