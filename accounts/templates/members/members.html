@@ -112,7 +112,7 @@
                         <td>{{ member.get_title_display }}</td>
                         <td>{{ member.get_role_display }}</td>
                         <td>{% if member.is_approved %}<span class="status status-green">Approved</span>{% else %}<span class="status status-yellow">Pending approval</span>{% endif %}</td>
-                        <td><a class="link-inline" href="{% url 'accounts:user-details' member.username %}">View</a></td>
+                        <td><a class="link-inline" href="{% if member.username %}{% url 'accounts:user-details' member.username %}{% endif %}">View</a></td>
                     </tr>
                     {% empty %}
                     <tr>
