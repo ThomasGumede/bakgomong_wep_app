@@ -146,7 +146,7 @@ class Account(AbstractUser, AbstractProfile):
             elif self.role == Role.KGOSANA:
                 raise ValidationError("There can only be one Kgosana at a time.")
             else:
-                raise ValidationError(f"There can only be one user with the role {self.role} at a time.")
+                pass  # No restriction for other roles
         super(Account, self).clean()
 
     def __str__(self):
