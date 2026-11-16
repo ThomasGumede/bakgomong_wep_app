@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d2c">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Bakgomong Kgotla ya Malla member portal — service unavailable.">
+    <title>503 · Service Unavailable | Bakgomong</title>
+    <link rel="icon" type="image/png" href="{% static 'errors/bakgomong-emblem.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link href="{% static 'errors/error-pages.css' %}" rel="stylesheet">
+</head>
+<body class="error--amber">
+<div class="error-site">
+    <header class="error-topbar">
+        <a class="error-brand" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}" aria-label="Bakgomong portal home">
+            <img src="{% static 'errors/bakgomong-logo.png' %}" alt="Bakgomong Kgotla ya Malla logo" width="222" height="73">
+        </a>
+        <div class="error-topbar-right"><span class="brand-dot" aria-hidden="true"></span> PRIVATE KGOTLA PORTAL</div>
+    </header>
+    <main class="error-stage" id="main-content">
+        <article class="error-card" aria-labelledby="error-title">
+            <div class="error-visual" aria-hidden="true">
+                <div class="visual-top">A HOME FOR OUR PEOPLE</div>
+                <div class="orbit-scene">
+                    <span class="orbit orbit--outer"></span>
+                    <span class="orbit orbit--middle"></span>
+                    <span class="orbit orbit--inner"></span>
+                    <div class="orbit-core"><img src="{% static 'errors/bakgomong-emblem.png' %}" alt=""></div>
+                    <div class="scene-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/><path d="M7 3 5 5m12-2 2 2"/></svg></div>
+                    <div class="scene-number">503</div>
+                    <div class="scene-plate"><span>ERROR CODE</span><strong>503</strong></div>
+                </div>
+                <div class="visual-bottom"><span class="visual-bottom-line"></span><p>Thank you for your patience and understanding.</p></div>
+            </div>
+            <div class="error-content">
+                <span class="error-status"><span class="status-circle" aria-hidden="true"></span> 503 <span aria-hidden="true">·</span> SERVICE UNAVAILABLE</span>
+                <p class="error-eyebrow">THE PORTAL IS TAKING A SHORT BREAK</p>
+                <h1 id="error-title" class="error-title">We’ll be<br><em>back shortly.</em></h1>
+                <p class="error-desc">The Bakgomong member portal is temporarily unavailable, possibly because of maintenance or high demand. Please visit again a little later.</p>
+                <div class="guidance">
+                    <span class="guidance-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg></span>
+                    <div><h2 class="guidance-title">While the portal is unavailable</h2><p>Your information has not been deleted by this message. For urgent contribution or account enquiries, contact your family leader or Kgotla administrator.</p></div>
+                </div>
+                <nav class="error-actions" aria-label="Recovery options">
+                    <a class="action action-primary" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">Try the portal again<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+                    <a class="action action-secondary" href="{% url 'accounts:login' %}">Member sign in</a>
+                </nav>
+                <div class="support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 0 1 4.8 1c0 1.9-2.4 2-2.4 4m0 3h.01"/></svg><p><strong>Still need help?</strong> Contact your family leader or Kgotla administrator. Passwords and account access are managed by Kgotla leadership.</p></div>
+            </div>
+        </article>
+    </main>
+    <footer class="error-footer"><span>© Bakgomong · Kgotla ya Malla</span><span>Our roots connect us. <strong>Our future unites us.</strong></span></footer>
+</div>
+</body>
+</html>

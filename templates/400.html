@@ -1,26 +1,60 @@
-{% extends '_base.html' %}
 {% load static %}
-{% block dash_title %}
-400 Bad Request
-{% endblock dash_title %}
-{% block dash_title2 %}
-500 Bad Request
-{% endblock dash_title2 %}
-
-
-
-{% block content %}
-<div class="card basic-data-table border-0 overflow-hidden">
-    <div class="card-body py-10 lg:py-[60px] xl:py-[80px] px-8 text-center">
-        <img src="{% static '/images/error-img.png' %}" alt="" class="mb-6 mx-auto">
-        <h6 class="mb-4">Page not Found</h6>
-        <p class="text-secondary-light">Sorry, the page you are looking for doesn't exist yet </p>
-        <a href="{% url 'dashboard:index' %}" class="btn btn-primary-600 rounded-lg px-5 py-[11px] mt-10">Back to Home</a>
-    </div>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d2c">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Bakgomong Kgotla ya Malla member portal — bad request.">
+    <title>400 · Bad Request | Bakgomong</title>
+    <link rel="icon" type="image/png" href="{% static 'errors/bakgomong-emblem.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link href="{% static 'errors/error-pages.css' %}" rel="stylesheet">
+</head>
+<body class="error--amber">
+<div class="error-site">
+    <header class="error-topbar">
+        <a class="error-brand" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}" aria-label="Bakgomong portal home">
+            <img src="{% static 'errors/bakgomong-logo.png' %}" alt="Bakgomong Kgotla ya Malla logo" width="222" height="73">
+        </a>
+        <div class="error-topbar-right"><span class="brand-dot" aria-hidden="true"></span> PRIVATE KGOTLA PORTAL</div>
+    </header>
+    <main class="error-stage" id="main-content">
+        <article class="error-card" aria-labelledby="error-title">
+            <div class="error-visual" aria-hidden="true">
+                <div class="visual-top">A HOME FOR OUR PEOPLE</div>
+                <div class="orbit-scene">
+                    <span class="orbit orbit--outer"></span>
+                    <span class="orbit orbit--middle"></span>
+                    <span class="orbit orbit--inner"></span>
+                    <div class="orbit-core"><img src="{% static 'errors/bakgomong-emblem.png' %}" alt=""></div>
+                    <div class="scene-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v4"/><path d="M14 3v5h5"/><path d="M5 12V5a2 2 0 0 1 2-2"/><path d="M5 19a2 2 0 0 0 2 2h9"/><path d="m11 12 7 7m0-7-7 7"/></svg></div>
+                    <div class="scene-number">400</div>
+                    <div class="scene-plate"><span>ERROR CODE</span><strong>400</strong></div>
+                </div>
+                <div class="visual-bottom"><span class="visual-bottom-line"></span><p>A fresh start is often all it takes.</p></div>
+            </div>
+            <div class="error-content">
+                <span class="error-status"><span class="status-circle" aria-hidden="true"></span> 400 <span aria-hidden="true">·</span> BAD REQUEST</span>
+                <p class="error-eyebrow">WE COULDN’T PROCESS THAT</p>
+                <h1 id="error-title" class="error-title">That request<br><em>didn’t look right.</em></h1>
+                <p class="error-desc">The information sent to Bakgomong could not be understood or accepted. The page may have expired, or the request may need to be corrected.</p>
+                <div class="guidance">
+                    <span class="guidance-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg></span>
+                    <div><h2 class="guidance-title">Try a fresh start</h2><p>Return to the portal and open the page again. If you were completing a form, review your entries before resubmitting.</p></div>
+                </div>
+                <nav class="error-actions" aria-label="Recovery options">
+                    <a class="action action-primary" href="{% url 'bakgomong_kgotla_yamalla:dashboard' %}">Return to portal<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+                    <a class="action action-secondary" href="{% url 'accounts:login' %}">Member sign in</a>
+                </nav>
+                <div class="support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 0 1 4.8 1c0 1.9-2.4 2-2.4 4m0 3h.01"/></svg><p><strong>Still need help?</strong> Contact your family leader or Kgotla administrator. Passwords and account access are managed by Kgotla leadership.</p></div>
+            </div>
+        </article>
+    </main>
+    <footer class="error-footer"><span>© Bakgomong · Kgotla ya Malla</span><span>Our roots connect us. <strong>Our future unites us.</strong></span></footer>
 </div>
-{% endblock content %}
-
-
-{% block scripts %}
-
-{% endblock scripts %}
+</body>
+</html>
