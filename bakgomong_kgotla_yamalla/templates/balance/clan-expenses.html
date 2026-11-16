@@ -136,7 +136,7 @@ Kgotla Finances
                 </p>
             </div>
             {% if request.user.is_staff %}
-            <a class="btn-outline staff-only" href="expense-form.html">
+            <a class="btn-outline staff-only" href="{% url 'bakgomong_kgotla_yamalla:record-expense' %}">
                 + Record expense
             </a>
             {% endif %}

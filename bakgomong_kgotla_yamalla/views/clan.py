@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from contributions.models import ContributionType, MemberContribution
 from utilities.choices import PaymentStatus, Role
 from accounts.models import Account
+from bakgomong_kgotla_yamalla.forms import KgotlaExpenseForm, ClanDocumentForm, MeetingForm
 
 logger = logging.getLogger("bakgomong_kgotla_yamalla")
 
@@ -38,6 +39,29 @@ def clan_expenses(request):
     context['expenses'] = KgotlaExpense.objects.all().order_by("-incurred_date")
     context["kgotla_balance"] = KgotlaBalance.objects.first()
     return render(request, "balance/clan-expenses.html", context)
+
+@login_required
+def record_expense(request):
+    user = request.user
+    if user.role != Role.TREASURER:
+        raise PermissionDenied("You do not have permission to record expenses.")
+    
+    if request.method == "POST":
+        form = KgotlaExpenseForm(request.POST, request.FILES)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.recorded_by = user
+            expense.save()
+            
+            messages.success(request, "Expense recorded successfully.")
+            return redirect("bakgomong_kgotla_yamalla:clan-expenses")
+        else:
+            messages.error(request, "There was an error recording the expense. Please check the form for errors.")
+            form = KgotlaExpenseForm(request.POST, request.FILES)  # Reinitialize the form with POST data to display errors
+            return render(request, "balance/record-expense.html", {"form": form})
+    else:
+        form = KgotlaExpenseForm()
+        return render(request, "balance/record-expense.html", {"form": form})
 
 @login_required
 def dashboard(request):

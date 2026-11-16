@@ -1,0 +1,100 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block seo %}
+<title>Kgotla Finances</title>
+{% endblock seo %}
+{% block dash_title %}
+Kgotla Finances
+{% endblock dash_title %}
+{% block content %}
+<main class="main-content page-enter" id="main-content">
+    <section class="page-heading">
+        <div>
+            <p class="section-kicker">
+                TREASURER
+            </p>
+            <h1>
+                Record expense
+            </h1>
+            <p class="heading-desc">
+                Create a KgotlaExpense demo record.
+            </p>
+        </div>
+        <div class="heading-actions">
+        </div>
+    </section>
+    <div class="content-narrow">
+        <div class="soft-card form-panel">
+            <div class="form-panel-head">
+                <h2>
+                    Expense details
+                </h2>
+                <p>
+                    Fields follow the bakgomong_kgotla_yamalla.KgotlaExpense model.
+                </p>
+            </div>
+            <form class="form-grid" id="expense-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label class="field-label" for="title">
+                        Expense title *
+                    </label>
+                    <input class="field" id="title" name="title" placeholder="" required="" type="text">
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="amount">
+                        Amount (ZAR) *
+                    </label>
+                    <input class="field" id="amount" name="amount" placeholder="" required="" type="number">
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="incurred_date">
+                        Date incurred *
+                    </label>
+                    <input class="field" id="incurred_date" name="incurred_date" placeholder="" required="" type="date">
+                </div>
+                <div class="form-field">
+                    <label class="field-label" for="recurring">
+                        Recurrence
+                    </label>
+                    {{form.recurring}}
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="description">
+                        Description
+                    </label>
+                    <textarea class="field" id="description" name="description" placeholder="" rows="3"></textarea>
+                </div>
+                <div class="form-field form-wide">
+                    <label class="field-label" for="proof_of_expense">
+                        Proof of expense file (required for Treasurer)
+                    </label>
+                    <input accept="image/*,.pdf" class="field" id="proof_of_expense" name="proof_of_expense" type="file">
+                    <span class="text-[11px] text-custom-tertiary block font-normal capitalize">Upload bank statement, screenshot, or
+                        receipt image</span>
+                
+                </div>
+                
+                <div class="form-wide form-actions">
+                    <a class="btn-outline" href="reports.html">
+                        Cancel
+                    </a>
+                    <button class="btn-primary" type="submit">
+                        <svg aria-hidden="true" class="icon" fill="none" height="18" stroke="currentColor"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"
+                            width="18">
+                            <path d="m5 12 5 5L20 7">
+                            </path>
+                        </svg>
+                        Save expense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock content %}
+
+{% block scripts %}
+
+{% endblock scripts %}

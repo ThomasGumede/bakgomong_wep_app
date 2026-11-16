@@ -1,6 +1,23 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Meeting, ClanDocument
+from .models import Meeting, ClanDocument, KgotlaExpense
+
+class KgotlaExpenseForm(forms.ModelForm):
+    class Meta:
+        model = KgotlaExpense
+        fields = [
+            "amount",
+            "description",
+            "incurred_date",
+            "title",
+            "recurring",
+            "proof_of_expense"
+        ]
+        widgets = {
+            "incurred_date": forms.DateInput(attrs={"type": "date", "class": "form-control rounded-lg bg-white dark:bg-neutral-700"}),
+            'recurring': forms.Select(attrs={"class": "field", "id": "recurring", "name": "recurring", "required": True}),
+            
+        }
 
 class ClanDocumentForm(forms.ModelForm):
     class Meta:
