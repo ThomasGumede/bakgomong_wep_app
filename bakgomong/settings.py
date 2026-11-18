@@ -255,12 +255,14 @@ INSTALLED_APPS += [
 # Example: ORM broker (no external service)
 Q_CLUSTER = {
     "name": "bakgomong",
-    "workers": 4,
+    "workers": 2,
     "recycle": 500,
     "timeout": 60,
     "retry": 120,
-    "queue_limit": 50,
-    "bulk": 10,
+    "queue_limit": 20,
+    "bulk": 5,
+    "poll": 1,
+    "save_limit": 100,
     "orm": "default",
 }
 
