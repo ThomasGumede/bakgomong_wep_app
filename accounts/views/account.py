@@ -26,7 +26,7 @@ EXECUTIVE_ROLES = [
 @login_required
 def user_details(request, username):
     model = get_object_or_404(get_user_model().objects.all(), username=username)
-    template = "accounts/profile.html"
+    template = "accounts/account-overview.html"
     context = {
         "user": model
     }
@@ -40,7 +40,7 @@ def account_overview(request, username):
     
     context['user'] = model
     if request.user.role not in EXECUTIVE_ROLES  and request.user != model:
-        template = "accounts/profile.html"
+        template = "accounts/account-overview.html"
     else:
         template = "accounts/account-overview.html"
         mc = model.member_contributions.all()
